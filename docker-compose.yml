@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+
+    app:
+        container_name: app
+        build:
+            context: ./scienceorfiction
+            dockerfile: dockerfile
+        env_file:
+            - ./scienceorfiction.env
+        ports:
+            - "5000:5000"
+        volumes:
+            - ./scienceorfiction/app:/scienceorfiction/app
+        links:
+            - db
+
+    db:
+        container_name: db
+        image: mysql:8.0.18
+        restart: always
+        env_file:
+            - ./scienceorfiction.env
+        ports:
+            - "3306:3306"
+        expose:
+            - "3306"
