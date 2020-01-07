@@ -1,7 +1,7 @@
 from os import environ
 from time import sleep
 
-from .models import db, Participants
+from .models import Participants
 
 
 def database_ready(db, app):
@@ -31,6 +31,13 @@ def database_ready(db, app):
     return success
 
 
-def getParticipants():
-    participants = db.session.query(Participants.name)
-    return participants
+def getRogues():
+    return Participants.query.filter_by(
+        is_rogue=True).order_by(
+            Participants.name).all()
+
+
+def getGuests():
+    return Participants.query.filter_by(
+        is_rogue=False).order_by(
+            Participants.name).all()

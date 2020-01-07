@@ -3,22 +3,34 @@
 {% block content %}
 
 <div class="container form-card col-md-5">
+    <h1>Update Stats</h1>
+    <br>
+
     <form action="/addEntry" method="POST" role="form">
         {{ form.csrf_token }}
 
-        <div class="form-field">
+        <div class="form-group">
             {{ form.ep_num.label }}
-            {{ form.ep_num(class_ = "form-control ") }}
+            {{ form.ep_num(class_ = "form-control") }}
         </div>
 
-        <div class="form-field">
+        <div class="form-group">
             {{ form.date.label }}
             {{ form.date(class_= "form-control") }}
         </div>
+        <br>
 
-        <div class="form-field">
-            {{ form.participants.label }}
-            {{ form.participants(class_= "form-control ")}}
+        <div class="form-group">
+            <h4>The Rogues</h4>
+            {% for rogue in rogues %}
+                <label for="{{ rogue.name }}">{{ rogue.name }}</label>
+                <select name={{ rogue.name }} id={{ rogue.name }} class="form-control">
+                    <option value="NULL"></option>
+                    <option value="correct">Correct</option>
+                    <option value="incorrect">Incorrect</option>
+                    <option value="absent">Absent</option>
+                </select>
+            {% endfor %}
         </div>
 
         <div class="form-field">

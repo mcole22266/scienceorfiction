@@ -4,8 +4,6 @@ from wtforms import StringField, DateField, SelectMultipleField, SubmitField
 from wtforms.validators import InputRequired
 from wtforms.widgets import ListWidget, CheckboxInput
 
-from .extensions import getParticipants
-
 
 class MultiCheckboxField(SelectMultipleField):
     widget = ListWidget(prefix_label=False)
@@ -21,10 +19,6 @@ class AddEntryForm(FlaskForm):
     date = DateField('Date', validators=[
         InputRequired()
     ])
-
-    participants = MultiCheckboxField('Participants',
-                                      choices=getParticipants(),
-                                      validators=[InputRequired()])
 
     submit = SubmitField('Add Entry')
 

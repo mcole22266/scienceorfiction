@@ -67,8 +67,6 @@ class Participants(db.Model):
                          nullable=False,
                          default=False)
 
-    results = relationship('Results')
-
     def __init__(self, name, date_created, is_rogue=False):
         self.name = name
         self.date_created = date_created

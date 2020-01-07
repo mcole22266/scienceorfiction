@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 
-from .extensions import database_ready
+from .extensions import database_ready, getRogues, getGuests
 from .forms import AddEntryForm
 
 
@@ -31,6 +31,9 @@ def create_app():
             form = AddEntryForm()
             return render_template('addEntry.html',
                                    title='TEST - Add Entry',
-                                   form=form)
+                                   form=form,
+                                   rogues=getRogues(),
+                                   guests=getGuests()
+                                   )
 
         return app
