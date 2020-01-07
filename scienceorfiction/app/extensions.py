@@ -1,6 +1,8 @@
 from os import environ
 from time import sleep
 
+from .models import db, Participants
+
 
 def database_ready(db, app):
     wait = int(environ['DB_WAIT_INITIAL'])
@@ -27,3 +29,8 @@ def database_ready(db, app):
             attemptNum += 1
 
     return success
+
+
+def getParticipants():
+    participants = db.session.query(Participants.name)
+    return participants

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container form-card col-md-5">
+    <form action="/addEntry" method="POST" role="form">
+        {{ form.csrf_token }}
+
+        <div class="form-field">
+            {{ form.ep_num.label }}
+            {{ form.ep_num(class_ = "form-control ") }}
+        </div>
+
+        <div class="form-field">
+            {{ form.date.label }}
+            {{ form.date(class_= "form-control") }}
+        </div>
+
+        <div class="form-field">
+            {{ form.participants.label }}
+            {{ form.participants(class_= "form-control ")}}
+        </div>
+
+        <div class="form-field">
+            {{ form.submit(class_= "btn btn-primary rounded-pill")}}
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}
