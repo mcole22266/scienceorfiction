@@ -1,0 +1,21 @@
+<!-- base.html -->
+
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>{{ title }}</title>
+
+        {% include 'meta.html' %}
+        {% include 'styles.html' %}
+    </head>
+
+    <body>
+        {% block content %}
+        {% endblock %}
+
+        {% include 'scripts.html' %}
+    </body>
+
+
+</html>

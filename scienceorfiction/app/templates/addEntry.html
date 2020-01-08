@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if form.errors %}
+    {{ form.errors }}
+{% endif %}
+
+<div class="container form-card col-md-5">
+    <h1>Update Stats</h1>
+    <br>
+
+    <form action="/test/update" method="POST" role="form">
+        {{ form.csrf_token }}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+        <div class="form-field">
+            {{ form.ep_num.label }}
+            {{ form.ep_num(class_ = "form-control") }}
+        </div>
+
+        <div class="form-field">
+            <label for="date-id">Date</label>
+            <input type="date" name="date" id="date-id" class="form-control">
+        </div>
+
+        <div class="form-field">
+            {{ form.num_items.label }}
+            {{ form.num_items(class_= "form-control") }}
+        </div>
+
+        <br>
+        <div class="form-field">
+            <h4>The Rogues</h4>
+            {% for rogue in rogues %}
+                <label for="{{ rogue.name }}">{{ rogue.name }}</label>
+                <select name="{{ rogue.name }}" id="{{ rogue.name }}" class="form-control">
+                    <option value="NULL"></option>
+                    <option value="correct">Correct</option>
+                    <option value="incorrect">Incorrect</option>
+                    <option value="absent">Absent</option>
+                </select>
+            {% endfor %}
+        </div>
+
+        <div class="form-field">
+            {{ form.submit(class_= "btn btn-primary rounded-pill")}}
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}
