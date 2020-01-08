@@ -1,5 +1,6 @@
+from datetime import datetime
+
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship
 
 db = SQLAlchemy()
 
@@ -8,32 +9,34 @@ class Episodes(db.Model):
     id = db.Column(db.Integer,
                    primary_key=True)
 
-    date = db.Column(db.DateTime,
-                     nullable=False)
-
     ep_num = db.Column(db.Integer,
                        unique=True,
                        nullable=False)
 
+    date = db.Column(db.String(20),
+                     nullable=False)
+
     num_items = db.Column(db.Integer)
 
-    sweep = db.Column(db.String(10))  # offense, defense, no sweep
+    sweep = db.Column(db.String(10),
+                      default='no sweep')  # offense, defense, no sweep
 
-    results = relationship('Results')
+    results = db.relationship('Results',
+                              backref='episode',
+                              lazy='dynamic')
 
-    def __init__(self, date, ep_num, num_items, sweep):
-        date = date,
-        ep_num = ep_num
-        num_items = num_items
-        sweep = sweep
+    def __init__(self, date, ep_num, num_items):
+        self.date = date
+        self.ep_num = ep_num
+        self.num_items = num_items
 
     def __repr__(self):
         if self.sweep != 'no sweep':
-            sweep_statement = 'with a clean sweep for the {self.sweep}'
+            sweep_statement = f'with a clean sweep for the {self.sweep}'
         else:
             sweep_statement = 'without a clean sweep'
         return f'Ep {self.ep_num}-{self.date}: \
-                {self.num_items} items {sweep_statement}'
+{self.num_items} items {sweep_statement}'
 
 
 class Participants(db.Model):
@@ -45,7 +48,8 @@ class Participants(db.Model):
                      nullable=False)
 
     date_created = db.Column(db.DateTime,
-                             nullable=False)
+                             nullable=False,
+                             default=datetime.now())
 
     wins = db.Column(db.Integer,
                      nullable=False,
@@ -67,9 +71,12 @@ class Participants(db.Model):
                          nullable=False,
                          default=False)
 
-    def __init__(self, name, date_created, is_rogue=False):
+    results = db.relationship('Results',
+                              backref='participant',
+                              lazy='dynamic')
+
+    def __init__(self, name, is_rogue=False):
         self.name = name
-        self.date_created = date_created
         self.is_rogue = is_rogue
 
     def __repr__(self):
@@ -87,16 +94,26 @@ class Results(db.Model):
     episode_id = db.Column(db.Integer,
                            db.ForeignKey('episodes.id'))
 
-    episode = relationship('Episodes', back_populates='results')
-
-    participant = db.Column(db.String(80),
-                            unique=True,
-                            nullable=False)
+    participant_id = db.Column(db.Integer,
+                               db.ForeignKey('participants.id'))
 
     correct = db.Column(db.Boolean,
                         nullable=False)
 
-    def __init__(self, episode_id, participant, correct):
+    absent = db.Column(db.Boolean,
+                       nullable=False)
+
+    def __init__(self, episode_id, rogue_id, correct):
         self.episode_id = episode_id
-        self.participant = participant
-        self.correct = correct
+        self.participant_id = rogue_id
+        if correct == 'correct':
+            self.correct = 1
+        else:
+            self.correct = 0
+        if correct == 'absent':
+            self.absent = 1
+        else:
+            self.absent = 0
+
+    def __repr__(self):
+        return f'rogue_id={self.participant_id}|correct={self.correct}'

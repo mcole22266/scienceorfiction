@@ -1,13 +1,7 @@
 from flask_wtf import FlaskForm
 
-from wtforms import StringField, DateField, SelectMultipleField, SubmitField
+from wtforms import StringField, SubmitField
 from wtforms.validators import InputRequired
-from wtforms.widgets import ListWidget, CheckboxInput
-
-
-class MultiCheckboxField(SelectMultipleField):
-    widget = ListWidget(prefix_label=False)
-    option_widget = CheckboxInput()
 
 
 class AddEntryForm(FlaskForm):
@@ -16,7 +10,7 @@ class AddEntryForm(FlaskForm):
         InputRequired()
     ])
 
-    date = DateField('Date', validators=[
+    num_items = StringField('Number of Items', validators=[
         InputRequired()
     ])
 

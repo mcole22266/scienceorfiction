@@ -1,7 +1,7 @@
 from os import environ
 from time import sleep
 
-from .models import Participants
+from .models import Participants, Results, Episodes
 
 
 def database_ready(db, app):
@@ -31,13 +31,58 @@ def database_ready(db, app):
     return success
 
 
-def getRogues():
-    return Participants.query.filter_by(
+def init_db(db):
+    for rogue in ['Steve', 'Bob', 'Jay', 'Evan', 'Cara']:
+        present = Participants.query.filter_by(name=rogue).first()
+        if not present:
+            participant = Participants(rogue, is_rogue=True)
+            db.session.add(participant)
+    db.session.commit()
+
+
+def updateRogueTable(roguename, correct):
+    if correct != 'NULL':
+        rogue = Participants.query.filter_by(
+            name=roguename).first()
+        if correct == 'correct':
+            rogue.wins += 1
+            rogue.present += 1
+        if correct == 'incorrect':
+            rogue.losses += 1
+            rogue.present += 1
+        if correct == 'absent':
+            rogue.absent += 1
+        return rogue.id
+
+
+def checkSweep(db, episode_id, app):
+    results = Results.query.filter_by(episode_id=episode_id).all()
+    results = [result.correct for result in results]
+    if len(set(results)) == 1:
+        # it's a sweep!
+        episode = Episodes.query.filter_by(id=episode_id).first()
+        if results[0] is False:
+            episode.sweep = 'offense'
+        else:
+            episode.sweep = 'defense'
+        db.session.commit()
+
+
+def getRogues(onlyNames=False):
+    rogues = Participants.query.filter_by(
         is_rogue=True).order_by(
             Participants.name).all()
 
+    if onlyNames:
+        for i, rogue in enumerate(rogues):
+            rogues[i] = rogue.name
+
+    return rogues
+
 
 def getGuests():
-    return Participants.query.filter_by(
+    guests = Participants.query.filter_by(
         is_rogue=False).order_by(
             Participants.name).all()
+
+    return guests
