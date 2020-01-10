@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import InputRequired
 
 
@@ -28,7 +28,7 @@ class AdminLoginForm(FlaskForm):
 
     username = StringField('Username')
 
-    password = StringField('Password')
+    password = PasswordField('Password')
 
     submit = SubmitField('Admin Login')
 
@@ -37,7 +37,7 @@ class AdminCreateForm(FlaskForm):
 
     username = StringField('Username')
 
-    password = StringField('Password')
+    password = PasswordField('Password')
 
     secret_code = StringField('Secret Code')
 

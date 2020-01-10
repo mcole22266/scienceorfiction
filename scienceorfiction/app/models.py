@@ -2,7 +2,14 @@ from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
 
+from .extensions import login_manager
+
 db = SQLAlchemy()
+
+
+@login_manager.user_loader
+def load_user(id):
+    return Admins.query.get(int(id))
 
 
 class Episodes(db.Model):
@@ -136,3 +143,15 @@ class Admins(db.Model):
 
     def __repr__(self):
         return f'Admin {self.username}'
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.id
