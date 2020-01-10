@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_wtf.csrf import CSRFProtect
+from flask_login import login_required
 
 from .extensions import (database_ready, init_db,
                          getRogues, getGuests,
@@ -31,8 +32,9 @@ def create_app():
         def index():
             return 'Hello World'
 
-        @app.route('/test/update', methods=['GET', 'POST'])
-        def update():
+        @app.route('/admin', methods=['GET', 'POST'])
+        @login_required
+        def admin():
             form = AddEntryForm()
 
             # POST
@@ -63,5 +65,12 @@ def create_app():
                                    rogues=getRogues(),
                                    guests=getGuests()
                                    )
-
         return app
+
+        @app.route('/admin/login')
+        def admin_login():
+            return 'admin login'
+
+        @app.route('/admin/create')
+        def admin_create():
+            return 'admin create'

@@ -1,5 +1,6 @@
 from os import environ
 from time import sleep
+from hashlib import sha256
 
 from .models import Participants, Results, Episodes
 
@@ -86,3 +87,8 @@ def getGuests():
             Participants.name).all()
 
     return guests
+
+
+def encrypt(string):
+    string = string.encode()
+    return sha256(string).hexdigest()

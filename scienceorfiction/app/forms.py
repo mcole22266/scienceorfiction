@@ -22,3 +22,23 @@ class AddParticipantForm(FlaskForm):
     name = StringField('Name')
 
     submit = SubmitField('Add Participant')
+
+
+class AdminLoginForm(FlaskForm):
+
+    username = StringField('Username')
+
+    password = StringField('Password')
+
+    submit = SubmitField('Admin Login')
+
+
+class AdminCreateForm(FlaskForm):
+
+    username = StringField('Username')
+
+    password = StringField('Password')
+
+    secret_code = StringField('Secret Code')
+
+    submit = SubmitField('Create Admin Account')

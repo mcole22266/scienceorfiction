@@ -117,3 +117,22 @@ class Results(db.Model):
 
     def __repr__(self):
         return f'rogue_id={self.participant_id}|correct={self.correct}'
+
+
+class Admins(db.Model):
+    id = db.Column(db.Integer,
+                   primary_key=True)
+
+    username = db.Column(db.String(80),
+                         nullable=False)
+
+    password = db.Column(db.String(80),
+                         nullable=False)
+
+    def __init__(self, username, password):
+        from .extensions import encrypt
+        self.username = username
+        self.password = encrypt(password)
+
+    def __repr__(self):
+        return f'Admin {self.username}'
