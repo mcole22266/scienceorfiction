@@ -14,7 +14,7 @@ class Config:
     DB_WAIT_INITIAL = environ['DB_WAIT_INITIAL']
     DB_WAIT_MULTIPLIER = environ['DB_WAIT_MULTIPLIER']
     DB_WAIT_MAX = environ['DB_WAIT_MAX']
-   
+
     # mysql config
     MYSQL_DATABASE = environ['MYSQL_DATABASE']
     MYSQL_ROOT_PASSWORD = environ['MYSQL_ROOT_PASSWORD']
@@ -22,3 +22,7 @@ class Config:
     # sqlalchemy config
     SQLALCHEMY_DATABASE_URI = environ['SQLALCHEMY_DATABASE_URI']
     SQLALCHEMY_TRACK_MODIFICATIONS = environ['SQLALCHEMY_TRACK_MODIFICATIONS']
+
+    # email config
+    GMAIL_USERNAME = environ['GMAIL_USERNAME']
+    GMAIL_PASSWORD = environ['GMAIL_PASSWORD']

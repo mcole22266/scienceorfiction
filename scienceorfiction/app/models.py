@@ -2,7 +2,14 @@ from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
 
+from .extensions import login_manager
+
 db = SQLAlchemy()
+
+
+@login_manager.user_loader
+def load_user(id):
+    return Admins.query.get(int(id))
 
 
 class Episodes(db.Model):
@@ -117,3 +124,37 @@ class Results(db.Model):
 
     def __repr__(self):
         return f'rogue_id={self.participant_id}|correct={self.correct}'
+
+
+class Admins(db.Model):
+    id = db.Column(db.Integer,
+                   primary_key=True)
+
+    username = db.Column(db.String(80),
+                         nullable=False)
+
+    password = db.Column(db.String(80),
+                         nullable=False)
+
+    def __init__(self, username, password, encrypted=False):
+        from .extensions import encrypt
+        self.username = username
+        if not encrypted:
+            self.password = encrypt(password)
+        elif encrypted:
+            self.password = password
+
+    def __repr__(self):
+        return f'Admin {self.username}'
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.id

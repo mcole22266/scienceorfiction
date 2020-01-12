@@ -1,7 +1,11 @@
 from os import environ
 from time import sleep
+from hashlib import sha256
 
-from .models import Participants, Results, Episodes
+from flask_login import LoginManager
+
+login_manager = LoginManager()
+login_manager.login_view = 'admin_login'
 
 
 def database_ready(db, app):
@@ -32,6 +36,7 @@ def database_ready(db, app):
 
 
 def init_db(db):
+    from .models import Participants
     for rogue in ['Steve', 'Bob', 'Jay', 'Evan', 'Cara']:
         present = Participants.query.filter_by(name=rogue).first()
         if not present:
@@ -41,6 +46,7 @@ def init_db(db):
 
 
 def updateRogueTable(roguename, correct):
+    from .models import Participants
     if correct != 'NULL':
         rogue = Participants.query.filter_by(
             name=roguename).first()
@@ -56,6 +62,7 @@ def updateRogueTable(roguename, correct):
 
 
 def checkSweep(db, episode_id, app):
+    from .models import Results, Episodes
     results = Results.query.filter_by(episode_id=episode_id).all()
     results = [result.correct for result in results]
     if len(set(results)) == 1:
@@ -69,6 +76,7 @@ def checkSweep(db, episode_id, app):
 
 
 def getRogues(onlyNames=False):
+    from .models import Participants
     rogues = Participants.query.filter_by(
         is_rogue=True).order_by(
             Participants.name).all()
@@ -81,8 +89,47 @@ def getRogues(onlyNames=False):
 
 
 def getGuests():
+    from .models import Participants
     guests = Participants.query.filter_by(
         is_rogue=False).order_by(
             Participants.name).all()
 
     return guests
+
+
+def check_authentication(username, password):
+    from .models import Admins
+    admin = Admins.query.filter_by(username=username).first()
+    if admin:
+        if admin.password == encrypt(password):
+            return True
+    return False
+
+
+def encrypt(string):
+    string = string.encode()
+    return sha256(string).hexdigest()
+
+
+def generate_secret_code():
+    from string import ascii_letters
+    from random import choice
+    secret_code = [choice(ascii_letters) for _ in range(10)]
+    secret_code = ''.join(secret_code)
+    return secret_code
+
+
+def email_secret_code(secret_code):
+    import yagmail
+    GMAIL_USERNAME = environ['GMAIL_USERNAME']
+    GMAIL_PASSWORD = environ['GMAIL_PASSWORD']
+    yag = yagmail.SMTP(GMAIL_USERNAME, GMAIL_PASSWORD)
+    subject = 'Secret Code Generation Bot'
+    contents = f'''
+-- AUTOMATED MESSAGE --
+
+Secret Code: {secret_code}
+
+With Love,
+The Bot'''
+    yag.send(GMAIL_USERNAME, subject, contents)

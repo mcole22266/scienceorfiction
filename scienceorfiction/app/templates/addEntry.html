@@ -7,10 +7,11 @@
 {% endif %}
 
 <div class="container form-card col-md-5">
+    <a href="/logout">Log Out</a>
     <h1>Update Stats</h1>
     <br>
 
-    <form action="/test/update" method="POST" role="form">
+    <form action="/admin" method="POST" role="form">
         {{ form.csrf_token }}
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 

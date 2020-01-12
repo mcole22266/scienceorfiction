@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if form.errors %}
+  {{ form.errors }}
+{% endif %}
+
+<div class="container form-card col-md-5">
+    <h1>Authenticate Admin Account</h1>
+    <br>
+
+    <form action="/admin/authenticate" method="post" role="form">
+        {{ form.csrf_token }}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="username" value="{{ username }}">
+        <input type="hidden" name="password" value="{{ password }}">
+
+        <div class="form-field">
+            {{ form.secret_code.label }}
+            {{ form.secret_code(class_ = "form-control") }}
+        </div>
+
+        <br>
+        <div class="form-field">
+            <a href="/admin/authenticate">Create Account</a>
+            {{ form.submit(class_ = "btn btn-primary rounded-pill", style="float: right;") }}
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}
