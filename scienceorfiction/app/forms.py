@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 
 from wtforms import StringField, SubmitField, PasswordField
-from wtforms.validators import InputRequired
+from wtforms.validators import ValidationError, InputRequired
 
 
 class AddEntryForm(FlaskForm):
@@ -30,7 +30,7 @@ class AdminLoginForm(FlaskForm):
 
     password = PasswordField('Password')
 
-    submit = SubmitField('Admin Login')
+    submit = SubmitField('Login')
 
 
 class AdminCreateForm(FlaskForm):
@@ -39,6 +39,17 @@ class AdminCreateForm(FlaskForm):
 
     password = PasswordField('Password')
 
+    submit = SubmitField('Create Account')
+
+
+class AdminAuthenticateForm(FlaskForm):
+
     secret_code = StringField('Secret Code')
 
-    submit = SubmitField('Create Admin Account')
+    submit = SubmitField('Create Account')
+
+
+def adminAlreadyExists(form, field):
+    from .models import Admins
+    if Admins.query.filter_by(username=field.data).first():
+        raise ValidationError('This admin username already exists.')

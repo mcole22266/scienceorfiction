@@ -136,10 +136,13 @@ class Admins(db.Model):
     password = db.Column(db.String(80),
                          nullable=False)
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, encrypted=False):
         from .extensions import encrypt
         self.username = username
-        self.password = encrypt(password)
+        if not encrypted:
+            self.password = encrypt(password)
+        elif encrypted:
+            self.password = password
 
     def __repr__(self):
         return f'Admin {self.username}'

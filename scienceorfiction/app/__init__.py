@@ -1,15 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_wtf.csrf import CSRFProtect
-from flask_login import login_required, current_user, login_user
-from flask_mail import Mail
+from flask_login import login_required, current_user, login_user, logout_user
 
-from .forms import AddEntryForm, AdminLoginForm, AdminCreateForm
+from .forms import (AddEntryForm, AdminLoginForm, AdminCreateForm,
+                    AdminAuthenticateForm)
 from .models import db, Episodes, Results, Admins
 from .extensions import (database_ready, init_db, login_manager,
                          getRogues, getGuests,
                          updateRogueTable, checkSweep,
                          check_authentication, email_secret_code,
-                         generate_secret_code)
+                         generate_secret_code, encrypt)
 
 
 csrf = CSRFProtect()
@@ -28,7 +28,6 @@ def create_app():
         csrf.init_app(app)
 
         login_manager.init_app(app)
-        mail = Mail(app)
 
         if database_ready(db, app):
             db.create_all()
@@ -105,23 +104,52 @@ def create_app():
             # POST
             if form.validate_on_submit():
                 username = request.form['username']
-                password = request.form['password']
-                secret_code_form = request.form['secret_code']
-                # if secret_code == secret_code_form:
-                if True:   # temporary until email server is set up
-                    admin = Admins(username, password)
-                    db.session.add(admin)
-                    db.session.commit()
-                    login_user(admin)
-                    return redirect(url_for('admin'))
+                password = encrypt(request.form['password'])
+                return redirect(url_for('admin_authenticate',
+                                        username=username,
+                                        password=password))
 
             # GET
             return render_template('adminCreate.html',
                                    title='Admin - Create',
                                    form=form)
 
-        @app.route('/admin/authenticate')
+        @app.route('/admin/authenticate', methods=['GET', 'POST'])
         def admin_authenticate():
-            email_secret_code(secret_code, mail)
+            if current_user.is_authenticated:
+                return redirect(url_for('admin'))
+            form = AdminAuthenticateForm()
+            username = request.args.get('username')
+            app.logger.info(username)
+            password = request.args.get('password')
+            app.logger.info(password)
+
+            # POST
+            if request.method == 'POST':
+                secret_code_form = request.form['secret_code']
+                if secret_code_form == secret_code:
+                    username = request.form['username']
+                    password = request.form['password']
+                    admin = Admins(username, password, encrypted=True)
+                    db.session.add(admin)
+                    db.session.commit()
+                    login_user(admin)
+                    return redirect(url_for('admin'))
+                else:
+                    return redirect(url_for('admin_authenticate'))
+
+            # GET
+            email_secret_code(secret_code)
+            return render_template('adminAuthenticate.html',
+                                   title='Admin - Authenticate',
+                                   username=username,
+                                   password=password,
+                                   form=form)
+
+        @app.route('/logout')
+        @login_required
+        def logout():
+            logout_user()
+            return redirect(url_for('admin'))
 
         return app
