@@ -22,3 +22,7 @@ class Config:
     # sqlalchemy config
     SQLALCHEMY_DATABASE_URI = environ['SQLALCHEMY_DATABASE_URI']
     SQLALCHEMY_TRACK_MODIFICATIONS = environ['SQLALCHEMY_TRACK_MODIFICATIONS']
+
+    # email config
+    GMAIL_USERNAME = environ['GMAIL_USERNAME']
+    GMAIL_PASSWORD = environ['GMAIL_PASSWORD']

@@ -3,5 +3,5 @@ flask_sqlalchemy
 mysql-connector-python
 flask_wtf
 flask_login
-Flask-Mail
+yagmail
 flake8

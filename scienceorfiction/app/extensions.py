@@ -119,6 +119,17 @@ def generate_secret_code():
     return secret_code
 
 
-def email_secret_code(secret_code, mail):
-    # logic to send email
-    return secret_code
+def email_secret_code(secret_code):
+    import yagmail
+    GMAIL_USERNAME = environ['GMAIL_USERNAME']
+    GMAIL_PASSWORD = environ['GMAIL_PASSWORD']
+    yag = yagmail.SMTP(GMAIL_USERNAME, GMAIL_PASSWORD)
+    subject = 'Secret Code Generation Bot'
+    contents = f'''
+-- AUTOMATED MESSAGE --
+
+Secret Code: {secret_code}
+
+With Love,
+The Bot'''
+    yag.send(GMAIL_USERNAME, subject, contents)

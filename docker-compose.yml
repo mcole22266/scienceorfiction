@@ -9,6 +9,7 @@ services:
             dockerfile: dockerfile
         env_file:
             - ./scienceorfiction.env
+            - ./secrets.env
         ports:
             - "5000:5000"
         volumes:
@@ -22,6 +23,7 @@ services:
         restart: always
         env_file:
             - ./scienceorfiction.env
+            - ./secrets.env
         ports:
             - "3306:3306"
         expose:
