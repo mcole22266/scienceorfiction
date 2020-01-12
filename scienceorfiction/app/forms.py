@@ -4,6 +4,12 @@ from wtforms import StringField, SubmitField, PasswordField
 from wtforms.validators import ValidationError, InputRequired
 
 
+def adminAlreadyExists(form, field):
+    from .models import Admins
+    if Admins.query.filter_by(username=field.data).first():
+        raise ValidationError('This admin username already exists.')
+
+
 class AddEntryForm(FlaskForm):
 
     ep_num = StringField('Episode Number', validators=[
@@ -35,7 +41,9 @@ class AdminLoginForm(FlaskForm):
 
 class AdminCreateForm(FlaskForm):
 
-    username = StringField('Username')
+    username = StringField('Username', validators=[
+        adminAlreadyExists
+    ])
 
     password = PasswordField('Password')
 
@@ -47,9 +55,3 @@ class AdminAuthenticateForm(FlaskForm):
     secret_code = StringField('Secret Code')
 
     submit = SubmitField('Create Account')
-
-
-def adminAlreadyExists(form, field):
-    from .models import Admins
-    if Admins.query.filter_by(username=field.data).first():
-        raise ValidationError('This admin username already exists.')
