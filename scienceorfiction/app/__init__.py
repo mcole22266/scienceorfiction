@@ -1,3 +1,4 @@
+from threading import Thread
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_wtf.csrf import CSRFProtect
 from flask_login import login_required, current_user, login_user, logout_user
@@ -139,7 +140,8 @@ def create_app():
                     return redirect(url_for('admin_authenticate'))
 
             # GET
-            email_secret_code(secret_code)
+            thread = Thread(target=email_secret_code, args=[secret_code])
+            thread.start()
             return render_template('adminAuthenticate.html',
                                    title='Admin - Authenticate',
                                    username=username,
