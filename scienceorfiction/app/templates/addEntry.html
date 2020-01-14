@@ -55,6 +55,16 @@
             {% endfor %}
         </div>
 
+        <br>
+        <div class="form-field">
+            <label for="is_presenter">Presenter</label>
+            <select name="is_presenter" id="is_presenter" class="form-control">
+                {% for rogue in rogues %}
+                    <option value="{{ rogue.name }}">{{ rogue.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
         <div class="form-field">
             {{ form.submit(class_= "btn btn-primary rounded-pill")}}
         </div>

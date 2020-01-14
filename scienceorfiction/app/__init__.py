@@ -5,7 +5,7 @@ from flask_login import login_required, current_user, login_user, logout_user
 
 from .forms import (AddEntryForm, AdminLoginForm, AdminCreateForm,
                     AdminAuthenticateForm)
-from .models import db, Episodes, Results, Admins
+from .models import db, Episodes, Results, Admins, Participants
 from .extensions import (database_ready, init_db, login_manager,
                          getRogues, getGuests, getThemes,
                          updateRogueTable, checkSweep,
@@ -52,6 +52,7 @@ def create_app():
                 ep_num = request.form['ep_num']
                 num_items = request.form['num_items']
                 theme = request.form['theme']
+                is_presenter = request.form['is_presenter']
                 episode = Episodes(date, ep_num, num_items, theme)
                 db.session.add(episode)
                 db.session.commit()
@@ -64,6 +65,11 @@ def create_app():
                             results = Results(episode.id, rogue_id, correct)
                             db.session.add(results)
                     db.session.commit()
+                rogue_presenter = Participants.query.filter_by(name=is_presenter).first()
+                results_presenter = Results(episode.id, rogue_presenter.id, correct=None)
+                db.session.add(results_presenter)
+                updateRogueTable(rogue_presenter.name, 'presenter')
+                db.session.commit()
                 checkSweep(db, episode.id, app)
                 return redirect(url_for('admin'))
 

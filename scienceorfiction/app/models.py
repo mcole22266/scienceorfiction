@@ -30,7 +30,7 @@ class Episodes(db.Model):
                       nullable=True)
 
     sweep = db.Column(db.String(10),
-                      default='no sweep')  # offense, defense, no sweep
+                      default='no sweep')
 
     results = db.relationship('Results',
                               backref='episode',
@@ -82,6 +82,10 @@ class Participants(db.Model):
                        nullable=False,
                        default=0)
 
+    presented = db.Column(db.Integer,
+                          nullable=False,
+                          default=0)
+
     is_rogue = db.Column(db.Boolean,
                          nullable=False,
                          default=False)
@@ -113,22 +117,28 @@ class Results(db.Model):
                                db.ForeignKey('participants.id'))
 
     correct = db.Column(db.Boolean,
-                        nullable=False)
+                        nullable=True)
 
     absent = db.Column(db.Boolean,
                        nullable=False)
 
+    is_presenter = db.Column(db.Boolean,
+                             nullable=False,
+                             default=0)
+
     def __init__(self, episode_id, rogue_id, correct):
         self.episode_id = episode_id
         self.participant_id = rogue_id
+        self.correct = None
+        self.absent = 0
+
         if correct == 'correct':
             self.correct = 1
-        else:
+        elif correct == 'incorrect':
             self.correct = 0
-        if correct == 'absent':
+        elif correct == 'absent':
+            self.correct = None
             self.absent = 1
-        else:
-            self.absent = 0
 
     def __repr__(self):
         return f'rogue_id={self.participant_id}|correct={self.correct}'

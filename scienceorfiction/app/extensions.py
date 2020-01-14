@@ -69,6 +69,9 @@ def updateRogueTable(roguename, correct):
             rogue.present += 1
         if correct == 'absent':
             rogue.absent += 1
+        if correct == 'presenter':
+            rogue.presented += 1
+            rogue.present += 1
         return rogue.id
 
 
@@ -80,9 +83,9 @@ def checkSweep(db, episode_id, app):
         # it's a sweep!
         episode = Episodes.query.filter_by(id=episode_id).first()
         if results[0] is False:
-            episode.sweep = 'offense'
+            episode.sweep = 'presenter sweep'
         else:
-            episode.sweep = 'defense'
+            episode.sweep = 'player sweep'
         db.session.commit()
 
 
