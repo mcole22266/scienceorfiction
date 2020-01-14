@@ -7,7 +7,7 @@ from .forms import (AddEntryForm, AdminLoginForm, AdminCreateForm,
                     AdminAuthenticateForm)
 from .models import db, Episodes, Results, Admins
 from .extensions import (database_ready, init_db, login_manager,
-                         getRogues, getGuests,
+                         getRogues, getGuests, getThemes,
                          updateRogueTable, checkSweep,
                          check_authentication, email_secret_code,
                          generate_secret_code, encrypt)
@@ -43,6 +43,7 @@ def create_app():
         @login_required
         def admin():
             form = AddEntryForm()
+            app.logger.info(getThemes())
 
             # POST
             if form.validate_on_submit():
@@ -50,7 +51,8 @@ def create_app():
                 date = request.form['date']
                 ep_num = request.form['ep_num']
                 num_items = request.form['num_items']
-                episode = Episodes(date, ep_num, num_items)
+                theme = request.form['theme']
+                episode = Episodes(date, ep_num, num_items, theme)
                 db.session.add(episode)
                 db.session.commit()
                 episode = Episodes.query.filter_by(ep_num=ep_num).first()
@@ -70,7 +72,8 @@ def create_app():
                                    title='Admin - Add Entry',
                                    form=form,
                                    rogues=getRogues(),
-                                   guests=getGuests()
+                                   guests=getGuests(),
+                                   themes=getThemes()
                                    )
 
         @app.route('/admin/login', methods=['GET', 'POST'])

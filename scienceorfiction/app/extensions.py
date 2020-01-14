@@ -36,12 +36,21 @@ def database_ready(db, app):
 
 
 def init_db(db):
-    from .models import Participants
+    from .models import Participants, Episodes, Admins
     for rogue in ['Steve', 'Bob', 'Jay', 'Evan', 'Cara']:
         present = Participants.query.filter_by(name=rogue).first()
         if not present:
             participant = Participants(rogue, is_rogue=True)
             db.session.add(participant)
+    for i,theme in enumerate(['Bears', 'Beets', 'Battlestar Gallactica', 'Star Wars', 'Star Trek', 'Science', 'Nanomachines']):
+        present = Episodes.query.filter_by(ep_num=i).first()
+        if not present:
+            episode = Episodes('2020-01-01', i, 3, theme)
+            db.session.add(episode)
+    present = Admins.query.filter_by(username='admin').first()
+    if not present:
+        admin = Admins('admin', 'adminpass')
+        db.session.add(admin)
     db.session.commit()
 
 
@@ -95,6 +104,17 @@ def getGuests():
             Participants.name).all()
 
     return guests
+
+
+def getThemes():
+    from .models import db, Episodes
+    # themes = db.session.query(Episodes.theme).distinct().isnot(None)
+    # themes = [theme[0] for theme in themes]
+    episodes = Episodes.query.filter(Episodes.theme!=None).order_by(
+        Episodes.theme).all()
+
+    themes = set([episode.theme for episode in episodes])
+    return sorted(list(themes))
 
 
 def check_authentication(username, password):

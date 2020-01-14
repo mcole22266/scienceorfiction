@@ -25,6 +25,10 @@ class Episodes(db.Model):
 
     num_items = db.Column(db.Integer)
 
+    theme = db.Column(db.String(50),
+                      unique=False,
+                      nullable=True)
+
     sweep = db.Column(db.String(10),
                       default='no sweep')  # offense, defense, no sweep
 
@@ -32,10 +36,14 @@ class Episodes(db.Model):
                               backref='episode',
                               lazy='dynamic')
 
-    def __init__(self, date, ep_num, num_items):
+    def __init__(self, date, ep_num, num_items, theme):
         self.date = date
         self.ep_num = ep_num
         self.num_items = num_items
+        if theme == '':
+            self.theme = None
+        else:
+            self.theme = theme
 
     def __repr__(self):
         if self.sweep != 'no sweep':
