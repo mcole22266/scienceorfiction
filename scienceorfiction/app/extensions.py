@@ -47,7 +47,7 @@ def init_db(db):
                                'Nanomachines']):
         present = Episodes.query.filter_by(ep_num=i).first()
         if not present:
-            episode = Episodes('2020-01-01', i, 3, theme)
+            episode = Episodes(i, '2020-01-01', 3, theme)
             db.session.add(episode)
     present = Admins.query.filter_by(username='admin').first()
     if not present:
@@ -79,13 +79,16 @@ def checkSweep(db, episode_id, app):
     from .models import Results, Episodes
     results = Results.query.filter_by(episode_id=episode_id).all()
     results = [result.correct for result in results]
-    if len(set(results)) == 1:
+    if 1 in results and 0 in results:
+        # no sweep
+        pass
+    else:
         # it's a sweep!
         episode = Episodes.query.filter_by(id=episode_id).first()
-        if results[0] is False:
-            episode.sweep = 'presenter sweep'
-        else:
+        if 1 in results:
             episode.sweep = 'player sweep'
+        else:
+            episode.sweep = 'presenter sweep'
         db.session.commit()
 
 

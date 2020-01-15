@@ -29,16 +29,16 @@ class Episodes(db.Model):
                       unique=False,
                       nullable=True)
 
-    sweep = db.Column(db.String(10),
+    sweep = db.Column(db.String(50),
                       default='no sweep')
 
     results = db.relationship('Results',
                               backref='episode',
                               lazy='dynamic')
 
-    def __init__(self, date, ep_num, num_items, theme):
-        self.date = date
+    def __init__(self, ep_num, date, num_items, theme):
         self.ep_num = ep_num
+        self.date = date
         self.num_items = num_items
         if theme == '':
             self.theme = None
@@ -139,6 +139,9 @@ class Results(db.Model):
         elif correct == 'absent':
             self.correct = None
             self.absent = 1
+        elif correct == 'presenter':
+            self.correct = None
+            self.is_presenter = 1
 
     def __repr__(self):
         return f'rogue_id={self.participant_id}|correct={self.correct}'

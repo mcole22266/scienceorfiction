@@ -5,7 +5,7 @@ from flask_login import login_required, current_user, login_user, logout_user
 
 from .forms import (AddEntryForm, AdminLoginForm, AdminCreateForm,
                     AdminAuthenticateForm)
-from .models import db, Episodes, Results, Admins, Participants
+from .models import db, Episodes, Results, Admins
 from .extensions import (database_ready, init_db, login_manager,
                          getRogues, getGuests, getThemes,
                          updateRogueTable, checkSweep,
@@ -47,28 +47,23 @@ def create_app():
 
             # POST
             if form.validate_on_submit():
-                rogues = getRogues(onlyNames=True)
-                date = request.form['date']
                 ep_num = request.form['ep_num']
+                date = request.form['date']
                 num_items = request.form['num_items']
                 theme = request.form['theme']
                 is_presenter = request.form['is_presenter']
-                episode = Episodes(date, ep_num, num_items, theme)
+                episode = Episodes(ep_num, date, num_items, theme)
                 db.session.add(episode)
-                db.session.commit()
-                episode = Episodes.query.filter_by(ep_num=ep_num).first()
                 for key in request.form.keys():
-                    if key in rogues:
-                        correct = request.form[key]
+                    if key in getRogues(onlyNames=True):
+                        if key == is_presenter:
+                            correct = 'presenter'
+                        else:
+                            correct = request.form[key]
                         rogue_id = updateRogueTable(key, correct)
                         if rogue_id:
                             results = Results(episode.id, rogue_id, correct)
                             db.session.add(results)
-                    db.session.commit()
-                rogue_presenter = Participants.query.filter_by(name=is_presenter).first()
-                results_presenter = Results(episode.id, rogue_presenter.id, correct=None)
-                db.session.add(results_presenter)
-                updateRogueTable(rogue_presenter.name, 'presenter')
                 db.session.commit()
                 checkSweep(db, episode.id, app)
                 return redirect(url_for('admin'))
