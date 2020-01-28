@@ -1,9 +1,13 @@
-from os import urandom, environ
+from os import environ, urandom
 
 
 class Config:
+    '''
+    Python representation of environment variables
+    to be used within the app
+    '''
 
-    # app config
+    # flask settings
     SECRET_KEY = urandom(32)
     FLASK_APP = environ["FLASK_APP"]
     FLASK_ENV = environ["FLASK_ENV"]
@@ -11,18 +15,19 @@ class Config:
     FLASK_HOST = environ['FLASK_HOST']
     FLASK_PORT = environ['FLASK_PORT']
 
+    # db connection settings
     DB_WAIT_INITIAL = environ['DB_WAIT_INITIAL']
     DB_WAIT_MULTIPLIER = environ['DB_WAIT_MULTIPLIER']
     DB_WAIT_MAX = environ['DB_WAIT_MAX']
 
-    # mysql config
+    # mysql settings
     MYSQL_DATABASE = environ['MYSQL_DATABASE']
     MYSQL_ROOT_PASSWORD = environ['MYSQL_ROOT_PASSWORD']
 
-    # sqlalchemy config
+    # sqlalchemy settings
     SQLALCHEMY_DATABASE_URI = environ['SQLALCHEMY_DATABASE_URI']
     SQLALCHEMY_TRACK_MODIFICATIONS = environ['SQLALCHEMY_TRACK_MODIFICATIONS']
 
-    # email config
+    # email settings
     GMAIL_USERNAME = environ['GMAIL_USERNAME']
     GMAIL_PASSWORD = environ['GMAIL_PASSWORD']

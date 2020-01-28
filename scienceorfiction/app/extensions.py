@@ -1,3 +1,5 @@
+# Contains several different helper functions
+
 from os import environ
 from time import sleep
 from hashlib import sha256
@@ -9,6 +11,19 @@ login_manager.login_view = 'admin_login'
 
 
 def database_ready(db, app):
+    '''
+    Checks for a database connection at intervals given
+    by the env file up to an interval limit given by
+    the env file.
+
+    Args:
+        db (SQLAlchemy): db object from .models
+        app (Flask): app object from init
+    Returns:
+        (bool): True upon db connection success
+                False if connection times out
+    '''
+
     wait = int(environ['DB_WAIT_INITIAL'])
     wait_multiplier = int(environ['DB_WAIT_MULTIPLIER'])
     wait_max = int(environ['DB_WAIT_MAX'])
@@ -36,6 +51,14 @@ def database_ready(db, app):
 
 
 def init_db(db):
+    '''
+    Initializes database with temporary data if data
+    is not already present.
+    Args:
+        db (SQLAlchemy): db object from .models
+    Returns:
+        None
+    '''
     from .models import Participants, Episodes, Admins
     for rogue in ['Steve', 'Bob', 'Jay', 'Evan', 'Cara']:
         present = Participants.query.filter_by(name=rogue).first()

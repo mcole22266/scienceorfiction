@@ -1,18 +1,30 @@
+# Contains all database models for Flask-SQLAlchemy as well as
+# the db object created upon initialization
+
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
 
 from .extensions import login_manager
 
-db = SQLAlchemy()
+db = SQLAlchemy()  # create db object
 
 
 @login_manager.user_loader
 def load_user(id):
+    '''
+    Mandatory function for login_manager.
+
+    Args:
+        id (int): User ID.
+    Returns:
+        (Admins): The admin with the given User ID
+    '''
     return Admins.query.get(int(id))
 
 
 class Episodes(db.Model):
+
     id = db.Column(db.Integer,
                    primary_key=True)
 
