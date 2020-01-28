@@ -29,6 +29,17 @@
             {{ form.num_items.label }}
             {{ form.num_items(class_= "form-control") }}
         </div>
+        <br>
+
+        <div class="form-field">
+            <label for="theme-id">Theme</label>
+            <input type="text" name="theme" id="theme-id" class="form-control" list="theme-list">
+            <datalist id="theme-list">
+                {% for theme in themes %}
+                    <option value="{{ theme }}">
+                {% endfor %}
+            </datalist>
+        </div>
 
         <br>
         <div class="form-field">
@@ -42,6 +53,16 @@
                     <option value="absent">Absent</option>
                 </select>
             {% endfor %}
+        </div>
+
+        <br>
+        <div class="form-field">
+            <label for="is_presenter">Presenter</label>
+            <select name="is_presenter" id="is_presenter" class="form-control">
+                {% for rogue in rogues %}
+                    <option value="{{ rogue.name }}">{{ rogue.name }}</option>
+                {% endfor %}
+            </select>
         </div>
 
         <div class="form-field">

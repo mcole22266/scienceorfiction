@@ -1,3 +1,5 @@
+# Contains several different helper functions
+
 from os import environ
 from time import sleep
 from hashlib import sha256
@@ -9,6 +11,19 @@ login_manager.login_view = 'admin_login'
 
 
 def database_ready(db, app):
+    '''
+    Checks for a database connection at intervals given
+    by the env file up to an interval limit given by
+    the env file.
+
+    Args:
+        db (SQLAlchemy): db object from .models
+        app (Flask): app object from init
+    Returns:
+        (bool): True upon db connection success
+                False if connection times out
+    '''
+
     wait = int(environ['DB_WAIT_INITIAL'])
     wait_multiplier = int(environ['DB_WAIT_MULTIPLIER'])
     wait_max = int(environ['DB_WAIT_MAX'])
@@ -36,12 +51,31 @@ def database_ready(db, app):
 
 
 def init_db(db):
-    from .models import Participants
+    '''
+    Initializes database with temporary data if data
+    is not already present.
+    Args:
+        db (SQLAlchemy): db object from .models
+    Returns:
+        None
+    '''
+    from .models import Participants, Episodes, Admins
     for rogue in ['Steve', 'Bob', 'Jay', 'Evan', 'Cara']:
         present = Participants.query.filter_by(name=rogue).first()
         if not present:
             participant = Participants(rogue, is_rogue=True)
             db.session.add(participant)
+    for i, theme in enumerate(['Bears', 'Beets', 'Battlestar Gallactica',
+                               'Star Wars', 'Star Trek', 'Science',
+                               'Nanomachines']):
+        present = Episodes.query.filter_by(ep_num=i).first()
+        if not present:
+            episode = Episodes(i, '2020-01-01', 3, theme)
+            db.session.add(episode)
+    present = Admins.query.filter_by(username='admin').first()
+    if not present:
+        admin = Admins('admin', 'adminpass')
+        db.session.add(admin)
     db.session.commit()
 
 
@@ -58,6 +92,9 @@ def updateRogueTable(roguename, correct):
             rogue.present += 1
         if correct == 'absent':
             rogue.absent += 1
+        if correct == 'presenter':
+            rogue.presented += 1
+            rogue.present += 1
         return rogue.id
 
 
@@ -65,13 +102,16 @@ def checkSweep(db, episode_id, app):
     from .models import Results, Episodes
     results = Results.query.filter_by(episode_id=episode_id).all()
     results = [result.correct for result in results]
-    if len(set(results)) == 1:
+    if 1 in results and 0 in results:
+        # no sweep
+        pass
+    else:
         # it's a sweep!
         episode = Episodes.query.filter_by(id=episode_id).first()
-        if results[0] is False:
-            episode.sweep = 'offense'
+        if 1 in results:
+            episode.sweep = 'player sweep'
         else:
-            episode.sweep = 'defense'
+            episode.sweep = 'presenter sweep'
         db.session.commit()
 
 
@@ -95,6 +135,17 @@ def getGuests():
             Participants.name).all()
 
     return guests
+
+
+def getThemes():
+    from .models import Episodes
+    # themes = db.session.query(Episodes.theme).distinct().isnot(None)
+    # themes = [theme[0] for theme in themes]
+    episodes = Episodes.query.filter(Episodes.theme != None).order_by(
+        Episodes.theme).all()
+
+    themes = set([episode.theme for episode in episodes])
+    return sorted(list(themes))
 
 
 def check_authentication(username, password):

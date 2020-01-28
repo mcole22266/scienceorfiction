@@ -1,18 +1,30 @@
+# Contains all database models for Flask-SQLAlchemy as well as
+# the db object created upon initialization
+
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
 
 from .extensions import login_manager
 
-db = SQLAlchemy()
+db = SQLAlchemy()  # create db object
 
 
 @login_manager.user_loader
 def load_user(id):
+    '''
+    Mandatory function for login_manager.
+
+    Args:
+        id (int): User ID.
+    Returns:
+        (Admins): The admin with the given User ID
+    '''
     return Admins.query.get(int(id))
 
 
 class Episodes(db.Model):
+
     id = db.Column(db.Integer,
                    primary_key=True)
 
@@ -25,17 +37,25 @@ class Episodes(db.Model):
 
     num_items = db.Column(db.Integer)
 
-    sweep = db.Column(db.String(10),
-                      default='no sweep')  # offense, defense, no sweep
+    theme = db.Column(db.String(50),
+                      unique=False,
+                      nullable=True)
+
+    sweep = db.Column(db.String(50),
+                      default='no sweep')
 
     results = db.relationship('Results',
                               backref='episode',
                               lazy='dynamic')
 
-    def __init__(self, date, ep_num, num_items):
-        self.date = date
+    def __init__(self, ep_num, date, num_items, theme):
         self.ep_num = ep_num
+        self.date = date
         self.num_items = num_items
+        if theme == '':
+            self.theme = None
+        else:
+            self.theme = theme
 
     def __repr__(self):
         if self.sweep != 'no sweep':
@@ -74,6 +94,10 @@ class Participants(db.Model):
                        nullable=False,
                        default=0)
 
+    presented = db.Column(db.Integer,
+                          nullable=False,
+                          default=0)
+
     is_rogue = db.Column(db.Boolean,
                          nullable=False,
                          default=False)
@@ -105,22 +129,31 @@ class Results(db.Model):
                                db.ForeignKey('participants.id'))
 
     correct = db.Column(db.Boolean,
-                        nullable=False)
+                        nullable=True)
 
     absent = db.Column(db.Boolean,
                        nullable=False)
 
+    is_presenter = db.Column(db.Boolean,
+                             nullable=False,
+                             default=0)
+
     def __init__(self, episode_id, rogue_id, correct):
         self.episode_id = episode_id
         self.participant_id = rogue_id
+        self.correct = None
+        self.absent = 0
+
         if correct == 'correct':
             self.correct = 1
-        else:
+        elif correct == 'incorrect':
             self.correct = 0
-        if correct == 'absent':
+        elif correct == 'absent':
+            self.correct = None
             self.absent = 1
-        else:
-            self.absent = 0
+        elif correct == 'presenter':
+            self.correct = None
+            self.is_presenter = 1
 
     def __repr__(self):
         return f'rogue_id={self.participant_id}|correct={self.correct}'
