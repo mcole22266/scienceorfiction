@@ -1,10 +1,12 @@
 # Contains several different helper functions
 
+from hashlib import sha256
 from os import environ
 from time import sleep
-from hashlib import sha256
 
 from flask_login import LoginManager
+
+from .testing import testdata
 
 login_manager = LoginManager()
 login_manager.login_view = 'admin_login'
@@ -60,22 +62,18 @@ def init_db(db):
         None
     '''
     from .models import Participants, Episodes, Admins
-    for rogue in ['Steve', 'Bob', 'Jay', 'Evan', 'Cara']:
+    for rogue in testdata.getRogues():
         present = Participants.query.filter_by(name=rogue).first()
         if not present:
             participant = Participants(rogue, is_rogue=True)
             db.session.add(participant)
-    for i, theme in enumerate(['Bears', 'Beets', 'Battlestar Gallactica',
-                               'Star Wars', 'Star Trek', 'Science',
-                               'Nanomachines']):
-        present = Episodes.query.filter_by(ep_num=i).first()
+    for admin in testdata.getAdmins():
+        present = Admins.query.filter_by(username=admin[0]).first()
         if not present:
-            episode = Episodes(i, '2020-01-01', 3, theme)
-            db.session.add(episode)
-    present = Admins.query.filter_by(username='admin').first()
-    if not present:
-        admin = Admins('admin', 'adminpass')
-        db.session.add(admin)
+            administrator = Admins(admin[0], admin[1])
+            db.session.add(administrator)
+    for episode in testdata.getEpisodes():
+        pass
     db.session.commit()
 
 
