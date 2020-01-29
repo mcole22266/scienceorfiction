@@ -5,13 +5,12 @@ from threading import Thread
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
-from .extensions import (check_authentication, checkSweep, email_secret_code,
-                         encrypt, generate_secret_code, getGuests, getRogues,
-                         getThemes, updateRogueTable)
+from .extensions import (addAdmins, addEpisode, check_authentication,
+                         email_secret_code, encrypt, generate_secret_code,
+                         getAdmins, getGuests, getRogues, getThemes)
 from .forms import (AddEntryForm, AdminAuthenticateForm, AdminCreateForm,
                     AdminLoginForm)
-from .models import Admins, Episodes, Results, db
-
+from .models import db
 
 secret_code = generate_secret_code()
 
@@ -34,20 +33,16 @@ def addRoutes(app):
             num_items = request.form['num_items']
             theme = request.form['theme']
             is_presenter = request.form['is_presenter']
-            episode = Episodes(ep_num, date, num_items, theme)
-            db.session.add(episode)
+            participant_results = []
             for key in request.form.keys():
                 if key in getRogues(onlyNames=True):
                     if key == is_presenter:
                         correct = 'presenter'
                     else:
                         correct = request.form[key]
-                    rogue_id = updateRogueTable(key, correct)
-                    if rogue_id:
-                        results = Results(episode.id, rogue_id, correct)
-                        db.session.add(results)
-            db.session.commit()
-            checkSweep(db, episode.id, app)
+                    participant_results.append((key, correct))
+            addEpisode(db, ep_num, date, num_items, theme,
+                       participant_results, commit=True)
             return redirect(url_for('admin'))
 
         # GET
@@ -70,7 +65,7 @@ def addRoutes(app):
             username = request.form['username']
             password = request.form['password']
             if check_authentication(username, password):
-                admin = Admins.query.filter_by(username=username).first()
+                admin = getAdmins(username)
                 login_user(admin)
                 return redirect(url_for('admin'))
             else:
@@ -117,9 +112,8 @@ def addRoutes(app):
             if secret_code_form == secret_code:
                 username = request.form['username']
                 password = request.form['password']
-                admin = Admins(username, password, encrypted=True)
-                db.session.add(admin)
-                db.session.commit()
+                admin = addAdmins(db, username, password,
+                                  encrypted=True, commit=True)
                 login_user(admin)
                 return redirect(url_for('admin'))
             else:

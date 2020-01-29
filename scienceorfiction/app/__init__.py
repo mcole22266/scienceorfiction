@@ -36,6 +36,6 @@ def create_app():
         if database_ready(db, app):
             db.create_all()
             db.session.commit()
-            init_db(db, app)
+            init_db(db)
 
         return app

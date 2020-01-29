@@ -52,7 +52,7 @@ def database_ready(db, app):
     return success
 
 
-def init_db(db, app):
+def init_db(db):
     '''
     Initializes database with temporary data if data
     is not already present.
@@ -61,68 +61,21 @@ def init_db(db, app):
     Returns:
         None
     '''
-    from .models import Participants, Episodes, Admins, Results
     for rogue in testdata.getRogues():
-        present = Participants.query.filter_by(name=rogue).first()
+        present = getParticipant(rogue)
         if not present:
-            participant = Participants(rogue, is_rogue=True)
-            db.session.add(participant)
+            addParticipant(db, rogue, is_rogue=True)
     for admin in testdata.getAdmins():
-        present = Admins.query.filter_by(username=admin[0]).first()
+        present = getAdmins(admin[0])
         if not present:
-            administrator = Admins(admin[0], admin[1])
-            db.session.add(administrator)
+            addAdmins(db, admin[0], admin[1])
     for episode in testdata.getEpisodes():
-        present = Episodes.query.filter_by(ep_num=episode['ep_num']).first()
+        present = getEpisodes(episode['ep_num'])
         if not present:
-            ep = Episodes(episode['ep_num'], episode['ep_date'],
-                          episode['num_items'], episode['theme'])
-            db.session.add(ep)
-            for rogue in testdata.getRogues():
-                for rogueResult in episode['rogues']:
-                    if rogueResult[0] == rogue:
-                        correct = rogueResult[1]
-                rogue_id = updateRogueTable(rogue, correct)
-                results = Results(ep.id, rogue_id, correct)
-                db.session.add(results)
-            checkSweep(db, ep.id, app)
+            addEpisode(db, episode['ep_num'], episode['ep_date'],
+                       episode['num_items'], episode['theme'],
+                       episode['rogues'])
     db.session.commit()
-
-
-def updateRogueTable(roguename, correct):
-    from .models import Participants
-    if correct != 'NULL':
-        rogue = Participants.query.filter_by(
-            name=roguename).first()
-        if correct == 'correct':
-            rogue.wins += 1
-            rogue.present += 1
-        if correct == 'incorrect':
-            rogue.losses += 1
-            rogue.present += 1
-        if correct == 'absent':
-            rogue.absent += 1
-        if correct == 'presenter':
-            rogue.presented += 1
-            rogue.present += 1
-        return rogue.id
-
-
-def checkSweep(db, episode_id, app):
-    from .models import Results, Episodes
-    results = Results.query.filter_by(episode_id=episode_id).all()
-    results = [result.correct for result in results]
-    if 1 in results and 0 in results:
-        # no sweep
-        pass
-    else:
-        # it's a sweep!
-        episode = Episodes.query.filter_by(id=episode_id).first()
-        if 1 in results:
-            episode.sweep = 'player sweep'
-        else:
-            episode.sweep = 'presenter sweep'
-        db.session.commit()
 
 
 def getRogues(onlyNames=False):
@@ -159,8 +112,7 @@ def getThemes():
 
 
 def check_authentication(username, password):
-    from .models import Admins
-    admin = Admins.query.filter_by(username=username).first()
+    admin = getAdmins(username)
     if admin:
         if admin.password == encrypt(password):
             return True
@@ -194,3 +146,79 @@ Secret Code: {secret_code}
 With Love,
 The Bot'''
     yag.send(GMAIL_USERNAME, subject, contents)
+
+
+def addParticipant(db, name, is_rogue=False, commit=False):
+    from .models import Participants
+    participant = Participants(name, is_rogue)
+    db.session.add(participant)
+    if commit:
+        db.session.commit()
+    return participant
+
+
+def getParticipant(name):
+    from .models import Participants
+    participant = Participants.query.filter_by(name=name).first()
+    return participant
+
+
+def addResult(db, episode_id, rogue_id, is_correct, commit=False):
+    from .models import Results
+    result = Results(episode_id, rogue_id, is_correct)
+    db.session.add(result)
+    if commit:
+        db.session.commit()
+    return result
+
+
+def getResults(episode_id=False, participant_id=False):
+    from .models import Results
+    if episode_id and participant_id:
+        # get specific results for this participant on this episode
+        return Results.query.filter_by(episode_id=episode_id,
+                                       participant_id=participant_id).first()
+    elif episode_id and not participant_id:
+        # get all results for this specific episode
+        return Results.query.filter_by(episode_id=episode_id).first()
+    elif not episode_id and participant_id:
+        # get all results for this specific participant
+        return Results.query.filter_by(participant_id=participant_id).first()
+    else:
+        return None
+
+
+def addEpisode(db, ep_num, date, num_items, theme, participant_results,
+               commit=False):
+    from .models import Episodes
+    episode = Episodes(ep_num, date, num_items, theme)
+    results = []
+    db.session.add(episode)
+    for participant, correct in participant_results:
+        episode_id = getEpisodes(ep_num).id
+        rogue_id = getParticipant(participant).id
+        results.append(addResult(db, episode_id, rogue_id, correct))
+    if commit:
+        db.session.commit
+    return episode, results
+
+
+def getEpisodes(ep_num):
+    from .models import Episodes
+    episode = Episodes.query.filter_by(ep_num=ep_num).first()
+    return episode
+
+
+def addAdmins(db, username, password, encrypted=False, commit=False):
+    from .models import Admins
+    admin = Admins(username, password, encrypted)
+    db.session.add(admin)
+    if commit:
+        db.session.commit()
+    return admin
+
+
+def getAdmins(username):
+    from .models import Admins
+    admin = Admins.query.filter_by(username=username).first()
+    return admin
