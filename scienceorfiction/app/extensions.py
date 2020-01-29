@@ -52,7 +52,7 @@ def database_ready(db, app):
     return success
 
 
-def init_db(db):
+def init_db(db, app):
     '''
     Initializes database with temporary data if data
     is not already present.
@@ -61,7 +61,7 @@ def init_db(db):
     Returns:
         None
     '''
-    from .models import Participants, Episodes, Admins
+    from .models import Participants, Episodes, Admins, Results
     for rogue in testdata.getRogues():
         present = Participants.query.filter_by(name=rogue).first()
         if not present:
@@ -73,7 +73,19 @@ def init_db(db):
             administrator = Admins(admin[0], admin[1])
             db.session.add(administrator)
     for episode in testdata.getEpisodes():
-        pass
+        present = Episodes.query.filter_by(ep_num=episode['ep_num']).first()
+        if not present:
+            ep = Episodes(episode['ep_num'], episode['ep_date'],
+                          episode['num_items'], episode['theme'])
+            db.session.add(ep)
+            for rogue in testdata.getRogues():
+                for rogueResult in episode['rogues']:
+                    if rogueResult[0] == rogue:
+                        correct = rogueResult[1]
+                rogue_id = updateRogueTable(rogue, correct)
+                results = Results(ep.id, rogue_id, correct)
+                db.session.add(results)
+            checkSweep(db, ep.id, app)
     db.session.commit()
 
 
