@@ -21,7 +21,7 @@ def getEpisodes():
     ep_date = date(2019, 1, 5)
     ep_num = 600
     num_items_choices = [3, 4]
-    participant_accuracy_choices = [.8, .5, .5, .4, .1]
+    participant_accuracy_choices = [.8, .5, .5, .4, .3]
     themes_choices = [None, 'Star Wars', 'Star Trek', 'Numbers', 'Vaccines',
                       'Computer Science', 'Biology', 'Chemistry',
                       'Diseases', 'Spacefaring', 'Pseudosciences',
@@ -41,7 +41,7 @@ def getEpisodes():
         episode['num_items'] = choice(num_items_choices)
 
         # select presenter
-        if random() <= .95:
+        if random() <= .9:
             presenter = 'Steve Novella'
         else:
             presenter = choice(rogues)[0]

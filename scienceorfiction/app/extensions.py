@@ -70,7 +70,7 @@ def init_db(db):
         if not present:
             addAdmins(db, admin[0], admin[1])
     for episode in testdata.getEpisodes():
-        present = getEpisodes(episode['ep_num'])
+        present = getEpisode(episode['ep_num'])
         if not present:
             addEpisode(db, episode['ep_num'], episode['ep_date'],
                        episode['num_items'], episode['theme'],
@@ -102,12 +102,8 @@ def getGuests():
 
 def getThemes():
     from .models import Episodes
-    # themes = db.session.query(Episodes.theme).distinct().isnot(None)
-    # themes = [theme[0] for theme in themes]
-    episodes = Episodes.query.filter(Episodes.theme != None).order_by(
-        Episodes.theme).all()
-
-    themes = set([episode.theme for episode in episodes])
+    episodes = Episodes.query.all()
+    themes = set([episode.theme for episode in episodes if episode.theme])
     return sorted(list(themes))
 
 
@@ -172,20 +168,35 @@ def addResult(db, episode_id, rogue_id, is_correct, commit=False):
     return result
 
 
-def getResults(episode_id=False, participant_id=False):
-    from .models import Results
+def getResults(episode_id=False, participant_id=False,
+               daterange=False, theme=False):
+    from .models import Results, Episodes
     if episode_id and participant_id:
         # get specific results for this participant on this episode
         return Results.query.filter_by(episode_id=episode_id,
                                        participant_id=participant_id).first()
     elif episode_id and not participant_id:
         # get all results for this specific episode
-        return Results.query.filter_by(episode_id=episode_id).first()
+        results = Results.query.filter_by(episode_id=episode_id).all()
     elif not episode_id and participant_id:
         # get all results for this specific participant
-        return Results.query.filter_by(participant_id=participant_id).first()
+        results = Results.query.filter_by(participant_id=participant_id).all()
     else:
         return None
+    if daterange:
+        startdate, enddate = daterange  # daterange is a tuple
+        for result in results:
+            episode = Episodes.query.filter_by(id=result.episode_id).first()
+            date = episode.date
+            if date < startdate or date < enddate:
+                results.remove(result)
+    if theme:
+        for result in results:
+            episode = Episodes.query.filter_by(id=result.episode_id).first()
+            ep_theme = episode.theme
+            if ep_theme != theme:
+                results.remove(result)
+    return results
 
 
 def addEpisode(db, ep_num, date, num_items, theme, participant_results,
@@ -195,7 +206,7 @@ def addEpisode(db, ep_num, date, num_items, theme, participant_results,
     results = []
     db.session.add(episode)
     for participant, correct in participant_results:
-        episode_id = getEpisodes(ep_num).id
+        episode_id = getEpisode(ep_num).id
         rogue_id = getParticipant(participant).id
         results.append(addResult(db, episode_id, rogue_id, correct))
     if commit:
@@ -203,10 +214,21 @@ def addEpisode(db, ep_num, date, num_items, theme, participant_results,
     return episode, results
 
 
-def getEpisodes(ep_num):
+def getEpisode(ep_num):
     from .models import Episodes
     episode = Episodes.query.filter_by(ep_num=ep_num).first()
     return episode
+
+
+def getAllEpisodes(daterange=False):
+    from .models import Episodes
+    if daterange:
+        startdate, enddate = daterange  # daterange is a tuple
+        episodes = Episodes.query.filter(
+            Episodes.date.between(startdate, enddate)).all()
+    else:
+        episodes = Episodes.query.all()
+    return episodes
 
 
 def addAdmins(db, username, password, encrypted=False, commit=False):

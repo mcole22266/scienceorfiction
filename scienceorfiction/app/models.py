@@ -32,7 +32,7 @@ class Episodes(db.Model):
                        unique=True,
                        nullable=False)
 
-    date = db.Column(db.String(20),
+    date = db.Column(db.Date,
                      nullable=False)
 
     num_items = db.Column(db.Integer)
@@ -55,7 +55,7 @@ class Episodes(db.Model):
             self.theme = theme
 
     def __repr__(self):
-        return f'Ep {self.ep_num}-{self.date}: {self.num_items} items'
+        return f'Ep {self.ep_num} - {self.date}: {self.num_items} items'
 
 
 class Participants(db.Model):
@@ -66,7 +66,7 @@ class Participants(db.Model):
                      unique=True,
                      nullable=False)
 
-    date_created = db.Column(db.DateTime,
+    date_created = db.Column(db.Date,
                              nullable=False,
                              default=datetime.now())
 
@@ -128,7 +128,7 @@ class Results(db.Model):
             self.is_presenter = 1
 
     def __repr__(self):
-        return f'rogue_id={self.participant_id}|correct={self.correct}'
+        return f'rogue_id={self.participant_id}|is_correct={self.is_correct}'
 
 
 class Admins(db.Model):

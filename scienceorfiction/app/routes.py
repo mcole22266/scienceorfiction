@@ -1,9 +1,11 @@
 # Contains all routing information (and lots of logic for now)
 
+from datetime import date
 from threading import Thread
 
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
+
 from bokeh.plotting import figure, output_file, save
 
 from .extensions import (addAdmins, addEpisode, check_authentication,
@@ -36,6 +38,56 @@ def addRoutes(app):
 
         return render_template('index.html',
                                title='Hello World')
+
+    @app.route('/stats')
+    def stats():
+        from .stats import getRogueAccuracy, getSweeps, getRogueAttendance
+        rogueAccuracies = []
+        rogueAccuracies2019 = []
+        rogueAccuraciesStarWars = []
+        rogueAttendances = []
+        startdate = date(2019, 1, 1)
+        enddate = date(2019, 12, 31)
+        rogues = getRogues(onlyNames=True)
+        for rogue in rogues:
+            accuracy = getRogueAccuracy(rogue)
+            rogueAccuracies.append((rogue, accuracy))
+        for rogue in rogues:
+            accuracy = getRogueAccuracy(rogue, daterange=(startdate, enddate))
+            rogueAccuracies2019.append((rogue, accuracy))
+        for rogue in rogues:
+            theme = 'Star Wars'
+            accuracy = getRogueAccuracy(rogue, theme=theme)
+            rogueAccuraciesStarWars.append((rogue, accuracy))
+        for rogue in rogues:
+            attendance = getRogueAttendance(rogue)
+            rogueAttendances.append((rogue, attendance))
+        presenterSweeps = getSweeps(presenter=True)
+        numPresenterSweeps = str(len(presenterSweeps))
+        participantSweeps = getSweeps(participant=True)
+        numParticipantSweeps = str(len(participantSweeps))
+        presenterSweeps19 = getSweeps(presenter=True,
+                                      daterange=(startdate, enddate))
+        numPresenterSweeps19 = str(len(presenterSweeps19))
+        participantSweeps19 = getSweeps(participant=True,
+                                        daterange=(startdate, enddate))
+        numParticipantSweeps19 = str(len(participantSweeps19))
+
+        return render_template('stats.html',
+                               title='Testing - Statistics',
+                               rogueAccuracies=rogueAccuracies,
+                               rogueAccuracies2019=rogueAccuracies2019,
+                               rogueAccuraciesStarWars=rogueAccuraciesStarWars,
+                               rogueAttendances=rogueAttendances,
+                               presenterSweeps=presenterSweeps,
+                               numPresenterSweeps=numPresenterSweeps,
+                               participantSweeps=participantSweeps,
+                               numParticipantSweeps=numParticipantSweeps,
+                               presenterSweeps2019=presenterSweeps19,
+                               numPresenterSweeps2019=numPresenterSweeps19,
+                               participantSweeps2019=participantSweeps19,
+                               numParticipantSweeps2019=numParticipantSweeps19
+                               )
 
     @app.route('/admin', methods=['GET', 'POST'])
     @login_required

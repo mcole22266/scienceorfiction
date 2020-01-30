@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Statistics</h1>
+    <hr>
+
+    <h4>Rogue Attendances:</h4>
+    <ul>
+        {% for rogue,attendance in rogueAttendances %}
+            <li>{{ rogue }}: {{ attendance }}</li>
+        {% endfor %}
+    </ul>
+
+    <br>
+    <br>
+
+    <h4>Rogue Accuracies:</h4>
+    <ul>
+        {% for rogue, accuracy in rogueAccuracies %}
+            <li>{{ rogue }}: {{ accuracy }}</li>
+        {% endfor %}
+    </ul>
+
+    <h4>Rogue Accuracies - 2019:</h4>
+    <ul>
+        {% for rogue, accuracy in rogueAccuracies2019 %}
+            <li>{{ rogue }}: {{ accuracy }}</li>
+        {% endfor %}
+    </ul>
+
+    <h4>Rogue Accuracies - Star Wars:</h4>
+    <ul>
+        {% for rogue, accuracy in rogueAccuraciesStarWars%}
+            <li>{{ rogue }}: {{ accuracy }}</li>
+        {% endfor %}
+    </ul>
+
+    <br>
+    <br>
+
+    <h4>Presenter Sweeps:</h4>
+    Total: {{ numPresenterSweeps }}
+    <ul>
+        {% for episode in presenterSweeps %}
+            <li>{{ episode.ep_num }}: {{ episode.date }} - {{ episode.id }}</li>
+        {% endfor %}
+    </ul>
+
+    <h4>Participant Sweeps:</h4>
+    Total: {{ numParticipantSweeps }}
+    <ul>
+        {% for episode in participantSweeps %}
+            <li>{{ episode.ep_num }}: {{ episode.date }} - {{ episode.id }}</li>
+        {% endfor %}
+    </ul>
+
+    <br>
+    <br>
+
+    <h4>Presenter Sweeps 2019:</h4>
+    Total: {{ numPresenterSweeps2019 }}
+    <ul>
+        {% for episode in presenterSweeps2019 %}
+            <li>{{ episode.ep_num }}: {{ episode.date }} - {{ episode.id }}</li>
+        {% endfor %}
+    </ul>
+
+    <h4>Participant Sweeps 2019:</h4>
+    Total: {{ numParticipantSweeps2019 }}
+    <ul>
+        {% for episode in participantSweeps2019 %}
+            <li>{{ episode.ep_num }}: {{ episode.date }} - {{ episode.id }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
