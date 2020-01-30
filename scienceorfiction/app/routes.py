@@ -4,6 +4,7 @@ from threading import Thread
 
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
+from bokeh.plotting import figure, output_file, save
 
 from .extensions import (addAdmins, addEpisode, check_authentication,
                          email_secret_code, encrypt, generate_secret_code,
@@ -19,7 +20,22 @@ def addRoutes(app):
 
     @app.route('/')
     def index():
-        return 'Hello World'
+        # create fake data
+        x = [1, 2, 3, 4, 5]
+        y = [6, 7, 2, 4, 5]
+
+        # output file where bokeh javascript will be written
+        output_file("/scienceorfiction/app/templates/bokeh/helloworld.html")
+
+        # create graph from fake data
+        p = figure(title="Hello World", x_axis_label='x', y_axis_label='y')
+        p.line(x, y, legend="Test Data", line_width=2)
+
+        # save graph to output file
+        save(p)
+
+        return render_template('index.html',
+                               title='Hello World')
 
     @app.route('/admin', methods=['GET', 'POST'])
     @login_required

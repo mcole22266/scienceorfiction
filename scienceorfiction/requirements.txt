@@ -5,3 +5,5 @@ flask_wtf
 flask_login
 yagmail
 flake8
+bokeh
+numpy
