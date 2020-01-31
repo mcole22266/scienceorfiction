@@ -31,3 +31,6 @@ class Config:
     # email settings
     GMAIL_USERNAME = environ['GMAIL_USERNAME']
     GMAIL_PASSWORD = environ['GMAIL_PASSWORD']
+
+    # bokeh settings
+    OUTPUT_FILEPATH = environ['OUTPUT_FILEPATH']

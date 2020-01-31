@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+
+  <form action="/" method="POST" role="form">
+    {{ form.csrf_token }}
+
+    <div class="form-field">
+      <label for="graph-id">Graph Choice</label>
+      <select name="graph_choice" for="graph_choice" id="graph-id" class="form-control">
+        {% for graph in graphs %}
+          <option value="{{ graph }}">{{ graph }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <br>
+
+    <div class="form-field">
+      <input class="btn btn-primary rounded-pill" type="submit" value="submit">
+    </div>
+    <br>
+
+  </form>
+
+  <hr>
+  {% include 'bokeh/' + filename %}
+
+</div>
+
+{% endblock %}

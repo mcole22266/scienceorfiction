@@ -32,7 +32,7 @@ class Episodes(db.Model):
                        unique=True,
                        nullable=False)
 
-    date = db.Column(db.String(20),
+    date = db.Column(db.Date,
                      nullable=False)
 
     num_items = db.Column(db.Integer)
@@ -40,9 +40,6 @@ class Episodes(db.Model):
     theme = db.Column(db.String(50),
                       unique=False,
                       nullable=True)
-
-    sweep = db.Column(db.String(50),
-                      default='no sweep')
 
     results = db.relationship('Results',
                               backref='episode',
@@ -58,12 +55,7 @@ class Episodes(db.Model):
             self.theme = theme
 
     def __repr__(self):
-        if self.sweep != 'no sweep':
-            sweep_statement = f'with a clean sweep for the {self.sweep}'
-        else:
-            sweep_statement = 'without a clean sweep'
-        return f'Ep {self.ep_num}-{self.date}: \
-{self.num_items} items {sweep_statement}'
+        return f'Ep {self.ep_num} - {self.date}: {self.num_items} items'
 
 
 class Participants(db.Model):
@@ -74,29 +66,9 @@ class Participants(db.Model):
                      unique=True,
                      nullable=False)
 
-    date_created = db.Column(db.DateTime,
+    date_created = db.Column(db.Date,
                              nullable=False,
                              default=datetime.now())
-
-    wins = db.Column(db.Integer,
-                     nullable=False,
-                     default=0)
-
-    losses = db.Column(db.Integer,
-                       nullable=False,
-                       default=0)
-
-    present = db.Column(db.Integer,
-                        nullable=False,
-                        default=0)
-
-    absent = db.Column(db.Integer,
-                       nullable=False,
-                       default=0)
-
-    presented = db.Column(db.Integer,
-                          nullable=False,
-                          default=0)
 
     is_rogue = db.Column(db.Boolean,
                          nullable=False,
@@ -114,8 +86,8 @@ class Participants(db.Model):
         if self.is_rogue:
             rogue_statement = 'Rogue'
         else:
-            rogue_statement = 'Temp'
-        return f'{self.name} ({rogue_statement}): {self.wins}/{self.losses}'
+            rogue_statement = 'Guest'
+        return f'{self.name}: {rogue_statement}'
 
 
 class Results(db.Model):
@@ -128,35 +100,35 @@ class Results(db.Model):
     participant_id = db.Column(db.Integer,
                                db.ForeignKey('participants.id'))
 
-    correct = db.Column(db.Boolean,
-                        nullable=True)
+    is_correct = db.Column(db.Boolean,
+                           nullable=True)
 
-    absent = db.Column(db.Boolean,
-                       nullable=False)
+    is_absent = db.Column(db.Boolean,
+                          nullable=False)
 
     is_presenter = db.Column(db.Boolean,
                              nullable=False,
                              default=0)
 
-    def __init__(self, episode_id, rogue_id, correct):
+    def __init__(self, episode_id, rogue_id, is_correct):
         self.episode_id = episode_id
         self.participant_id = rogue_id
-        self.correct = None
-        self.absent = 0
+        self.is_correct = None
+        self.is_absent = 0
 
-        if correct == 'correct':
-            self.correct = 1
-        elif correct == 'incorrect':
-            self.correct = 0
-        elif correct == 'absent':
-            self.correct = None
-            self.absent = 1
-        elif correct == 'presenter':
-            self.correct = None
+        if is_correct == 'correct':
+            self.is_correct = 1
+        elif is_correct == 'incorrect':
+            self.is_correct = 0
+        elif is_correct == 'absent':
+            self.is_correct = None
+            self.is_absent = 1
+        elif is_correct == 'presenter':
+            self.is_correct = None
             self.is_presenter = 1
 
     def __repr__(self):
-        return f'rogue_id={self.participant_id}|correct={self.correct}'
+        return f'rogue_id={self.participant_id}|is_correct={self.is_correct}'
 
 
 class Admins(db.Model):
