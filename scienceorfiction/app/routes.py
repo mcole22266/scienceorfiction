@@ -22,7 +22,7 @@ secret_code = generate_secret_code()
 
 def addRoutes(app):
     @app.route('/', methods=['GET', 'POST'])
-    def index(filename='rogueAccuracies.html'):
+    def index(filename='rogueOverallAccuracies.html'):
         graphs = ['Rogue Accuracies',
                   'Rogue Accuracies for Star Wars',
                   'Rogue Accuracies Over Time',
@@ -51,7 +51,7 @@ def addRoutes(app):
             return redirect(url_for('index', filename=filename))
 
         # GET
-        graphRogueOverallAccuracies('rogueOverallAccuracies.html')
+        graphRogueOverallAccuracies(filename)
         if request.args.get('filename'):
             filename = request.args.get('filename')
         return render_template('index.html',
