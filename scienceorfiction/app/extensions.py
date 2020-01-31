@@ -214,9 +214,12 @@ def addEpisode(db, ep_num, date, num_items, theme, participant_results,
     return episode, results
 
 
-def getEpisode(ep_num):
+def getEpisode(ep_num=False, ep_id=False):
     from .models import Episodes
-    episode = Episodes.query.filter_by(ep_num=ep_num).first()
+    if ep_num:
+        episode = Episodes.query.filter_by(ep_num=ep_num).first()
+    elif ep_id:
+        episode = Episodes.query.filter_by(id=ep_id).first()
     return episode
 
 

@@ -1,7 +1,7 @@
-from .extensions import getParticipant, getResults, getAllEpisodes
+from .extensions import getParticipant, getResults, getAllEpisodes, getEpisode
 
 
-def getRogueAccuracy(roguename, daterange=False, theme=False):
+def getRogueOverallAccuracy(roguename, daterange=False, theme=False):
     rogue = getParticipant(roguename)
     results = getResults(participant_id=rogue.id, daterange=daterange,
                          theme=theme)
@@ -13,6 +13,23 @@ def getRogueAccuracy(roguename, daterange=False, theme=False):
     total = len(presentResults)
     accuracy = totalCorrect/total
     return accuracy
+
+
+def getRogueAccuracy(roguename, daterange=False, theme=False):
+    rogue = getParticipant(roguename)
+    results = getResults(participant_id=rogue.id, daterange=daterange,
+                         theme=theme)
+    accuracies = []
+    total = 0
+    totalCorrect = 0
+    for result in results:
+        episode = getEpisode(ep_id=result.episode_id)
+        total += 1
+        if result.is_correct and not result.is_absent:
+            totalCorrect += 1
+        accuracy = totalCorrect/total
+        accuracies.append((episode, accuracy))
+    return accuracies
 
 
 def getRogueAttendance(roguename, daterange=False):

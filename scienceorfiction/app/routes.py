@@ -5,43 +5,62 @@ from threading import Thread
 
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
-
-from bokeh.plotting import figure, output_file, save
+from flask_wtf import FlaskForm
 
 from .extensions import (addAdmins, addEpisode, check_authentication,
                          email_secret_code, encrypt, generate_secret_code,
                          getAdmins, getGuests, getRogues, getThemes)
 from .forms import (AddEntryForm, AdminAuthenticateForm, AdminCreateForm,
                     AdminLoginForm)
+from .graphs import (graphRogueAccuracies, graphRogueOverallAccuracies,
+                     graphSweeps)
 from .models import db
+from .stats import getRogueAttendance, getRogueOverallAccuracy, getSweeps
 
 secret_code = generate_secret_code()
 
 
 def addRoutes(app):
+    @app.route('/', methods=['GET', 'POST'])
+    def index(filename='rogueAccuracies.html'):
+        graphs = ['Rogue Accuracies Over Time',
+                  'Rogue Accuracies Over Time for Star Wars',
+                  'Sweeps Over Time', 'Rogue Accuracies',
+                  'Rogue Accuracies for Star Wars']
+        form = FlaskForm()
 
-    @app.route('/')
-    def index():
-        # create fake data
-        x = [1, 2, 3, 4, 5]
-        y = [6, 7, 2, 4, 5]
+        # POST
+        if form.validate_on_submit():
+            graph_choice = request.form['graph_choice']
+            if graph_choice == 'Rogue Accuracies Over Time':
+                filename = 'rogueAccuracies.html'
+                graphRogueAccuracies(filename)
+            elif graph_choice == 'Rogue Accuracies Over Time for Star Wars':
+                filename = 'rogueAccuraciesStarWars.html'
+                graphRogueAccuracies(filename, theme='Star Wars')
+            elif graph_choice == 'Sweeps Over Time':
+                filename = 'sweeps.html'
+                graphSweeps(filename)
+            elif graph_choice == 'Rogue Accuracies':
+                filename = 'rogueOverallAccuracies.html'
+                graphRogueOverallAccuracies(filename)
+            elif graph_choice == 'Rogue Accuracies for Star Wars':
+                filename = 'rogueOverallAccuraciesStarWars.html'
+                graphRogueOverallAccuracies(filename, theme='Star Wars')
+            return redirect(url_for('index', filename=filename))
 
-        # output file where bokeh javascript will be written
-        output_file("/scienceorfiction/app/templates/bokeh/helloworld.html")
-
-        # create graph from fake data
-        p = figure(title="Hello World", x_axis_label='x', y_axis_label='y')
-        p.line(x, y, legend="Test Data", line_width=2)
-
-        # save graph to output file
-        save(p)
-
+        # GET
+        graphRogueAccuracies('rogueAccuracies.html')
+        if request.args.get('filename'):
+            filename = request.args.get('filename')
         return render_template('index.html',
-                               title='Hello World')
+                               title='Hello World',
+                               form=form,
+                               graphs=graphs,
+                               filename=filename)
 
     @app.route('/stats')
     def stats():
-        from .stats import getRogueAccuracy, getSweeps, getRogueAttendance
         rogueAccuracies = []
         rogueAccuracies2019 = []
         rogueAccuraciesStarWars = []
@@ -50,14 +69,15 @@ def addRoutes(app):
         enddate = date(2019, 12, 31)
         rogues = getRogues(onlyNames=True)
         for rogue in rogues:
-            accuracy = getRogueAccuracy(rogue)
+            accuracy = getRogueOverallAccuracy(rogue)
             rogueAccuracies.append((rogue, accuracy))
         for rogue in rogues:
-            accuracy = getRogueAccuracy(rogue, daterange=(startdate, enddate))
+            accuracy = getRogueOverallAccuracy(rogue,
+                                               daterange=(startdate, enddate))
             rogueAccuracies2019.append((rogue, accuracy))
         for rogue in rogues:
             theme = 'Star Wars'
-            accuracy = getRogueAccuracy(rogue, theme=theme)
+            accuracy = getRogueOverallAccuracy(rogue, theme=theme)
             rogueAccuraciesStarWars.append((rogue, accuracy))
         for rogue in rogues:
             attendance = getRogueAttendance(rogue)
