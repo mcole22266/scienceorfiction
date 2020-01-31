@@ -23,10 +23,11 @@ secret_code = generate_secret_code()
 def addRoutes(app):
     @app.route('/', methods=['GET', 'POST'])
     def index(filename='rogueAccuracies.html'):
-        graphs = ['Rogue Accuracies Over Time',
+        graphs = ['Rogue Accuracies',
+                  'Rogue Accuracies for Star Wars',
+                  'Rogue Accuracies Over Time',
                   'Rogue Accuracies Over Time for Star Wars',
-                  'Sweeps Over Time', 'Rogue Accuracies',
-                  'Rogue Accuracies for Star Wars']
+                  'Sweeps Over Time']
         form = FlaskForm()
 
         # POST
@@ -50,7 +51,7 @@ def addRoutes(app):
             return redirect(url_for('index', filename=filename))
 
         # GET
-        graphRogueAccuracies('rogueAccuracies.html')
+        graphRogueOverallAccuracies('rogueOverallAccuracies.html')
         if request.args.get('filename'):
             filename = request.args.get('filename')
         return render_template('index.html',
