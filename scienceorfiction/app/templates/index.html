@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 
-{% include 'navbar.html' %}
 
 {% block content %}
+
+{% include 'navbar.html' %}
+
 <div class="container">
 
   <form action="/" method="POST" role="form">
@@ -29,5 +31,7 @@
   {% include 'bokeh/' + filename %}
 
 </div>
+
+{% include 'footer.html' %}
 
 {% endblock %}
