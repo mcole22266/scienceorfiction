@@ -1,37 +1,44 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
 
-{% include 'navbar.html' %}
+<div class="vh-100">
 
-<div class="container">
+  {% include 'navbar.html' %}
 
-  <form action="/" method="POST" role="form">
-    {{ form.csrf_token }}
+  <div class="container-fluid row align-items-center h-100">
 
-    <div class="form-field">
-      <label for="graph-id">Graph Choice</label>
-      <select name="graph_choice" for="graph_choice" id="graph-id" class="form-control">
-        {% for graph in graphs %}
-          <option value="{{ graph }}">{{ graph }}</option>
-        {% endfor %}
-      </select>
+    <!-- Title and Graph Options -->
+    <div class="container col-4">
+
+      <h1>Science or Fiction</h1>
+
+      <form action="/" method="POST" role="form">
+        {{ form.csrf_token }}
+        <div class="form-field">
+          <label for="graph-id">Graph Choice</label>
+          <select name="graph_choice" for="graph_choice" id="graph-id" class="form-control">
+            {% for graph in graphs %}
+              <option value="{{ graph }}">{{ graph }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <br>
+        <div class="form-field">
+          <input class="btn btn-primary rounded-pill" type="submit" value="submit">
+        </div>
+        <br>
+      </form>
+
     </div>
-    <br>
-
-    <div class="form-field">
-      <input class="btn btn-primary rounded-pill" type="submit" value="submit">
+    
+    <!-- Graph -->
+    <div class="container col-8">
+      {% include 'bokeh/' + graph + '.html' %}
     </div>
-    <br>
+  </div>
 
-  </form>
-
-  <hr>
-  {% include 'bokeh/' + filename %}
-
+  {% include 'footer.html' %}
 </div>
-
-{% include 'footer.html' %}
 
 {% endblock %}
