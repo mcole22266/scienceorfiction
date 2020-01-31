@@ -6,13 +6,14 @@ from .stats import getRogueAccuracy, getSweeps, getRogueOverallAccuracy
 
 
 def saveGraph(graph, filename):
+    filename += '.html'
     output_filepath = environ['OUTPUT_FILEPATH']
     output_filepath += filename
     output_file(output_filepath)
     save(graph)
 
 
-def graphRogueOverallAccuracies(saveTo='graph.html', daterange=False,
+def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
                                 theme=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
@@ -34,7 +35,7 @@ def graphRogueOverallAccuracies(saveTo='graph.html', daterange=False,
     saveGraph(p, saveTo)
 
 
-def graphRogueAccuracies(saveTo='graph.html', theme=False, daterange=False):
+def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
     shuffle(colors)
@@ -56,7 +57,7 @@ def graphRogueAccuracies(saveTo='graph.html', theme=False, daterange=False):
     saveGraph(p, saveTo)
 
 
-def graphSweeps(saveTo='graph.html', daterange=False):
+def graphSweeps(saveTo='graph', daterange=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
     shuffle(colors)

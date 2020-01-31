@@ -22,7 +22,7 @@ secret_code = generate_secret_code()
 
 def addRoutes(app):
     @app.route('/', methods=['GET', 'POST'])
-    def index(filename='rogueOverallAccuracies.html'):
+    def index(graph='rogueOverallAccuracies'):
         graphs = ['Rogue Accuracies',
                   'Rogue Accuracies for Star Wars',
                   'Rogue Accuracies Over Time',
@@ -34,31 +34,31 @@ def addRoutes(app):
         if form.validate_on_submit():
             graph_choice = request.form['graph_choice']
             if graph_choice == 'Rogue Accuracies Over Time':
-                filename = 'rogueAccuracies.html'
-                graphRogueAccuracies(filename)
+                graph = 'rogueAccuracies'
+                graphRogueAccuracies(graph)
             elif graph_choice == 'Rogue Accuracies Over Time for Star Wars':
-                filename = 'rogueAccuraciesStarWars.html'
-                graphRogueAccuracies(filename, theme='Star Wars')
+                graph = 'rogueAccuraciesStarWars'
+                graphRogueAccuracies(graph, theme='Star Wars')
             elif graph_choice == 'Sweeps Over Time':
-                filename = 'sweeps.html'
-                graphSweeps(filename)
+                graph = 'sweeps'
+                graphSweeps(graph)
             elif graph_choice == 'Rogue Accuracies':
-                filename = 'rogueOverallAccuracies.html'
-                graphRogueOverallAccuracies(filename)
+                graph = 'rogueOverallAccuracies'
+                graphRogueOverallAccuracies(graph)
             elif graph_choice == 'Rogue Accuracies for Star Wars':
-                filename = 'rogueOverallAccuraciesStarWars.html'
-                graphRogueOverallAccuracies(filename, theme='Star Wars')
-            return redirect(url_for('index', filename=filename))
+                graph = 'rogueOverallAccuraciesStarWars'
+                graphRogueOverallAccuracies(graph, theme='Star Wars')
+            return redirect(url_for('index', graph=graph))
 
         # GET
-        graphRogueOverallAccuracies(filename)
-        if request.args.get('filename'):
-            filename = request.args.get('filename')
+        graphRogueOverallAccuracies(graph)
+        if request.args.get('graph'):
+            graph = request.args.get('graph')
         return render_template('index.html',
                                title='Hello World',
                                form=form,
                                graphs=graphs,
-                               filename=filename)
+                               graph=graph)
 
     @app.route('/stats')
     def stats():
