@@ -1,4 +1,4 @@
-from .extensions import getParticipant, getResults, getAllEpisodes, getEpisode
+from .extensions import getAllEpisodes, getEpisode, getParticipant, getResults
 
 
 def getRogueOverallAccuracy(roguename, daterange=False, theme=False):

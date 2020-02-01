@@ -18,7 +18,7 @@ def getAdmins():
 
 def getEpisodes():
     episodeList = []
-    ep_date = date(2019, 1, 5)
+    ep_date = date(2012, 1, 7)
     ep_num = 600
     num_items_choices = [3, 4]
     participant_accuracy_choices = [.8, .5, .5, .4, .3]
@@ -33,7 +33,7 @@ def getEpisodes():
         shuffle(participant_accuracy_choices)
         rogues.append((rogue, participant_accuracy_choices.pop()))
 
-    while ep_date < date(2021, 1, 1):
+    while ep_date < date.today():
         episode = {}
         episode['ep_num'] = ep_num
         episode['ep_date'] = ep_date

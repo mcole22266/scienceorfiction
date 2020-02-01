@@ -1,18 +1,47 @@
-from random import shuffle
+from datetime import date
 from os import environ
+from random import shuffle
+
 from bokeh.plotting import figure, output_file, save
-from .extensions import getRogues, getAllEpisodes
-from .stats import getRogueAccuracy, getSweeps, getRogueOverallAccuracy
+
+from .extensions import getAllEpisodes, getRogues
+from .stats import getRogueAccuracy, getRogueOverallAccuracy, getSweeps
 
 
 def saveGraph(graph, filename):
+    filename += '.html'
     output_filepath = environ['OUTPUT_FILEPATH']
     output_filepath += filename
     output_file(output_filepath)
     save(graph)
 
 
-def graphRogueOverallAccuracies(saveTo='graph.html', daterange=False,
+def getGraph(graphType, graphYear, graphTheme):
+    graph = graphType
+    if graphYear == '':
+        daterange = False
+    elif graphYear == 'overall':
+        daterange = False
+    else:
+        startDate = date(int(graphYear), 1, 1)
+        endDate = date(int(graphYear), 12, 31)
+        daterange = (startDate, endDate)
+        graph += graphYear
+    if graphTheme == '':
+        graphTheme = False
+    else:
+        graph += graphTheme
+    if graphType == 'overallAccuracy':
+        graphRogueOverallAccuracies(graph, daterange=daterange,
+                                    theme=graphTheme)
+    elif graphType == 'accuracyOverTime':
+        graphRogueAccuracies(graph, daterange=daterange, theme=graphTheme)
+    elif graphType == 'sweeps':
+        graphSweeps(graph, daterange=daterange)
+    return graph
+
+
+def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
                                 theme=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
@@ -34,7 +63,7 @@ def graphRogueOverallAccuracies(saveTo='graph.html', daterange=False,
     saveGraph(p, saveTo)
 
 
-def graphRogueAccuracies(saveTo='graph.html', theme=False, daterange=False):
+def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
     shuffle(colors)
@@ -56,7 +85,7 @@ def graphRogueAccuracies(saveTo='graph.html', theme=False, daterange=False):
     saveGraph(p, saveTo)
 
 
-def graphSweeps(saveTo='graph.html', daterange=False):
+def graphSweeps(saveTo='graph', daterange=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
     shuffle(colors)
