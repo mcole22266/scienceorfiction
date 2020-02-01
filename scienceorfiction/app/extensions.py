@@ -107,6 +107,13 @@ def getThemes():
     return sorted(list(themes))
 
 
+def getYears():
+    from .models import Episodes
+    episodes = Episodes.query.all()
+    dates = set([str(episode.date.year) for episode in episodes])
+    return dates
+
+
 def check_authentication(username, password):
     admin = getAdmins(username)
     if admin:
@@ -185,13 +192,13 @@ def getResults(episode_id=False, participant_id=False,
         return None
     if daterange:
         startdate, enddate = daterange  # daterange is a tuple
-        for result in results:
+        for result in results[:]:
             episode = Episodes.query.filter_by(id=result.episode_id).first()
             date = episode.date
-            if date < startdate or date < enddate:
+            if date < startdate or date > enddate:
                 results.remove(result)
     if theme:
-        for result in results:
+        for result in results[:]:
             episode = Episodes.query.filter_by(id=result.episode_id).first()
             ep_theme = episode.theme
             if ep_theme != theme:

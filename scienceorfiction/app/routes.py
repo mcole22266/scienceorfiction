@@ -9,11 +9,10 @@ from flask_wtf import FlaskForm
 
 from .extensions import (addAdmins, addEpisode, check_authentication,
                          email_secret_code, encrypt, generate_secret_code,
-                         getAdmins, getGuests, getRogues, getThemes)
+                         getAdmins, getGuests, getRogues, getThemes, getYears)
 from .forms import (AddEntryForm, AdminAuthenticateForm, AdminCreateForm,
                     AdminLoginForm)
-from .graphs import (graphRogueAccuracies, graphRogueOverallAccuracies,
-                     graphSweeps)
+from .graphs import getGraph
 from .models import db
 from .stats import getRogueAttendance, getRogueOverallAccuracy, getSweeps
 
@@ -22,43 +21,53 @@ secret_code = generate_secret_code()
 
 def addRoutes(app):
     @app.route('/', methods=['GET', 'POST'])
-    def index(graph='rogueOverallAccuracies'):
-        graphs = ['Rogue Accuracies',
-                  'Rogue Accuracies for Star Wars',
-                  'Rogue Accuracies Over Time',
-                  'Rogue Accuracies Over Time for Star Wars',
-                  'Sweeps Over Time']
+    def index():
         form = FlaskForm()
 
         # POST
         if form.validate_on_submit():
-            graph_choice = request.form['graph_choice']
-            if graph_choice == 'Rogue Accuracies Over Time':
-                graph = 'rogueAccuracies'
-                graphRogueAccuracies(graph)
-            elif graph_choice == 'Rogue Accuracies Over Time for Star Wars':
-                graph = 'rogueAccuraciesStarWars'
-                graphRogueAccuracies(graph, theme='Star Wars')
-            elif graph_choice == 'Sweeps Over Time':
-                graph = 'sweeps'
-                graphSweeps(graph)
-            elif graph_choice == 'Rogue Accuracies':
-                graph = 'rogueOverallAccuracies'
-                graphRogueOverallAccuracies(graph)
-            elif graph_choice == 'Rogue Accuracies for Star Wars':
-                graph = 'rogueOverallAccuraciesStarWars'
-                graphRogueOverallAccuracies(graph, theme='Star Wars')
-            return redirect(url_for('index', graph=graph))
+            graphType = request.form['graphType']
+            year = request.form['year']
+            try:
+                theme = request.form['theme']
+            except Exception:
+                theme = ''
+            return redirect(url_for('index',
+                                    graphType=graphType,
+                                    graphYear=year,
+                                    graphTheme=theme))
 
         # GET
-        graphRogueOverallAccuracies(graph)
-        if request.args.get('graph'):
-            graph = request.args.get('graph')
+        graphType = request.args.get('graphType', 'overallAccuracy')
+        graphYear = request.args.get('graphYear', '2019')
+        graphTheme = request.args.get('graphTheme', '')
+
+        graph = getGraph(graphType, graphYear, graphTheme)
         return render_template('index.html',
                                title='Hello World',
                                form=form,
-                               graphs=graphs,
-                               graph=graph)
+                               graph=graph,
+                               graphType=graphType,
+                               graphYear=graphYear,
+                               graphTheme=graphTheme,
+                               years=getYears(),
+                               themes=getThemes())
+
+    @app.route('/overallAccuracy')
+    def overallAccuracy():
+        return redirect(url_for('index', graphType='overallAccuracy'))
+
+    @app.route('/accuracyOverTime')
+    def accuracyOverTime():
+        return redirect(url_for('index', graphType='accuracyOverTime'))
+
+    @app.route('/sweeps')
+    def sweeps():
+        return redirect(url_for('index', graphType='sweeps'))
+
+    @app.route('/about')
+    def about():
+        return render_template('about.html')
 
     @app.route('/stats')
     def stats():

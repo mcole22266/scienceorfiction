@@ -1,8 +1,11 @@
-from random import shuffle
+from datetime import date
 from os import environ
+from random import shuffle
+
 from bokeh.plotting import figure, output_file, save
-from .extensions import getRogues, getAllEpisodes
-from .stats import getRogueAccuracy, getSweeps, getRogueOverallAccuracy
+
+from .extensions import getAllEpisodes, getRogues
+from .stats import getRogueAccuracy, getRogueOverallAccuracy, getSweeps
 
 
 def saveGraph(graph, filename):
@@ -11,6 +14,31 @@ def saveGraph(graph, filename):
     output_filepath += filename
     output_file(output_filepath)
     save(graph)
+
+
+def getGraph(graphType, graphYear, graphTheme):
+    graph = graphType
+    if graphYear == '':
+        daterange = False
+    elif graphYear == 'overall':
+        daterange = False
+    else:
+        startDate = date(int(graphYear), 1, 1)
+        endDate = date(int(graphYear), 12, 31)
+        daterange = (startDate, endDate)
+        graph += graphYear
+    if graphTheme == '':
+        graphTheme = False
+    else:
+        graph += graphTheme
+    if graphType == 'overallAccuracy':
+        graphRogueOverallAccuracies(graph, daterange=daterange,
+                                    theme=graphTheme)
+    elif graphType == 'accuracyOverTime':
+        graphRogueAccuracies(graph, daterange=daterange, theme=graphTheme)
+    elif graphType == 'sweeps':
+        graphSweeps(graph, daterange=daterange)
+    return graph
 
 
 def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
