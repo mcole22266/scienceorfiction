@@ -21,7 +21,7 @@ def getEpisodes():
     ep_date = date(2012, 1, 7)
     ep_num = 600
     num_items_choices = [3, 4]
-    participant_accuracy_choices = [.8, .5, .5, .4, .3]
+    participant_accuracy_choices = [.9, .7, .5, .4, .2]
     themes_choices = [None, 'Star Wars', 'Star Trek', 'Numbers', 'Vaccines',
                       'Computer Science', 'Biology', 'Chemistry',
                       'Diseases', 'Spacefaring', 'Pseudosciences',
