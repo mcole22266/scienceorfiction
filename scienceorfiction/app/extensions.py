@@ -118,9 +118,10 @@ def getGuests():
 
 def getThemes():
     from .models import Episodes
-    episodes = Episodes.query.all()
-    themes = set([episode.theme for episode in episodes if episode.theme])
-    return sorted(list(themes))
+    episodes = Episodes.query.with_entities(Episodes.theme).order_by(
+               Episodes.theme).distinct()
+    episodes = [episode[0] for episode in episodes]
+    return episodes
 
 
 def getYears():
@@ -195,31 +196,42 @@ def getResults(episode_id=False, participant_id=False,
                daterange=False, theme=False):
     from .models import Results, Episodes
     if episode_id and participant_id:
-        # get specific results for this participant on this episode
+        # get specific result for this participant on this episode
         return Results.query.filter_by(episode_id=episode_id,
                                        participant_id=participant_id).first()
-    elif episode_id and not participant_id:
+    elif episode_id and not (participant_id or daterange or theme):
         # get all results for this specific episode
-        results = Results.query.filter_by(episode_id=episode_id).all()
-    elif not episode_id and participant_id:
+        return Results.query.filter_by(episode_id=episode_id).all()
+    elif participant_id and not (episode_id or daterange or theme):
         # get all results for this specific participant
-        results = Results.query.filter_by(participant_id=participant_id).all()
-    else:
-        return None
-    if daterange:
-        startdate, enddate = daterange  # daterange is a tuple
-        for result in results[:]:
-            episode = Episodes.query.filter_by(id=result.episode_id).first()
-            date = episode.date
-            if date < startdate or date > enddate:
-                results.remove(result)
-    if theme:
-        for result in results[:]:
-            episode = Episodes.query.filter_by(id=result.episode_id).first()
-            ep_theme = episode.theme
-            if ep_theme != theme:
-                results.remove(result)
-    return results
+        return Results.query.filter_by(participant_id=participant_id).all()
+    elif theme and not (episode_id or participant_id or daterange):
+        # get all results for this specific theme
+        return Results.query.join(Episodes).filter(
+            Episodes.theme == theme).all()
+    elif daterange and not (episode_id or participant_id or theme):
+        # get all results within a date range
+        return Results.query.join(Episodes).filter(
+            Episodes.date.between(daterange[0], daterange[1])).all()
+    elif participant_id and daterange:
+        # get all results for this specific participant
+        # over this period of time
+        return Results.query.join(Episodes).filter(
+            Episodes.date.between(daterange[0], daterange[1]),
+            Results.participant_id == participant_id).all()
+    elif participant_id and theme:
+        # get all results for this specific participant
+        # for this theme
+        return Results.query.join(Episodes).filter(
+            Episodes.theme == theme,
+            Results.participant_id == participant_id).all()
+    elif participant_id and daterange and theme:
+        # get all results for this specific participant
+        # within this daterange and this theme
+        return Results.query.join(Episodes).filter(
+            Episodes.date.between(daterange[0], daterange[1]),
+            Episodes.theme == theme).filter_by(
+                participant_id=participant_id).all()
 
 
 def addEpisode(db, ep_num, date, num_items, theme, participant_results,
@@ -233,7 +245,7 @@ def addEpisode(db, ep_num, date, num_items, theme, participant_results,
         rogue_id = getParticipant(participant).id
         results.append(addResult(db, episode_id, rogue_id, correct))
     if commit:
-        db.session.commit
+        db.session.commit()
     return episode, results
 
 
