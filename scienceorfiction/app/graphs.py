@@ -44,6 +44,8 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
                                 theme=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
+    keepcolors = []
+
     x = []
     y = []
     for rogue in getRogues(onlyNames=True):
@@ -52,12 +54,16 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
         accuracy = accuracy*100
         x.append(rogue)
         y.append(accuracy)
+        keepcolors.append(colors.pop())
 
+    colors = keepcolors
     p = figure(title="Rogue Accuracies",
                plot_width=1250,
                x_range=x,
                y_axis_label='Percent Correct')
+
     p.vbar(x=x, top=y, bottom=0, width=0.5, color=colors, alpha=0.3)
+
     saveGraph(p, saveTo)
 
 
