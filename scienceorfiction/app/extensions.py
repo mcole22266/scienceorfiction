@@ -111,7 +111,7 @@ def getYears():
     from .models import Episodes
     episodes = Episodes.query.all()
     dates = set([str(episode.date.year) for episode in episodes])
-    return dates
+    return sorted(list(dates))
 
 
 def check_authentication(username, password):
