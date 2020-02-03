@@ -85,6 +85,7 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
             y.append(accuracy)
         color = colors.pop()
         p.line(x, y, legend_label=rogue, line_width=4, color=color, alpha=.3)
+        # p.circle(x, y, fill_color=color, alpha=.2, size=6)
     saveGraph(p, saveTo)
 
 
@@ -121,6 +122,7 @@ def graphSweeps(saveTo='graph', daterange=False):
     color = colors.pop()
     p.line(x, y, legend_label='Presenter Sweeps',
            line_width=4, color=color, alpha=.3)
+    # p.circle(x, y, fill_color=color, alpha=.2, size=6)
 
     x = []
     y = []
