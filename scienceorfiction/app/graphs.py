@@ -60,7 +60,9 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
     p = figure(title="Rogue Accuracies",
                plot_width=1250,
                x_range=x,
-               y_axis_label='Percent Correct')
+               y_axis_label='Percent Correct',
+               tools='hover',
+               tooltips="@x: @top%")
 
     p.vbar(x=x, top=y, bottom=0, width=0.5, color=colors, alpha=0.3)
 
