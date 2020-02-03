@@ -1,6 +1,5 @@
 from datetime import date
 from os import environ
-from random import shuffle
 
 from bokeh.plotting import figure, output_file, save
 
@@ -45,7 +44,6 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
                                 theme=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
-    shuffle(colors)
     x = []
     y = []
     for rogue in getRogues(onlyNames=True):
@@ -66,7 +64,6 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
 def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
-    shuffle(colors)
     p = figure(title="Rogue Accuracies",
                plot_width=1250,
                x_axis_label='Date',
@@ -88,7 +85,6 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
 def graphSweeps(saveTo='graph', daterange=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
-    shuffle(colors)
     p = figure(title="Sweeps",
                plot_width=1250,
                x_axis_label='Date',
