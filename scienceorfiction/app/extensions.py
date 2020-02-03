@@ -1,7 +1,7 @@
 # Contains several different helper functions
 
 from hashlib import sha256
-from os import environ
+from os import environ, path, makedirs
 from time import sleep
 
 from flask_login import LoginManager
@@ -76,6 +76,22 @@ def init_db(db):
                        episode['num_items'], episode['theme'],
                        episode['rogues'])
     db.session.commit()
+
+
+def init_app(app):
+    '''
+    Initializes the app.
+    Args:
+        app (Flask): app from Flask
+    Returns:
+        None
+    '''
+    app.logger.info('Checking if bokeh folder exists')
+    if not path.exists('/scienceorfiction/app/templates/bokeh'):
+        app.logger.info('No bokeh folder found, creating folder')
+        makedirs('/scienceorfiction/app/templates/bokeh')
+    else:
+        app.logger.info('bokeh folder found')
 
 
 def getRogues(onlyNames=False):

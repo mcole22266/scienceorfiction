@@ -3,7 +3,7 @@
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect
 
-from .extensions import database_ready, init_db, login_manager
+from .extensions import database_ready, init_db, init_app, login_manager
 from .models import db
 from .routes import addRoutes
 
@@ -33,6 +33,7 @@ def create_app():
         login_manager.init_app(app)
         addRoutes(app)
 
+        init_app(app)
         if database_ready(db, app):
             db.create_all()
             db.session.commit()
