@@ -2,6 +2,7 @@ from datetime import date
 from os import environ
 
 from bokeh.plotting import figure, output_file, save
+from bokeh.models import HoverTool
 
 from .extensions import getAllEpisodes, getRogues
 from .stats import getRogueAccuracy, getRogueOverallAccuracy, getSweeps
@@ -57,11 +58,14 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
         keepcolors.append(colors.pop())
 
     colors = keepcolors
+    tools = 'hover, pan, wheel_zoom, save'
     p = figure(title="Rogue Accuracies",
                plot_width=1250,
                x_range=x,
                y_axis_label='Percent Correct',
-               tools='hover',
+               toolbar_location='above',
+               toolbar_sticky=False,
+               tools=tools,
                tooltips="@x: @top%")
 
     p.vbar(x=x, top=y, bottom=0, width=0.5, color=colors, alpha=0.3)
@@ -72,17 +76,24 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
 def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
+    hovertool = HoverTool(
+        mode='vline',
+        tooltips="@y%"
+    )
+    tools = [hovertool]
     p = figure(title="Rogue Accuracies",
                plot_width=1250,
                x_axis_label='Date',
                y_axis_label='Accuracy',
-               x_axis_type='datetime')
+               x_axis_type='datetime',
+               tools=tools)
 
     for rogue in getRogues(onlyNames=True):
         accuracies = getRogueAccuracy(rogue, theme=theme, daterange=daterange)
         x = []
         y = []
         for episode, accuracy in accuracies:
+            accuracy *= 100
             x.append(episode.date)
             y.append(accuracy)
         color = colors.pop()
