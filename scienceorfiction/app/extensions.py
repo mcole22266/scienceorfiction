@@ -213,13 +213,13 @@ def getResults(episode_id=False, participant_id=False,
         # get all results within a date range
         return Results.query.join(Episodes).filter(
             Episodes.date.between(daterange[0], daterange[1])).all()
-    elif participant_id and daterange:
+    elif participant_id and daterange and not theme:
         # get all results for this specific participant
         # over this period of time
         return Results.query.join(Episodes).filter(
             Episodes.date.between(daterange[0], daterange[1]),
             Results.participant_id == participant_id).all()
-    elif participant_id and theme:
+    elif participant_id and theme and not daterange:
         # get all results for this specific participant
         # for this theme
         return Results.query.join(Episodes).filter(
@@ -230,8 +230,8 @@ def getResults(episode_id=False, participant_id=False,
         # within this daterange and this theme
         return Results.query.join(Episodes).filter(
             Episodes.date.between(daterange[0], daterange[1]),
-            Episodes.theme == theme).filter_by(
-                participant_id=participant_id).all()
+            Episodes.theme == theme,
+            Results.participant_id == participant_id).all()
 
 
 def addEpisode(db, ep_num, date, num_items, theme, participant_results,
