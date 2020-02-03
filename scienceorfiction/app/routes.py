@@ -39,7 +39,7 @@ def addRoutes(app):
 
         # GET
         graphType = request.args.get('graphType', 'overallAccuracy')
-        graphYear = request.args.get('graphYear', '2019')
+        graphYear = request.args.get('graphYear', str(date.today().year))
         graphTheme = request.args.get('graphTheme', '')
 
         graph = getGraph(graphType, graphYear, graphTheme)

@@ -11,7 +11,10 @@ def getRogueOverallAccuracy(roguename, daterange=False, theme=False):
                       if result.is_correct]
     totalCorrect = len(correctResults)
     total = len(presentResults)
-    accuracy = totalCorrect/total
+    try:
+        accuracy = totalCorrect/total
+    except ZeroDivisionError:
+        accuracy = 0
     return accuracy
 
 
@@ -27,7 +30,10 @@ def getRogueAccuracy(roguename, daterange=False, theme=False):
         total += 1
         if result.is_correct and not result.is_absent:
             totalCorrect += 1
-        accuracy = totalCorrect/total
+        try:
+            accuracy = totalCorrect/total
+        except ZeroDivisionError:
+            accuracy = 0
         accuracies.append((episode, accuracy))
     return accuracies
 
