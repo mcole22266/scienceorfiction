@@ -78,7 +78,14 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
               'navy']
     hovertool = HoverTool(
         mode='vline',
-        tooltips="@y%"
+        tooltips=[
+            ('Date', '@x{%raw%}{%F}{%endraw%}'),  # raw/endraw added due to
+                                                  # Jinja2 Error
+            ('Accuracy', '@y%')
+        ],
+        formatters={
+            'x': 'datetime'
+        }
     )
     tools = [hovertool]
     p = figure(title="Rogue Accuracies",
