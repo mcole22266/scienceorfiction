@@ -1,8 +1,8 @@
 from datetime import date
 from os import environ
-from random import shuffle
 
 from bokeh.plotting import figure, output_file, save
+from bokeh.models import HoverTool
 
 from .extensions import getAllEpisodes, getRogues
 from .stats import getRogueAccuracy, getRogueOverallAccuracy, getSweeps
@@ -45,7 +45,8 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
                                 theme=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
-    shuffle(colors)
+    keepcolors = []
+
     x = []
     y = []
     for rogue in getRogues(onlyNames=True):
@@ -54,46 +55,93 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
         accuracy = accuracy*100
         x.append(rogue)
         y.append(accuracy)
+        keepcolors.append(colors.pop())
 
+    colors = keepcolors
+    tools = 'hover, pan, wheel_zoom, save, reset'
     p = figure(title="Rogue Accuracies",
                plot_width=1250,
                x_range=x,
-               y_axis_label='Percent Correct')
+               y_axis_label='Percent Correct',
+               toolbar_location='above',
+               toolbar_sticky=False,
+               tools=tools,
+               tooltips="@x: @top%",
+               active_drag="pan",
+               active_inspect="hover",
+               active_scroll="wheel_zoom")
+
     p.vbar(x=x, top=y, bottom=0, width=0.5, color=colors, alpha=0.3)
+
     saveGraph(p, saveTo)
 
 
 def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
-    shuffle(colors)
+    hovertool = HoverTool(
+        mode='vline',
+        tooltips=[
+            ('Date', '@x{%raw%}{%F}{%endraw%}'),  # raw/endraw added due to
+                                                  # Jinja2 Error
+            ('Accuracy', '@y%')
+        ],
+        formatters={
+            'x': 'datetime'
+        }
+    )
+    tools = [hovertool, 'pan', 'wheel_zoom', 'save', 'reset']
     p = figure(title="Rogue Accuracies",
                plot_width=1250,
                x_axis_label='Date',
                y_axis_label='Accuracy',
-               x_axis_type='datetime')
+               x_axis_type='datetime',
+               tools=tools,
+               active_drag="pan",
+               active_inspect=hovertool,
+               active_scroll="wheel_zoom")
 
     for rogue in getRogues(onlyNames=True):
         accuracies = getRogueAccuracy(rogue, theme=theme, daterange=daterange)
         x = []
         y = []
         for episode, accuracy in accuracies:
+            accuracy *= 100
             x.append(episode.date)
             y.append(accuracy)
         color = colors.pop()
         p.line(x, y, legend_label=rogue, line_width=4, color=color, alpha=.3)
+        # p.circle(x, y, fill_color=color, alpha=.2, size=6)
     saveGraph(p, saveTo)
 
 
 def graphSweeps(saveTo='graph', daterange=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
-    shuffle(colors)
+
+    hovertool = HoverTool(
+        mode='vline',
+        tooltips=[
+            ('Date', '@x{%raw%}{%F}{%endraw%}'),  # raw/endraw added due to
+                                                  # Jinja2 Error
+            ('Accuracy', '@y%')
+        ],
+        formatters={
+            'x': 'datetime'
+        }
+    )
+
+    tools = [hovertool, 'pan', 'wheel_zoom', 'save', 'reset']
+
     p = figure(title="Sweeps",
                plot_width=1250,
                x_axis_label='Date',
                y_axis_label='Number of Sweeps',
-               x_axis_type='datetime')
+               x_axis_type='datetime',
+               tools=tools,
+               active_drag='pan',
+               active_inspect=hovertool,
+               active_scroll='wheel_zoom')
 
     allPresenterSweeps = getSweeps(presenter=True, daterange=daterange)
     allparticipantSweeps = getSweeps(participant=True, daterange=daterange)
@@ -119,6 +167,7 @@ def graphSweeps(saveTo='graph', daterange=False):
     color = colors.pop()
     p.line(x, y, legend_label='Presenter Sweeps',
            line_width=4, color=color, alpha=.3)
+    # p.circle(x, y, fill_color=color, alpha=.2, size=6)
 
     x = []
     y = []
