@@ -58,7 +58,7 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
         keepcolors.append(colors.pop())
 
     colors = keepcolors
-    tools = 'hover, pan, wheel_zoom, save'
+    tools = 'hover, pan, wheel_zoom, save, reset'
     p = figure(title="Rogue Accuracies",
                plot_width=1250,
                x_range=x,
@@ -66,7 +66,10 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
                toolbar_location='above',
                toolbar_sticky=False,
                tools=tools,
-               tooltips="@x: @top%")
+               tooltips="@x: @top%",
+               active_drag="pan",
+               active_inspect="hover",
+               active_scroll="wheel_zoom")
 
     p.vbar(x=x, top=y, bottom=0, width=0.5, color=colors, alpha=0.3)
 
@@ -87,13 +90,16 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
             'x': 'datetime'
         }
     )
-    tools = [hovertool]
+    tools = [hovertool, 'pan', 'wheel_zoom', 'save', 'reset']
     p = figure(title="Rogue Accuracies",
                plot_width=1250,
                x_axis_label='Date',
                y_axis_label='Accuracy',
                x_axis_type='datetime',
-               tools=tools)
+               tools=tools,
+               active_drag="pan",
+               active_inspect=hovertool,
+               active_scroll="wheel_zoom")
 
     for rogue in getRogues(onlyNames=True):
         accuracies = getRogueAccuracy(rogue, theme=theme, daterange=daterange)
@@ -112,11 +118,30 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
 def graphSweeps(saveTo='graph', daterange=False):
     colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
               'navy']
+
+    hovertool = HoverTool(
+        mode='vline',
+        tooltips=[
+            ('Date', '@x{%raw%}{%F}{%endraw%}'),  # raw/endraw added due to
+                                                  # Jinja2 Error
+            ('Accuracy', '@y%')
+        ],
+        formatters={
+            'x': 'datetime'
+        }
+    )
+
+    tools = [hovertool, 'pan', 'wheel_zoom', 'save', 'reset']
+
     p = figure(title="Sweeps",
                plot_width=1250,
                x_axis_label='Date',
                y_axis_label='Number of Sweeps',
-               x_axis_type='datetime')
+               x_axis_type='datetime',
+               tools=tools,
+               active_drag='pan',
+               active_inspect=hovertool,
+               active_scroll='wheel_zoom')
 
     allPresenterSweeps = getSweeps(presenter=True, daterange=daterange)
     allparticipantSweeps = getSweeps(participant=True, daterange=daterange)
