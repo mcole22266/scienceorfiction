@@ -2,12 +2,13 @@
 
 {% block content %}
 
+{% include 'navbar-admin.html' %}
+
 {% if form.errors %}
     {{ form.errors }}
 {% endif %}
 
 <div class="container form-card col-md-5">
-    <a href="/logout">Log Out</a>
     <h1>Update Stats</h1>
     <br>
 
