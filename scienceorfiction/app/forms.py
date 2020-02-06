@@ -35,7 +35,7 @@ class AdminLoginForm(FlaskForm):
 
     password = PasswordField('Password')
 
-    submit = SubmitField('Login')
+    submit = SubmitField('Log In')
 
 
 class AdminCreateForm(FlaskForm):
