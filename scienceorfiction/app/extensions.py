@@ -3,6 +3,7 @@
 from hashlib import sha256
 from os import environ, path, makedirs
 from time import sleep
+from datetime import date, datetime
 
 from flask_login import LoginManager
 
@@ -63,8 +64,10 @@ def init_db(db):
     '''
     for rogue in testdata.getRogues():
         present = getParticipant(rogue)
+        start_date = date(2014, 1, 1)
         if not present:
-            addParticipant(db, rogue, is_rogue=True)
+            addParticipant(db, rogue, is_rogue=True,
+                           rogue_start_date=start_date)
     for admin in testdata.getAdmins():
         present = getAdmins(admin[0])
         if not present:
@@ -168,9 +171,23 @@ The Bot'''
     yag.send(GMAIL_USERNAME, subject, contents)
 
 
-def addParticipant(db, name, is_rogue=False, commit=False):
+def addParticipant(db, name, is_rogue=False,
+                   rogue_start_date=None, rogue_end_date=None,
+                   commit=False):
     from .models import Participants
-    participant = Participants(name, is_rogue)
+    # start and end dates need to be converted from date to datetime object
+    # before being passed into the db
+    if rogue_start_date:
+        rogue_start_date = datetime(rogue_start_date.year,
+                                    rogue_start_date.month,
+                                    rogue_start_date.day)
+    if rogue_end_date:
+        rogue_end_date = datetime(rogue_end_date.year,
+                                  rogue_end_date.month,
+                                  rogue_end_date.day)
+    participant = Participants(name, is_rogue,
+                               rogue_start_date=rogue_start_date,
+                               rogue_end_date=rogue_end_date)
     db.session.add(participant)
     if commit:
         db.session.commit()

@@ -6,6 +6,8 @@
             <th>Name</th>
             <th>Date Created</th>
             <th>Is Rogue</th>
+            <th>Rogue Start Date</th>
+            <th>Rogue End Date</th>
         </tr>
     </thead>
     {% for participant in participants %}
@@ -15,6 +17,8 @@
                 <td>{{ participant.name }}</td>
                 <td>{{ participant.date_created }}</td>
                 <td>{{ participant.is_rogue }}</td>
+                <td>{{ participant.rogue_start_date}}</td>
+                <td>{{ participant.rogue_end_date}}</td>
             </tr>
         </tbody>
     {% endfor %}
