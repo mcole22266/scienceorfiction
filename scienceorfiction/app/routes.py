@@ -129,7 +129,7 @@ def addRoutes(app):
         # POST
         if form.validate_on_submit():
             ep_num = request.form['ep_num']
-            date = request.form['date']
+            ep_date = request.form['date']
             num_items = request.form['num_items']
             theme = request.form['theme']
             is_presenter = request.form['is_presenter']
@@ -141,7 +141,7 @@ def addRoutes(app):
                     else:
                         correct = request.form[key]
                     participant_results.append((key, correct))
-            addEpisode(db, ep_num, date, num_items, theme,
+            addEpisode(db, ep_num, ep_date, num_items, theme,
                        participant_results, commit=True)
             return redirect(url_for('admin'))
 
@@ -154,7 +154,8 @@ def addRoutes(app):
                                themes=getThemes(),
                                participants=getAllParticipants(),
                                episodes=getAllEpisodes(desc=True),
-                               results=getAllResults()
+                               results=getAllResults(),
+                               today_date=date.today()
                                )
 
     @app.route('/admin/login', methods=['GET', 'POST'])
