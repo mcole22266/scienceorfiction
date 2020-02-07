@@ -1,0 +1,21 @@
+<table class="table table-sm table-bordered table-hover">
+    <caption>Particpant Info</caption>
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Date Created</th>
+            <th>Is Rogue</th>
+        </tr>
+    </thead>
+    {% for participant in participants %}
+        <tbody>
+            <tr>
+                <th scope="row">{{ participant.id }}</th>
+                <td>{{ participant.name }}</td>
+                <td>{{ participant.date_created }}</td>
+                <td>{{ participant.is_rogue }}</td>
+            </tr>
+        </tbody>
+    {% endfor %}
+</table>

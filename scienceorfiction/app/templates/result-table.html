@@ -1,0 +1,25 @@
+<table class="table table-sm table-bordered table-hover">
+    <caption>Result Info</caption>
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Episode ID</th>
+            <th>Participant ID</th>
+            <th>Is Correct</th>
+            <th>Is Absent</th>
+            <th>Is Presenter</th>
+        </tr>
+    </thead>
+    {% for result in results%}
+        <tbody>
+            <tr>
+                <th scope="row">{{ result.id }}</th>
+                <td>{{ result.episode_id }}</td>
+                <td>{{ result.participant_id }}</td>
+                <td>{{ result.is_correct }}</td>
+                <td>{{ result.is_absent }}</td>
+                <td>{{ result.is_presenter }}</td>
+            </tr>
+        </tbody>
+    {% endfor %}
+</table>

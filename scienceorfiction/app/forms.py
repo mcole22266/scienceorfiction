@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import PasswordField, StringField, SubmitField
-from wtforms.validators import InputRequired, ValidationError
+from wtforms.validators import InputRequired, ValidationError, EqualTo
 
 
 def adminAlreadyExists(form, field):
@@ -35,7 +35,7 @@ class AdminLoginForm(FlaskForm):
 
     password = PasswordField('Password')
 
-    submit = SubmitField('Login')
+    submit = SubmitField('Log In')
 
 
 class AdminCreateForm(FlaskForm):
@@ -44,7 +44,13 @@ class AdminCreateForm(FlaskForm):
         adminAlreadyExists
     ])
 
-    password = PasswordField('Password')
+    password = PasswordField('Password', validators=[
+        EqualTo('passwordConfirm', message='Passwords do not match.')
+    ])
+
+    passwordConfirm = PasswordField('Confirm Password', validators=[
+        EqualTo('password', message='Passwords do not match.')
+    ])
 
     submit = SubmitField('Create Account')
 

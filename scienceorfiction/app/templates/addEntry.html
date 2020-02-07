@@ -1,75 +1,72 @@
-{% extends 'base.html' %}
-
-{% block content %}
-
 {% if form.errors %}
     {{ form.errors }}
 {% endif %}
 
-<div class="container form-card col-md-5">
-    <a href="/logout">Log Out</a>
-    <h1>Update Stats</h1>
-    <br>
-
+<div class="container-fluid form-card">
     <form action="/admin" method="POST" role="form">
         {{ form.csrf_token }}
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
-        <div class="form-field">
-            {{ form.ep_num.label }}
-            {{ form.ep_num(class_ = "form-control") }}
+        <div class="row">
+            <div class="col-4">
+                {{ form.ep_num.label }}
+                {{ form.ep_num(class_ = "form-control", value=episodes[0].ep_num+1) }}  <!-- Default value: next episode number -->
+            </div>
+            <div class="col-4">
+                <label for="date-id">Date</label>
+                <input type="date" name="date" id="date-id" value="{{ today_date }}" class="form-control">  <!-- Default value: today's date -->
+            </div>
+            <div class="col-4">
+                {{ form.num_items.label }}
+                {{ form.num_items(class_ = "form-control") }}
+            </div>
         </div>
-
-        <div class="form-field">
-            <label for="date-id">Date</label>
-            <input type="date" name="date" id="date-id" class="form-control">
-        </div>
-
-        <div class="form-field">
-            {{ form.num_items.label }}
-            {{ form.num_items(class_= "form-control") }}
+        <div class="row">
+            <div class="col-12">
+                <label for="theme-id">Theme</label>
+                <input type="text" name="theme" id="theme-id" class="form-control" list="theme-list">
+                <datalist id="theme-list">
+                    {% for theme in themes %}
+                        <option value="{{ theme }}">
+                    {% endfor %}
+                </datalist>
+            </div>
         </div>
         <br>
-
+        <h4>Participants</h4>
         <div class="form-field">
-            <label for="theme-id">Theme</label>
-            <input type="text" name="theme" id="theme-id" class="form-control" list="theme-list">
-            <datalist id="theme-list">
-                {% for theme in themes %}
-                    <option value="{{ theme }}">
-                {% endfor %}
-            </datalist>
-        </div>
-
-        <br>
-        <div class="form-field">
-            <h4>The Rogues</h4>
             {% for rogue in rogues %}
-                <label for="{{ rogue.name }}">{{ rogue.name }}</label>
-                <select name="{{ rogue.name }}" id="{{ rogue.name }}" class="form-control">
-                    <option value="NULL"></option>
-                    <option value="correct">Correct</option>
-                    <option value="incorrect">Incorrect</option>
-                    <option value="absent">Absent</option>
-                </select>
+                <div class="row">
+                    <div class="col-12">
+                        </div> 
+                        <label for="{{ rogue.name }}">{{ rogue.name }}</label>
+                        <select name="{{ rogue.name }}" id="{{ rogue.name }}" class="form-control">
+                            <option value="NULL"></option>
+                            <option value="correct">Correct</option>
+                            <option value="incorrect">Incorrect</option>
+                            <option value="absent">Absent</option>
+                        </select>
+                    </div>
             {% endfor %}
         </div>
+        <br>
+        <h4>Presenter</h4>
+        <div class="form-field">
+            <div class="row">
+                <div class="col-12">
+                    <select name="is_presenter" id="is_presenter" class="form-control">
+                        {% for rogue in rogues %}
+                            <option value="{{ rogue.name }}">{{ rogue.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
 
         <br>
-        <div class="form-field">
-            <label for="is_presenter">Presenter</label>
-            <select name="is_presenter" id="is_presenter" class="form-control">
-                {% for rogue in rogues %}
-                    <option value="{{ rogue.name }}">{{ rogue.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="form-field">
+        <div class="form-field" style="float: right;">
             {{ form.submit(class_= "btn btn-primary rounded-pill")}}
-        </div>
+        </div> 
 
     </form>
 </div>
-
-{% endblock %}

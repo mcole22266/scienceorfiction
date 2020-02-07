@@ -1,0 +1,17 @@
+<nav class="navbar navbar-expand-md sticky-top navbar-dark bg-primary">
+
+    <div class="navbar-header">
+        <a href="/" class="navbar-brand"><img src="../static/images/sguLogo.png" alt="SGU Logo" width="100" height="50"></a>
+    </div>
+
+    <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav ml-auto">
+            {% if current_user.is_active %}
+                <li class="nav-item">
+                    <a href="/logout" class="nav-link">Log Out</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
+</nav>

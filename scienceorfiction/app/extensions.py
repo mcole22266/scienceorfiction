@@ -183,6 +183,12 @@ def getParticipant(name):
     return participant
 
 
+def getAllParticipants():
+    from .models import Participants
+    participants = Participants.query.all()
+    return participants
+
+
 def addResult(db, episode_id, rogue_id, is_correct, commit=False):
     from .models import Results
     result = Results(episode_id, rogue_id, is_correct)
@@ -234,6 +240,12 @@ def getResults(episode_id=False, participant_id=False,
             Results.participant_id == participant_id).all()
 
 
+def getAllResults():
+    from .models import Results
+    results = Results.query.all()
+    return results
+
+
 def addEpisode(db, ep_num, date, num_items, theme, participant_results,
                commit=False):
     from .models import Episodes
@@ -258,12 +270,19 @@ def getEpisode(ep_num=False, ep_id=False):
     return episode
 
 
-def getAllEpisodes(daterange=False):
+def getAllEpisodes(daterange=False, desc=False):
     from .models import Episodes
-    if daterange:
+    if daterange and not desc:
         startdate, enddate = daterange  # daterange is a tuple
         episodes = Episodes.query.filter(
             Episodes.date.between(startdate, enddate)).all()
+    elif daterange and desc:
+        startdate, enddate = daterange  # daterange is a tuple
+        episodes = Episodes.query.filter(
+            Episodes.date.between(startdate, enddate)).order_by(
+                Episodes.ep_num.desc()).all()
+    elif not daterange and desc:
+        episodes = Episodes.query.order_by(Episodes.ep_num.desc()).all()
     else:
         episodes = Episodes.query.all()
     return episodes

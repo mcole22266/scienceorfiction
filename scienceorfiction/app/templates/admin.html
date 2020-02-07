@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% include 'navbar-admin.html' %}
+<br>
+<br>
+
+<div class="vh-100">
+    <div class="container-fluid">
+        <h1>Welcome {{ current_user.username }}</h1>
+        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addEntryForm">Add entry</button>
+    </div>
+    <br>
+    <br>
+
+    <div class="container col-10">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+            <a class="nav-link active" id="participant-tab" data-toggle="tab" href="#participants" role="tab" aria-controls="participants" aria-selected="true">
+                Participants
+            </a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" id="episode-tab" data-toggle="tab" href="#episodes" role="tab" aria-controls="episodes" aria-selected="false">
+                Episodes</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" id="result-tab" data-toggle="tab" href="#results" role="tab" aria-controls="results" aria-selected="false">
+                Results</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="participants" role="tabpanel" aria-labelledby="participant-tab">{% include 'participant-table.html' %}</div>
+            <div class="tab-pane fade" id="episodes" role="tabpanel" aria-labelledby="episode-tab">{% include 'episode-table.html' %}</div>
+            <div class="tab-pane fade" id="results" role="tabpanel" aria-labelledby="result-tab">{% include 'result-table.html' %}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addEntryForm" tabindex="-1" role="dialog" aria-labelledby="addEntryForm" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title" id="addEntryFormTitle">Add Entry</h1>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            {% include 'addEntry.html' %}
+        </div>
+    </div>
+</div>
+</div>
+
+
+{% endblock %}
+
