@@ -270,12 +270,19 @@ def getEpisode(ep_num=False, ep_id=False):
     return episode
 
 
-def getAllEpisodes(daterange=False):
+def getAllEpisodes(daterange=False, desc=False):
     from .models import Episodes
-    if daterange:
+    if daterange and not desc:
         startdate, enddate = daterange  # daterange is a tuple
         episodes = Episodes.query.filter(
             Episodes.date.between(startdate, enddate)).all()
+    elif daterange and desc:
+        startdate, enddate = daterange  # daterange is a tuple
+        episodes = Episodes.query.filter(
+            Episodes.date.between(startdate, enddate)).order_by(
+                Episodes.ep_num.desc()).all()
+    elif not daterange and desc:
+        episodes = Episodes.query.order_by(Episodes.ep_num.desc()).all()
     else:
         episodes = Episodes.query.all()
     return episodes

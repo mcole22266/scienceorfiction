@@ -153,7 +153,7 @@ def addRoutes(app):
                                guests=getGuests(),
                                themes=getThemes(),
                                participants=getAllParticipants(),
-                               episodes=getAllEpisodes(),
+                               episodes=getAllEpisodes(desc=True),
                                results=getAllResults()
                                )
 
