@@ -183,6 +183,12 @@ def getParticipant(name):
     return participant
 
 
+def getAllParticipants():
+    from .models import Participants
+    participants = Participants.query.all()
+    return participants
+
+
 def addResult(db, episode_id, rogue_id, is_correct, commit=False):
     from .models import Results
     result = Results(episode_id, rogue_id, is_correct)
@@ -232,6 +238,12 @@ def getResults(episode_id=False, participant_id=False,
             Episodes.date.between(daterange[0], daterange[1]),
             Episodes.theme == theme,
             Results.participant_id == participant_id).all()
+
+
+def getAllResults():
+    from .models import Results
+    results = Results.query.all()
+    return results
 
 
 def addEpisode(db, ep_num, date, num_items, theme, participant_results,

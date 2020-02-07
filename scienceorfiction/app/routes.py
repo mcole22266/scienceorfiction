@@ -9,7 +9,9 @@ from flask_wtf import FlaskForm
 
 from .extensions import (addAdmins, addEpisode, check_authentication,
                          email_secret_code, encrypt, generate_secret_code,
-                         getAdmins, getGuests, getRogues, getThemes, getYears)
+                         getAdmins, getAllEpisodes, getAllParticipants,
+                         getAllResults, getGuests, getRogues, getThemes,
+                         getYears)
 from .forms import (AddEntryForm, AdminAuthenticateForm, AdminCreateForm,
                     AdminLoginForm)
 from .graphs import getGraph
@@ -144,12 +146,15 @@ def addRoutes(app):
             return redirect(url_for('admin'))
 
         # GET
-        return render_template('addEntry.html',
+        return render_template('admin.html',
                                title='Admin - Add Entry',
                                form=form,
                                rogues=getRogues(),
                                guests=getGuests(),
-                               themes=getThemes()
+                               themes=getThemes(),
+                               participants=getAllParticipants(),
+                               episodes=getAllEpisodes(),
+                               results=getAllResults()
                                )
 
     @app.route('/admin/login', methods=['GET', 'POST'])
