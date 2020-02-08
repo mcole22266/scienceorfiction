@@ -87,7 +87,7 @@ class Participants(db.Model):
     def __init__(self, name, is_rogue=False,
                  rogue_start_date=None,
                  rogue_end_date=None):
-        self.name = name
+        self.name = name.title()
         self.is_rogue = is_rogue
         self.rogue_start_date = rogue_start_date
         self.rogue_end_date = rogue_end_date

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, SubmitField
+from wtforms import PasswordField, StringField, SubmitField, BooleanField
 from wtforms.validators import InputRequired, ValidationError, EqualTo
 
 
@@ -25,6 +25,8 @@ class AddEntryForm(FlaskForm):
 class AddParticipantForm(FlaskForm):
 
     name = StringField('Name')
+
+    is_rogue = BooleanField('Rogue')
 
     submit = SubmitField('Add Participant')
 

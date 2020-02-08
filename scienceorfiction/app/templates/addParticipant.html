@@ -1,0 +1,56 @@
+{% if participantForm.errors %}
+    {{ participantForm.errors }}
+{% endif %}
+
+<div class="container-fluid form-card">
+    <form action="/admin" method="POST" role="form">
+        {{ participantForm.csrf_token }}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+        <div class="form-group">
+            {{ participantForm.name.label }}
+            {{ participantForm.name(class_ = "form-control") }}
+        </div>
+
+        <div class="form-check">
+            {{ participantForm.is_rogue(class_ = "form-check-input", onchange="showRogueDates()") }}
+            {{ participantForm.is_rogue.label(class_ = "form-check-label") }}
+        </div>
+
+        <br>
+        <div class="form-group row">
+            <div class="col-6">
+                <label for="start-date-id" id="start-date-label-id" hidden="true">Rogue Start Date</label>
+                <input type="date" name="rogue_start_date" id="start-date-id" class="form-control" hidden="true">
+            </div>
+
+            <div class="col-6">
+                <label for="end-date-id" id="end-date-label-id" hidden="true">Rogue End Date</label>
+                <input type="date" name="rogue_end_date" id="end-date-id" class="form-control" hidden="true">
+            </div>
+        </div>
+
+        <br>
+        <div class="form-field" style="float: right;">
+            {{ participantForm.submit(class_ = "btn btn-primary rounded-pill", id = ("submit")) }}
+        </div>
+    </form>
+</div>
+
+
+<script>
+    function showRogueDates() {
+        var checked = document.getElementById('is_rogue').checked
+        if (checked) {
+            document.getElementById('start-date-id').hidden = false
+            document.getElementById('start-date-label-id').hidden = false
+            document.getElementById('end-date-id').hidden = false
+            document.getElementById('end-date-label-id').hidden = false
+        } else {
+            document.getElementById('start-date-id').hidden = true
+            document.getElementById('start-date-label-id').hidden = true
+            document.getElementById('end-date-id').hidden = true
+            document.getElementById('end-date-label-id').hidden = true
+        }
+    }
+</script>
