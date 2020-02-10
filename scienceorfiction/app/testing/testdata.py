@@ -16,24 +16,34 @@ def getAdmins():
     return adminList
 
 
+def getRoguesRandomized():
+    rogues = getRogues()
+    participant_accuracy_choices = [.9, .8, .5, .2, .1]
+    shuffle(participant_accuracy_choices)
+    roguesRandomized = []
+    for rogue in rogues:
+        roguesRandomized.append((rogue, participant_accuracy_choices.pop()))
+    return roguesRandomized
+
+
 def getEpisodes():
     episodeList = []
-    ep_date = date(2000, 1, 7)
+    ep_date = date(2012, 1, 7)
     ep_num = 600
     num_items_choices = [3, 4]
-    participant_accuracy_choices = [.9, .7, .5, .4, .2]
     themes_choices = [None, 'Star Wars', 'Star Trek', 'Numbers', 'Vaccines',
                       'Computer Science', 'Biology', 'Chemistry',
                       'Diseases', 'Spacefaring', 'Pseudosciences',
                       'Brains', 'Aquatic Animals', 'Medicine', 'Steel']
 
     # assign accuracies to rogues
-    rogues = []
-    for rogue in getRogues():
-        shuffle(participant_accuracy_choices)
-        rogues.append((rogue, participant_accuracy_choices.pop()))
+    rogues = getRoguesRandomized()
 
+    previousYear = ep_date.year
     while ep_date < date.today():
+        if ep_date.year != previousYear:
+            rogues = getRoguesRandomized()
+            previousYear = ep_date.year
         episode = {}
         episode['ep_num'] = ep_num
         episode['ep_date'] = ep_date
