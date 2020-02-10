@@ -18,7 +18,7 @@ def getAdmins():
 
 def getEpisodes():
     episodeList = []
-    ep_date = date(2012, 1, 7)
+    ep_date = date(2000, 1, 7)
     ep_num = 600
     num_items_choices = [3, 4]
     participant_accuracy_choices = [.9, .7, .5, .4, .2]
