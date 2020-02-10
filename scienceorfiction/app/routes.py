@@ -169,7 +169,7 @@ def addRoutes(app):
                                commit=True)
             else:
                 addParticipant(db, name, commit=True)
-                
+
             return redirect(url_for('admin'))
 
         # GET
@@ -177,7 +177,7 @@ def addRoutes(app):
                                title='Admin - Add Entry',
                                form=form,
                                participantForm=participantForm,
-                               rogues=getRogues(),
+                               rogues=getRogues(current=date.today()),
                                guests=getGuests(),
                                themes=getThemes(),
                                participants=getAllParticipants(),

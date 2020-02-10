@@ -97,11 +97,22 @@ def init_app(app):
         app.logger.info('bokeh folder found')
 
 
-def getRogues(onlyNames=False):
+def getRogues(onlyNames=False, current=False):
+    '''current arg is passed a date'''
     from .models import Participants
     rogues = Participants.query.filter_by(
         is_rogue=True).order_by(
             Participants.name).all()
+
+    if current:
+        for rogue in rogues[:]:
+            if not rogue.rogue_end_date:
+                end_date = date.today()
+            else:
+                end_date = rogue.rogue_end_date
+            start_date = rogue.rogue_start_date
+            if not start_date < current <= end_date:
+                rogues.remove(rogue)
 
     if onlyNames:
         for i, rogue in enumerate(rogues):
