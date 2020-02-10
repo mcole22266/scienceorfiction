@@ -7,6 +7,8 @@
         {{ form.csrf_token }}
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
+        <h3>Episode</h3>
+        <br>
         <div class="row">
             <div class="col-4">
                 {{ form.ep_num.label }}
@@ -33,34 +35,12 @@
             </div>
         </div>
         <br>
-        <h4>Participants</h4>
-        <div class="form-field">
-            {% for rogue in rogues %}
-                <div class="row">
-                    <div class="col-12">
-                        </div> 
-                        <label for="{{ rogue.name }}">{{ rogue.name }}</label>
-                        <select name="{{ rogue.name }}" id="{{ rogue.name }}" class="form-control">
-                            <option value="NULL"></option>
-                            <option value="correct">Correct</option>
-                            <option value="incorrect">Incorrect</option>
-                            <option value="absent">Absent</option>
-                        </select>
-                    </div>
-            {% endfor %}
-        </div>
+        <hr>
+        <h3>Participants</h3>
+        <div class="form-field" id="participants">
+        {% include 'participantsForm.html' %}
         <br>
-        <h4>Presenter</h4>
-        <div class="form-field">
-            <div class="row">
-                <div class="col-12">
-                    <select name="is_presenter" id="is_presenter" class="form-control">
-                        {% for rogue in rogues %}
-                            <option value="{{ rogue.name }}">{{ rogue.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
+        <input type="button" value="Add a guest" onClick="addGuest();" class="btn btn-primary rounded-pill">
         </div>
 
         <br>

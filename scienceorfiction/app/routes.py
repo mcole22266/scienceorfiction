@@ -133,15 +133,13 @@ def addRoutes(app):
             ep_date = request.form['date']
             num_items = request.form['num_items']
             theme = request.form['theme']
-            is_presenter = request.form['is_presenter']
             participant_results = []
             for key in request.form.keys():
-                if key in getRogues(onlyNames=True):
-                    if key == is_presenter:
-                        correct = 'presenter'
-                    else:
-                        correct = request.form[key]
-                    participant_results.append((key, correct))
+                if 'radio' in key:
+                    # remove 'radio-' from key by finding hyphen
+                    participant = key[key.find('-')+1:]
+                    result = request.form[key]
+                    participant_results.append((participant, result))
             addEpisode(db, ep_num, ep_date, num_items, theme,
                        participant_results, commit=True)
             return redirect(url_for('admin'))

@@ -1,0 +1,28 @@
+{% for rogue in rogues %}
+<br>
+    <div class="row container-fluid">
+        <label for="{{ rogue.name }}">{{ rogue.name }}:</label>
+    </div>
+    <div class="row container-fluid">
+        <div class="form-check form-check-inline">
+            <input type="radio" name="radio-{{ rogue.name }}" id="correct-{{ rogue.name }}" value="correct" class="form-check-input">
+            <label for="correct-{{ rogue.name }}" class="form-check-label">Correct</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input type="radio" name="radio-{{ rogue.name }}" id="incorrect-{{ rogue.name }}" value="incorrect" class="form-check-input">
+            <label for="incorrect-{{ rogue.name }}" class="form-check-label">Incorrect</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input type="radio" name="radio-{{ rogue.name }}" id="absent-{{ rogue.name }}" value="absent" class="form-check-input">
+            <label for="absent-{{ rogue.name }}" class="form-check-label">Absent</label>
+        </div>
+        <div class="form-check">
+            {% if rogue.name == "Steve Novella" %}
+                <input type="radio" name="radio-{{ rogue.name }}" id="presenter-{{ rogue.name }}" value="presenter" class="form-check-input" checked>
+            {% else %}
+                <input type="radio" name="radio-{{ rogue.name }}" id="presenter-{{ rogue.name }}" value="presenter" class="form-check-input">
+            {% endif %}
+            <label for="presenter-{{ rogue.name }}" class="form-check-label">Presenter</label>
+        </div>
+    </div>
+{% endfor %}
