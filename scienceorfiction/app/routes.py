@@ -135,10 +135,22 @@ def addRoutes(app):
             theme = request.form['theme']
             participant_results = []
             for key in request.form.keys():
+                app.logger.info(key)
                 if 'radio' in key:
-                    # remove 'radio-' from key by finding hyphen
-                    participant = key[key.find('-')+1:]
-                    result = request.form[key]
+                    if 'guest' not in key:
+                        # remove 'radio-' from key by finding hyphen
+                        participant = key[key.find('-')+1:]
+                        result = request.form[key]
+                    else:
+                        # remove '-radio' from key by finding hyphen
+                        guest = key[:key.find('-')]
+                        app.logger.info('guest: ' + guest)
+                        participant = request.form[guest]
+                        app.logger.info('participant: ' + participant)
+                        result = request.form[guest + '-radio']
+                        app.logger.info('result: ' + result)
+                        # TODO: Check to see if guest exists in db already
+                        addParticipant(db, participant, commit=True)
                     participant_results.append((participant, result))
             addEpisode(db, ep_num, ep_date, num_items, theme,
                        participant_results, commit=True)
