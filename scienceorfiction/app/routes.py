@@ -187,7 +187,7 @@ def addRoutes(app):
                                title='Admin - Add Entry',
                                form=form,
                                participantForm=participantForm,
-                               rogues=getRogues(current=date.today()),
+                               rogues=getRogues(current_date=date.today()),
                                guests=getGuests(),
                                themes=getThemes(),
                                participants=getAllParticipants(),

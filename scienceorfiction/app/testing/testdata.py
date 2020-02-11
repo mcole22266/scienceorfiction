@@ -19,10 +19,16 @@ def getAdmins():
 def getRoguesRandomized():
     rogues = getRogues()
     participant_accuracy_choices = [.9, .8, .5, .2, .1]
+    start_dates = [date(2000, 1, 1), date(2000, 1, 1), date(2005, 5, 3),
+                   date(2012, 7, 19), date(2004, 4, 28)]
+    end_dates = [None, None, None, date(2019, 5, 5), date(2015, 7, 12)]
     shuffle(participant_accuracy_choices)
+    shuffle(start_dates)
+    shuffle(end_dates)
     roguesRandomized = []
     for rogue in rogues:
-        roguesRandomized.append((rogue, participant_accuracy_choices.pop()))
+        roguesRandomized.append((rogue, participant_accuracy_choices.pop(),
+                                 start_dates.pop(), end_dates.pop()))
     return roguesRandomized
 
 
