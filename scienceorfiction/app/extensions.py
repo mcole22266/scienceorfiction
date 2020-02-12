@@ -122,11 +122,8 @@ def getRogues(onlyNames=False, current_date=False, daterange=False):
                 end_date = date.today()
             else:
                 end_date = rogue.rogue_end_date
-            latest_start = max(rogue.rogue_start_date, daterange[0])
-            earliest_end = max(end_date, daterange[1])
-            delta = (earliest_end - latest_start).days + 1
-            overlap = max(0, delta)
-            if overlap == 0:
+            start_date = rogue.rogue_start_date
+            if start_date >= daterange[1] or end_date <= daterange[0]:
                 rogues.remove(rogue)
 
     if onlyNames:
