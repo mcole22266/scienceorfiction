@@ -32,7 +32,7 @@ def getRoguesRandomized():
     return roguesRandomized
 
 
-def getEpisodes():
+def getEpisodes(rogues):
     episodeList = []
     ep_date = date(2012, 1, 7)
     ep_num = 600
@@ -42,13 +42,9 @@ def getEpisodes():
                       'Diseases', 'Spacefaring', 'Pseudosciences',
                       'Brains', 'Aquatic Animals', 'Medicine', 'Steel']
 
-    # assign accuracies to rogues
-    rogues = getRoguesRandomized()
-
     previousYear = ep_date.year
     while ep_date < date.today():
         if ep_date.year != previousYear:
-            rogues = getRoguesRandomized()
             previousYear = ep_date.year
         episode = {}
         episode['ep_num'] = ep_num
@@ -65,22 +61,24 @@ def getEpisodes():
         # select correct or incorrect
         episode['rogues'] = []
         for rogue in rogues:
-            if rogue[0] != presenter:
-                # rogue is participant
-                if random() >= .1:
-                    # rogue is present
-                    if random() <= rogue[1]:
-                        # rogue is correct
-                        episode['rogues'].append((rogue[0], 'correct'))
+            if not rogue[-1] or not rogue[-1] < episode['ep_date']:
+                # rogue is no longer a participant
+                if rogue[0] != presenter:
+                    # rogue is participant
+                    if random() >= .1:
+                        # rogue is present
+                        if random() <= rogue[1]:
+                            # rogue is correct
+                            episode['rogues'].append((rogue[0], 'correct'))
+                        else:
+                            # rogue is incorrect
+                            episode['rogues'].append((rogue[0], 'incorrect'))
                     else:
-                        # rogue is incorrect
-                        episode['rogues'].append((rogue[0], 'incorrect'))
+                        # rogue is absent
+                        episode['rogues'].append((rogue[0], 'absent'))
                 else:
-                    # rogue is absent
-                    episode['rogues'].append((rogue[0], 'absent'))
-            else:
-                # rogue is presenter
-                episode['rogues'].append((rogue[0], 'presenter'))
+                    # rogue is presenter
+                    episode['rogues'].append((rogue[0], 'presenter'))
 
         # append episode and increment values
         episodeList.append(episode)

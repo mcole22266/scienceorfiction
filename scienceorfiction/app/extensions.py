@@ -62,17 +62,19 @@ def init_db(db):
     Returns:
         None
     '''
-    for rogue in testdata.getRogues():
-        present = getParticipant(rogue)
-        start_date = date(2014, 1, 1)
+    rogues = testdata.getRoguesRandomized()
+    for rogue in rogues:
+        roguename, accuracy, start, end = rogue
+        present = getParticipant(roguename)
         if not present:
-            addParticipant(db, rogue, is_rogue=True,
-                           rogue_start_date=start_date)
+            addParticipant(db, roguename, is_rogue=True,
+                           rogue_start_date=start,
+                           rogue_end_date=end)
     for admin in testdata.getAdmins():
         present = getAdmins(admin[0])
         if not present:
             addAdmins(db, admin[0], admin[1])
-    for episode in testdata.getEpisodes():
+    for episode in testdata.getEpisodes(rogues):
         present = getEpisode(episode['ep_num'])
         if not present:
             addEpisode(db, episode['ep_num'], episode['ep_date'],
