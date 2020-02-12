@@ -27,8 +27,8 @@ def getRoguesRandomized():
     shuffle(end_dates)
     roguesRandomized = []
     for rogue in rogues:
-        roguesRandomized.append((rogue, participant_accuracy_choices.pop(),
-                                 start_dates.pop(), end_dates.pop()))
+        roguesRandomized.append([rogue, participant_accuracy_choices.pop(),
+                                 start_dates.pop(), end_dates.pop()])
     return roguesRandomized
 
 
@@ -46,6 +46,10 @@ def getEpisodes(rogues):
     while ep_date < date.today():
         if ep_date.year != previousYear:
             previousYear = ep_date.year
+            accuracies = [rogue[1] for rogue in rogues]
+            shuffle(accuracies)
+            for rogue in rogues:
+                rogue[1] = accuracies.pop()
         episode = {}
         episode['ep_num'] = ep_num
         episode['ep_date'] = ep_date
