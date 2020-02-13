@@ -1,4 +1,4 @@
-<table class="table table-sm table-bordered table-hover">
+<table class="table table-sm table-bordered table-hover" data-toggle="table" data-pagination="true">
     <caption>Result Info</caption>
     <thead class="thead-dark">
         <tr>
@@ -10,16 +10,16 @@
             <th>Is Presenter</th>
         </tr>
     </thead>
-    {% for result in results%}
-        <tbody>
-            <tr>
-                <th scope="row">{{ result.id }}</th>
-                <td>{{ result.episode_id }}</td>
-                <td>{{ result.participant_id }}</td>
-                <td>{{ result.is_correct }}</td>
-                <td>{{ result.is_absent }}</td>
-                <td>{{ result.is_presenter }}</td>
-            </tr>
-        </tbody>
-    {% endfor %}
+    <tbody>
+        {% for result in results%}
+                <tr>
+                    <th scope="row">{{ result.id }}</th>
+                    <td>{{ result.episode_id }}</td>
+                    <td>{{ result.participant_id }}</td>
+                    <td>{{ result.is_correct }}</td>
+                    <td>{{ result.is_absent }}</td>
+                    <td>{{ result.is_presenter }}</td>
+                </tr>
+        {% endfor %}
+    </tbody>
 </table>

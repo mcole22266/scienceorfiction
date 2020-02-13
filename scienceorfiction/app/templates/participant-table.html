@@ -1,4 +1,4 @@
-<table class="table table-sm table-bordered table-hover">
+<table class="table table-sm table-bordered table-hover" data-toggle="table" data-pagination="true">
     <caption>Particpant Info</caption>
     <thead class="thead-dark">
         <tr>
@@ -6,16 +6,20 @@
             <th>Name</th>
             <th>Date Created</th>
             <th>Is Rogue</th>
+            <th>Rogue Start Date</th>
+            <th>Rogue End Date</th>
         </tr>
     </thead>
-    {% for participant in participants %}
-        <tbody>
-            <tr>
-                <th scope="row">{{ participant.id }}</th>
-                <td>{{ participant.name }}</td>
-                <td>{{ participant.date_created }}</td>
-                <td>{{ participant.is_rogue }}</td>
-            </tr>
-        </tbody>
-    {% endfor %}
+    <tbody>
+        {% for participant in participants %}
+                <tr>
+                    <th scope="row">{{ participant.id }}</th>
+                    <td>{{ participant.name }}</td>
+                    <td>{{ participant.date_created }}</td>
+                    <td>{{ participant.is_rogue }}</td>
+                    <td>{{ participant.rogue_start_date}}</td>
+                    <td>{{ participant.rogue_end_date}}</td>
+                </tr>
+        {% endfor %}
+    </tbody>
 </table>

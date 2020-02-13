@@ -16,24 +16,40 @@ def getAdmins():
     return adminList
 
 
-def getEpisodes():
+def getRoguesRandomized():
+    rogues = getRogues()
+    participant_accuracy_choices = [.9, .8, .5, .2, .1]
+    start_dates = [date(2000, 1, 1), date(2000, 1, 1), date(2005, 5, 3),
+                   date(2012, 7, 19), date(2004, 4, 28)]
+    end_dates = [None, None, None, date(2019, 5, 5), date(2015, 7, 12)]
+    shuffle(participant_accuracy_choices)
+    shuffle(start_dates)
+    shuffle(end_dates)
+    roguesRandomized = []
+    for rogue in rogues:
+        roguesRandomized.append([rogue, participant_accuracy_choices.pop(),
+                                 start_dates.pop(), end_dates.pop()])
+    return roguesRandomized
+
+
+def getEpisodes(rogues):
     episodeList = []
     ep_date = date(2012, 1, 7)
     ep_num = 600
     num_items_choices = [3, 4]
-    participant_accuracy_choices = [.9, .7, .5, .4, .2]
     themes_choices = [None, 'Star Wars', 'Star Trek', 'Numbers', 'Vaccines',
                       'Computer Science', 'Biology', 'Chemistry',
                       'Diseases', 'Spacefaring', 'Pseudosciences',
                       'Brains', 'Aquatic Animals', 'Medicine', 'Steel']
 
-    # assign accuracies to rogues
-    rogues = []
-    for rogue in getRogues():
-        shuffle(participant_accuracy_choices)
-        rogues.append((rogue, participant_accuracy_choices.pop()))
-
+    previousYear = ep_date.year
     while ep_date < date.today():
+        if ep_date.year != previousYear:
+            previousYear = ep_date.year
+            accuracies = [rogue[1] for rogue in rogues]
+            shuffle(accuracies)
+            for rogue in rogues:
+                rogue[1] = accuracies.pop()
         episode = {}
         episode['ep_num'] = ep_num
         episode['ep_date'] = ep_date
@@ -49,22 +65,24 @@ def getEpisodes():
         # select correct or incorrect
         episode['rogues'] = []
         for rogue in rogues:
-            if rogue[0] != presenter:
-                # rogue is participant
-                if random() >= .1:
-                    # rogue is present
-                    if random() <= rogue[1]:
-                        # rogue is correct
-                        episode['rogues'].append((rogue[0], 'correct'))
+            if not rogue[-1] or not rogue[-1] < episode['ep_date']:
+                # rogue is no longer a participant
+                if rogue[0] != presenter:
+                    # rogue is participant
+                    if random() >= .1:
+                        # rogue is present
+                        if random() <= rogue[1]:
+                            # rogue is correct
+                            episode['rogues'].append((rogue[0], 'correct'))
+                        else:
+                            # rogue is incorrect
+                            episode['rogues'].append((rogue[0], 'incorrect'))
                     else:
-                        # rogue is incorrect
-                        episode['rogues'].append((rogue[0], 'incorrect'))
+                        # rogue is absent
+                        episode['rogues'].append((rogue[0], 'absent'))
                 else:
-                    # rogue is absent
-                    episode['rogues'].append((rogue[0], 'absent'))
-            else:
-                # rogue is presenter
-                episode['rogues'].append((rogue[0], 'presenter'))
+                    # rogue is presenter
+                    episode['rogues'].append((rogue[0], 'presenter'))
 
         # append episode and increment values
         episodeList.append(episode)

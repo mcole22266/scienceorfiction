@@ -49,7 +49,7 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
 
     x = []
     y = []
-    for rogue in getRogues(onlyNames=True):
+    for rogue in getRogues(onlyNames=True, daterange=daterange):
         accuracy = getRogueOverallAccuracy(rogue, daterange=daterange,
                                            theme=theme)
         accuracy = accuracy*100
@@ -62,6 +62,7 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
     p = figure(title="Rogue Accuracies",
                plot_width=1250,
                x_range=x,
+               y_range=(0, 100),
                y_axis_label='Percent Correct',
                toolbar_location='above',
                toolbar_sticky=False,
@@ -101,7 +102,7 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
                active_inspect=hovertool,
                active_scroll="wheel_zoom")
 
-    for rogue in getRogues(onlyNames=True):
+    for rogue in getRogues(onlyNames=True, daterange=daterange):
         accuracies = getRogueAccuracy(rogue, theme=theme, daterange=daterange)
         x = []
         y = []

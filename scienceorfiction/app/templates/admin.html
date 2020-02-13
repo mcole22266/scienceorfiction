@@ -9,7 +9,8 @@
 <div class="vh-100">
     <div class="container-fluid">
         <h1>Welcome {{ current_user.username }}</h1>
-        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addEntryForm">Add entry</button>
+        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addEntryForm">Add Entry</button>
+        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addParticipantForm">Add Participant</button>
     </div>
     <br>
     <br>
@@ -38,23 +39,39 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Add Entry Modal -->
 <div class="modal fade" id="addEntryForm" tabindex="-1" role="dialog" aria-labelledby="addEntryForm" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h1 class="modal-title" id="addEntryFormTitle">Add Entry</h1>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            {% include 'addEntry.html' %}
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title" id="addEntryFormTitle">Add Entry</h1>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% include 'addEntry.html' %}
+            </div>
         </div>
     </div>
 </div>
-</div>
 
+<!-- Add Participant Modal -->
+<div class="modal fade" id="addParticipantForm" tabindex="-1" role="dialog" aria-labelledby="addParticipantForm" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title" id="addParticipantFormTitle">Add Participant</h1>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% include 'addParticipant.html' %}
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
 

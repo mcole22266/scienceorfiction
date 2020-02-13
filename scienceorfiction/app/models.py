@@ -74,13 +74,23 @@ class Participants(db.Model):
                          nullable=False,
                          default=False)
 
+    rogue_start_date = db.Column(db.Date,
+                                 nullable=True)
+
+    rogue_end_date = db.Column(db.Date,
+                               nullable=True)
+
     results = db.relationship('Results',
                               backref='participant',
                               lazy='dynamic')
 
-    def __init__(self, name, is_rogue=False):
-        self.name = name
+    def __init__(self, name, is_rogue=False,
+                 rogue_start_date=None,
+                 rogue_end_date=None):
+        self.name = name.title()
         self.is_rogue = is_rogue
+        self.rogue_start_date = rogue_start_date
+        self.rogue_end_date = rogue_end_date
 
     def __repr__(self):
         if self.is_rogue:

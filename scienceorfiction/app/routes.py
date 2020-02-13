@@ -1,6 +1,6 @@
 # Contains all routing information (and lots of logic for now)
 
-from datetime import date
+from datetime import date, datetime
 from threading import Thread
 
 from flask import flash, redirect, render_template, request, url_for
@@ -11,9 +11,9 @@ from .extensions import (addAdmins, addEpisode, check_authentication,
                          email_secret_code, encrypt, generate_secret_code,
                          getAdmins, getAllEpisodes, getAllParticipants,
                          getAllResults, getGuests, getRogues, getThemes,
-                         getYears)
+                         getYears, addParticipant)
 from .forms import (AddEntryForm, AdminAuthenticateForm, AdminCreateForm,
-                    AdminLoginForm)
+                    AdminLoginForm, AddParticipantForm)
 from .graphs import getGraph
 from .models import db
 from .stats import getRogueAttendance, getRogueOverallAccuracy, getSweeps
@@ -125,6 +125,7 @@ def addRoutes(app):
     @login_required
     def admin():
         form = AddEntryForm()
+        participantForm = AddParticipantForm()
 
         # POST
         if form.validate_on_submit():
@@ -132,24 +133,61 @@ def addRoutes(app):
             ep_date = request.form['date']
             num_items = request.form['num_items']
             theme = request.form['theme']
-            is_presenter = request.form['is_presenter']
             participant_results = []
             for key in request.form.keys():
-                if key in getRogues(onlyNames=True):
-                    if key == is_presenter:
-                        correct = 'presenter'
+                app.logger.info(key)
+                if 'radio' in key:
+                    if 'guest' not in key:
+                        # remove 'radio-' from key by finding hyphen
+                        participant = key[key.find('-')+1:]
+                        result = request.form[key]
                     else:
-                        correct = request.form[key]
-                    participant_results.append((key, correct))
+                        # remove '-radio' from key by finding hyphen
+                        guest = key[:key.find('-')]
+                        app.logger.info('guest: ' + guest)
+                        participant = request.form[guest]
+                        app.logger.info('participant: ' + participant)
+                        result = request.form[guest + '-radio']
+                        app.logger.info('result: ' + result)
+                        # TODO: Check to see if guest exists in db already
+                        addParticipant(db, participant, commit=True)
+                    participant_results.append((participant, result))
             addEpisode(db, ep_num, ep_date, num_items, theme,
                        participant_results, commit=True)
+            return redirect(url_for('admin'))
+
+        if participantForm.validate_on_submit():
+            name = request.form['name']
+            try:
+                is_rogue = request.form['is_rogue']
+            except Exception:
+                is_rogue = False
+            if is_rogue:
+                start_date = request.form['rogue_start_date']
+                if start_date != '':
+                    start_date = datetime.strptime(start_date, '%Y-%m-%d')
+                else:
+                    start_date = None
+                end_date = request.form['rogue_end_date']
+                if end_date != '':
+                    end_date = datetime.strptime(end_date, '%Y-%m-%d')
+                else:
+                    end_date = None
+                addParticipant(db, name, is_rogue=True,
+                               rogue_start_date=start_date,
+                               rogue_end_date=end_date,
+                               commit=True)
+            else:
+                addParticipant(db, name, commit=True)
+
             return redirect(url_for('admin'))
 
         # GET
         return render_template('admin.html',
                                title='Admin - Add Entry',
                                form=form,
-                               rogues=getRogues(),
+                               participantForm=participantForm,
+                               rogues=getRogues(current_date=date.today()),
                                guests=getGuests(),
                                themes=getThemes(),
                                participants=getAllParticipants(),

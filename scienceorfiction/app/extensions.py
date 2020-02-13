@@ -3,6 +3,7 @@
 from hashlib import sha256
 from os import environ, path, makedirs
 from time import sleep
+from datetime import date, datetime
 
 from flask_login import LoginManager
 
@@ -61,15 +62,19 @@ def init_db(db):
     Returns:
         None
     '''
-    for rogue in testdata.getRogues():
-        present = getParticipant(rogue)
+    rogues = testdata.getRoguesRandomized()
+    for rogue in rogues:
+        roguename, accuracy, start, end = rogue
+        present = getParticipant(roguename)
         if not present:
-            addParticipant(db, rogue, is_rogue=True)
+            addParticipant(db, roguename, is_rogue=True,
+                           rogue_start_date=start,
+                           rogue_end_date=end)
     for admin in testdata.getAdmins():
         present = getAdmins(admin[0])
         if not present:
             addAdmins(db, admin[0], admin[1])
-    for episode in testdata.getEpisodes():
+    for episode in testdata.getEpisodes(rogues):
         present = getEpisode(episode['ep_num'])
         if not present:
             addEpisode(db, episode['ep_num'], episode['ep_date'],
@@ -94,11 +99,32 @@ def init_app(app):
         app.logger.info('bokeh folder found')
 
 
-def getRogues(onlyNames=False):
+def getRogues(onlyNames=False, current_date=False, daterange=False):
+    '''current arg is passed a date'''
     from .models import Participants
     rogues = Participants.query.filter_by(
         is_rogue=True).order_by(
             Participants.name).all()
+
+    if current_date:
+        for rogue in rogues[:]:
+            if not rogue.rogue_end_date:
+                end_date = date.today()
+            else:
+                end_date = rogue.rogue_end_date
+            start_date = rogue.rogue_start_date
+            if not start_date < current_date <= end_date:
+                rogues.remove(rogue)
+
+    if daterange:
+        for rogue in rogues[:]:
+            if not rogue.rogue_end_date:
+                end_date = date.today()
+            else:
+                end_date = rogue.rogue_end_date
+            start_date = rogue.rogue_start_date
+            if start_date >= daterange[1] or end_date <= daterange[0]:
+                rogues.remove(rogue)
 
     if onlyNames:
         for i, rogue in enumerate(rogues):
@@ -168,9 +194,23 @@ The Bot'''
     yag.send(GMAIL_USERNAME, subject, contents)
 
 
-def addParticipant(db, name, is_rogue=False, commit=False):
+def addParticipant(db, name, is_rogue=False,
+                   rogue_start_date=None, rogue_end_date=None,
+                   commit=False):
     from .models import Participants
-    participant = Participants(name, is_rogue)
+    # start and end dates need to be converted from date to datetime object
+    # before being passed into the db
+    if rogue_start_date:
+        rogue_start_date = datetime(rogue_start_date.year,
+                                    rogue_start_date.month,
+                                    rogue_start_date.day)
+    if rogue_end_date:
+        rogue_end_date = datetime(rogue_end_date.year,
+                                  rogue_end_date.month,
+                                  rogue_end_date.day)
+    participant = Participants(name, is_rogue,
+                               rogue_start_date=rogue_start_date,
+                               rogue_end_date=rogue_end_date)
     db.session.add(participant)
     if commit:
         db.session.commit()

@@ -3,10 +3,11 @@
 {% endif %}
 
 <div class="container-fluid form-card">
-    <form action="/admin" method="POST" role="form">
+    <form action="/admin" method="POST" role="form" id="addEntryForm" name="addEntryForm">
         {{ form.csrf_token }}
-        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
 
+        <h3>Episode</h3>
+        <br>
         <div class="row">
             <div class="col-4">
                 {{ form.ep_num.label }}
@@ -33,35 +34,13 @@
             </div>
         </div>
         <br>
-        <h4>Participants</h4>
-        <div class="form-field">
-            {% for rogue in rogues %}
-                <div class="row">
-                    <div class="col-12">
-                        </div> 
-                        <label for="{{ rogue.name }}">{{ rogue.name }}</label>
-                        <select name="{{ rogue.name }}" id="{{ rogue.name }}" class="form-control">
-                            <option value="NULL"></option>
-                            <option value="correct">Correct</option>
-                            <option value="incorrect">Incorrect</option>
-                            <option value="absent">Absent</option>
-                        </select>
-                    </div>
-            {% endfor %}
-        </div>
+        <hr>
+        <h3>Participants</h3>
+        <div class="form-field" id="modal-participants">
+            {% include 'participantsForm.html' %}
         <br>
-        <h4>Presenter</h4>
-        <div class="form-field">
-            <div class="row">
-                <div class="col-12">
-                    <select name="is_presenter" id="is_presenter" class="form-control">
-                        {% for rogue in rogues %}
-                            <option value="{{ rogue.name }}">{{ rogue.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
         </div>
+        <input type="button" value="Add a guest" onClick="addGuest();" class="btn btn-primary rounded-pill">
 
         <br>
         <div class="form-field" style="float: right;">
@@ -70,3 +49,122 @@
 
     </form>
 </div>
+
+<script>
+    var counter = 0;
+
+    function addGuest() {
+        counter += 1;
+        var form = document.getElementById('modal-participants');
+        var mainDiv = document.createElement('div');
+        mainDiv.className = 'row container-fluid';
+        mainDiv.id = 'guest-div' + counter;
+
+        var inputDiv = document.createElement('div');
+        inputDiv.className = 'form-group row';
+        var nameInputDiv = document.createElement('div');
+        nameInputDiv.className = 'col-8';
+        var nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.name = 'guest' + counter;
+        nameInput.id = 'guest-id' + counter;
+        nameInput.placeholder = 'Name';
+        nameInput.className = 'form-control';
+        nameInputDiv.appendChild(nameInput);
+        inputDiv.appendChild(nameInputDiv);
+        var removeInputDiv = document.createElement('div');
+        removeInputDiv.className = 'col-4';
+        var removeInput = document.createElement('button');
+        removeInput.id = 'remove-guest' + counter;
+        removeInput.onclick = function(e) {
+            removeGuest(e)
+        };
+        removeInput.type = 'button';
+        removeInput.innerHTML = "Delete";
+        removeInput.className = 'btn btn-danger rounded-pill';
+        removeInputDiv.appendChild(removeInput);
+        inputDiv.appendChild(removeInputDiv);
+        mainDiv.appendChild(inputDiv);
+
+        var radioDiv = document.createElement('div');
+        radioDiv.className = 'row container-fluid';
+
+        var correctDiv = document.createElement('div');
+        correctDiv.className = 'form-check form-check-inline';
+        var correctInput = document.createElement('input');
+        correctInput.type = 'radio';
+        correctInput.name = 'guest' + counter + '-radio';
+        correctInput.id = 'guest' + counter + '-correct';
+        correctInput.value = 'correct';
+        correctInput.className = 'form-check-input';
+        correctDiv.appendChild(correctInput);
+        var correctLabel = document.createElement('label');
+        correctLabel.htmlFor = 'guest' + counter + '-correct';
+        correctLabel.className = 'form-check-label';
+        correctLabel.textContent = 'Correct';
+        correctDiv.appendChild(correctLabel);
+        radioDiv.appendChild(correctDiv);
+
+        var incorrectDiv = document.createElement('div');
+        incorrectDiv.className = 'form-check form-check-inline';
+        var incorrectInput = document.createElement('input');
+        incorrectInput.type = 'radio';
+        incorrectInput.name = 'guest' + counter + '-radio';
+        incorrectInput.id = 'guest' + counter + '-incorrect';
+        incorrectInput.value = 'incorrect';
+        incorrectInput.className = 'form-check-input';
+        incorrectDiv.appendChild(incorrectInput);
+        var incorrectLabel = document.createElement('label');
+        incorrectLabel.htmlFor = 'guest' + counter + '-incorrect';
+        incorrectLabel.className = 'form-check-label';
+        incorrectLabel.textContent = 'Incorrect';
+        incorrectDiv.appendChild(incorrectLabel);
+        radioDiv.appendChild(incorrectDiv);
+
+        var absentDiv = document.createElement('div');
+        absentDiv.className = 'form-check form-check-inline';
+        var absentInput = document.createElement('input');
+        absentInput.type = 'radio';
+        absentInput.name = 'guest' + counter + '-radio';
+        absentInput.id = 'guest' + counter + '-absent';
+        absentInput.value = 'absent';
+        absentInput.className = 'form-check-input';
+        absentDiv.appendChild(absentInput);
+        var absentLabel = document.createElement('label');
+        absentLabel.htmlFor = 'guest' + counter + 'absent';
+        absentLabel.className = 'form-check-label';
+        absentLabel.textContent = 'Absent';
+        absentDiv.appendChild(absentLabel);
+        radioDiv.appendChild(absentDiv);
+
+        var presenterDiv = document.createElement('div');
+        presenterDiv.className = 'form-check form-check-inline';
+        var presenterInput = document.createElement('input');
+        presenterInput.type = 'radio';
+        presenterInput.name = 'guest' + counter + '-radio';
+        presenterInput.id = 'guest' + counter + '-presenter';
+        presenterInput.value = 'presenter';
+        presenterInput.className = 'form-check-input';
+        presenterDiv.appendChild(presenterInput);
+        var presenterLabel = document.createElement('label');
+        presenterLabel.htmlFor = 'guest' + counter + '-presenter';
+        presenterLabel.className = 'form-check-label';
+        presenterLabel.textContent = 'Presenter';
+        presenterDiv.appendChild(presenterLabel);
+        radioDiv.appendChild(presenterDiv);
+
+        mainDiv.appendChild(radioDiv);
+        mainDiv.appendChild(document.createElement('br'));
+        mainDiv.appendChild(document.createElement('br'));
+        form.appendChild(mainDiv);
+    };
+
+    function removeGuest(ev) {
+        var removeInput = ev.target;
+        var removeInputDiv = removeInput.parentElement;
+        var inputDiv = removeInputDiv.parentElement;
+        var mainDiv = inputDiv.parentElement;
+        var form = mainDiv.parentElement;
+        form.removeChild(mainDiv);
+    }
+</script>
