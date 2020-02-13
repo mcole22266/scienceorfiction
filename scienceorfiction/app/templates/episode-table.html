@@ -1,4 +1,4 @@
-<table class="table table-sm table-bordered table-hover">
+<table class="table table-sm table-bordered table-hover" data-toggle="table" data-pagination="true">
     <caption>Episode Info</caption>
     <thead class="thead-dark">
         <tr>
@@ -9,15 +9,15 @@
             <th>Theme</th>
         </tr>
     </thead>
-    {% for episode in episodes %}
-        <tbody>
-            <tr>
-                <th scope="row">{{ episode.id }}</th>
-                <td>{{ episode.ep_num }}</td>
-                <td>{{ episode.date }}</td>
-                <td>{{ episode.num_items }}</td>
-                <td>{{ episode.theme }}</td>
-            </tr>
-        </tbody>
-    {% endfor %}
+    <tbody>
+        {% for episode in episodes %}
+                <tr>
+                    <th scope="row">{{ episode.id }}</th>
+                    <td>{{ episode.ep_num }}</td>
+                    <td>{{ episode.date }}</td>
+                    <td>{{ episode.num_items }}</td>
+                    <td>{{ episode.theme }}</td>
+                </tr>
+        {% endfor %}
+    </tbody>
 </table>
