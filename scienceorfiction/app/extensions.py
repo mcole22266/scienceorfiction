@@ -79,7 +79,7 @@ def init_db(db):
         if not present:
             addEpisode(db, episode['ep_num'], episode['ep_date'],
                        episode['num_items'], episode['theme'],
-                       episode['rogues'])
+                       episode['guests'], episode['rogues'])
     db.session.commit()
 
 
@@ -295,8 +295,8 @@ def addEpisode(db, ep_num, date, num_items, theme, guests, participant_results,
                commit=False):
     from .models import Episodes
     episode = Episodes(ep_num, date, num_items, theme)
-    for guest in guests:
-        addParticipant(db, guest)
+    for name, correct in guests:
+        addParticipant(db, name)
     results = []
     db.session.add(episode)
     for participant, correct in participant_results:
