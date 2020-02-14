@@ -133,6 +133,7 @@ def addRoutes(app):
             ep_date = request.form['date']
             num_items = request.form['num_items']
             theme = request.form['theme']
+            guests = []
             participant_results = []
             for key in request.form.keys():
                 app.logger.info(key)
@@ -149,10 +150,9 @@ def addRoutes(app):
                         app.logger.info('participant: ' + participant)
                         result = request.form[guest + '-radio']
                         app.logger.info('result: ' + result)
-                        # TODO: Check to see if guest exists in db already
-                        addParticipant(db, participant, commit=True)
+                        guests.append(participant)
                     participant_results.append((participant, result))
-            addEpisode(db, ep_num, ep_date, num_items, theme,
+            addEpisode(db, ep_num, ep_date, num_items, theme, guests,
                        participant_results, commit=True)
             return redirect(url_for('admin'))
 

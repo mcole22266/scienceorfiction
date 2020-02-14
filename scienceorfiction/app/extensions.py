@@ -208,13 +208,18 @@ def addParticipant(db, name, is_rogue=False,
         rogue_end_date = datetime(rogue_end_date.year,
                                   rogue_end_date.month,
                                   rogue_end_date.day)
-    participant = Participants(name, is_rogue,
-                               rogue_start_date=rogue_start_date,
-                               rogue_end_date=rogue_end_date)
-    db.session.add(participant)
-    if commit:
-        db.session.commit()
-    return participant
+    present = getParticipant(name)
+    if not present:
+        participant = Participants(name, is_rogue,
+                                   rogue_start_date=rogue_start_date,
+                                   rogue_end_date=rogue_end_date)
+        db.session.add(participant)
+        if commit:
+            db.session.commit()
+
+        return participant
+
+    return present
 
 
 def getParticipant(name):
@@ -286,10 +291,12 @@ def getAllResults():
     return results
 
 
-def addEpisode(db, ep_num, date, num_items, theme, participant_results,
+def addEpisode(db, ep_num, date, num_items, theme, guests, participant_results,
                commit=False):
     from .models import Episodes
     episode = Episodes(ep_num, date, num_items, theme)
+    for guest in guests:
+        addParticipant(db, guest)
     results = []
     db.session.add(episode)
     for participant, correct in participant_results:
