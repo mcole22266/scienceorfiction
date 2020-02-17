@@ -60,10 +60,10 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
     colors = keepcolors
     tools = 'hover, pan, wheel_zoom, save, reset'
     p = figure(title="Rogue Accuracies",
-               plot_width=1250,
                x_range=x,
                y_range=(0, 100),
                y_axis_label='Percent Correct',
+               sizing_mode='stretch_width',
                toolbar_location='above',
                toolbar_sticky=False,
                tools=tools,
@@ -93,10 +93,10 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
     )
     tools = [hovertool, 'pan', 'wheel_zoom', 'save', 'reset']
     p = figure(title="Rogue Accuracies",
-               plot_width=1250,
                x_axis_label='Date',
                y_axis_label='Accuracy',
                x_axis_type='datetime',
+               sizing_mode='stretch_width',
                tools=tools,
                active_drag="pan",
                active_inspect=hovertool,
@@ -139,6 +139,7 @@ def graphSweeps(saveTo='graph', daterange=False):
                x_axis_label='Date',
                y_axis_label='Number of Sweeps',
                x_axis_type='datetime',
+               sizing_mode='stretch_width',
                tools=tools,
                active_drag='pan',
                active_inspect=hovertool,

@@ -9,17 +9,20 @@
         <h3>Episode</h3>
         <br>
         <div class="row">
-            <div class="col-4">
+            <div class="col-md-4">
                 {{ form.ep_num.label }}
                 {{ form.ep_num(class_ = "form-control", value=episodes[0].ep_num+1) }}  <!-- Default value: next episode number -->
+                <br>
             </div>
-            <div class="col-4">
+            <div class="col-md-4">
                 <label for="date-id">Date</label>
                 <input type="date" name="date" id="date-id" value="{{ today_date }}" class="form-control">  <!-- Default value: today's date -->
+                <br>
             </div>
-            <div class="col-4">
+            <div class="col-md-4">
                 {{ form.num_items.label }}
                 {{ form.num_items(class_ = "form-control") }}
+                <br>
             </div>
         </div>
         <div class="row">
@@ -40,7 +43,7 @@
             {% include 'participantsForm.html' %}
         <br>
         </div>
-        <input type="button" value="Add a guest" onClick="addGuest();" class="btn btn-primary rounded-pill">
+        <input type="button" value="Add a guest" onClick="addGuest();" class="btn btn-secondary rounded-pill">
 
         <br>
         <div class="form-field" style="float: right;">
