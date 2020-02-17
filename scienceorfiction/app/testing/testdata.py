@@ -10,6 +10,14 @@ def getRogues():
     return rogueList
 
 
+def getGuests():
+    '''Returns a list of Guests'''
+    guestList = ['George Hrab', 'Bill Nye', 'Britt Hermes',
+                 'Neil deGrasse Tyson', 'Jennifer Oulette',
+                 'Richard Wiseman']
+    return guestList
+
+
 def getAdmins():
     '''Returns list of Admin Tuples (username, password)'''
     adminList = [('admin', 'adminpass')]
@@ -55,6 +63,7 @@ def getEpisodes(rogues):
         episode['ep_date'] = ep_date
         episode['theme'] = choice(themes_choices)
         episode['num_items'] = choice(num_items_choices)
+        episode['guests'] = []
 
         # select presenter
         if random() <= .9:
@@ -83,6 +92,14 @@ def getEpisodes(rogues):
                 else:
                     # rogue is presenter
                     episode['rogues'].append((rogue[0], 'presenter'))
+
+        if random() <= .08:
+            guest = choice(getGuests())
+            if random() >= .5:
+                participant = (guest, 'correct')
+            else:
+                participant = (guest, 'incorrect')
+            episode['guests'].append(participant)
 
         # append episode and increment values
         episodeList.append(episode)
