@@ -224,6 +224,7 @@ def addParticipant(db, name, is_rogue=False,
 
 def getParticipant(name):
     from .models import Participants
+    name = name.title()
     participant = Participants.query.filter_by(name=name).first()
     return participant
 
@@ -294,15 +295,17 @@ def getAllResults():
 def addEpisode(db, ep_num, date, num_items, theme, guests, participant_results,
                commit=False):
     from .models import Episodes
+    results = []
     episode = Episodes(ep_num, date, num_items, theme)
+    db.session.add(episode)
+    episode = getEpisode(ep_num=ep_num)
     for name, correct in guests:
         addParticipant(db, name)
-    results = []
-    db.session.add(episode)
+        guest = getParticipant(name)
+        results.append(addResult(db, episode.id, guest.id, correct))
     for participant, correct in participant_results:
-        episode_id = getEpisode(ep_num).id
-        rogue_id = getParticipant(participant).id
-        results.append(addResult(db, episode_id, rogue_id, correct))
+        rogue = getParticipant(participant)
+        results.append(addResult(db, episode.id, rogue.id, correct))
     if commit:
         db.session.commit()
     return episode, results
