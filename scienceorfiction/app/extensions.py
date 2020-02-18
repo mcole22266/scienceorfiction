@@ -357,8 +357,8 @@ def getUserFriendlyRogues(db):
     data = db.session.execute('''
     SELECT
         name, rogue_start_date, rogue_end_date,
-        sum(is_correct) as correct,
-        count(is_correct)-sum(is_correct) as incorrect
+        SUM(is_correct) AS correct,
+        COUNT(is_correct)-SUM(is_correct) AS incorrect
     FROM
         participants, results
     WHERE
@@ -366,5 +366,26 @@ def getUserFriendlyRogues(db):
         is_rogue=1
     GROUP BY
         participants.id
+    ORDER BY
+        rogue_start_date
+    ''')
+    return data
+
+
+def getUserFriendlyGuests(db):
+    data = db.session.execute('''
+    SELECT
+        name,
+        count(is_correct) AS num_appearances,
+        SUM(is_correct) AS correct,
+        COUNT(is_correct)-SUM(is_correct) AS incorrect
+    FROM participants, results
+    WHERE
+        participants.id = participant_id AND
+        is_rogue=0
+    GROUP BY
+        participants.id
+    ORDER BY
+        num_appearances DESC
     ''')
     return data

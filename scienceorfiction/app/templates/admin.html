@@ -23,6 +23,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" id="usefulGuest-tab" data-toggle="tab" href="#usefulGuests" role="tab" aria-controls="usefulGuests" aria-selected="false">
+                    Guests
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" id="participant-tab" data-toggle="tab" href="#participants" role="tab" aria-controls="participants" aria-selected="false">
                     Participants (db)
                 </a>
@@ -40,6 +45,7 @@
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="usefulRogues" role="tabpanel" aria-labelledby="usefulRogues-tab">{% include 'userFriendlyRogues-table.html' %}</div>
+            <div class="tab-pane fade" id="usefulGuests" role="tabpanel" aria-labelledby="usefulGuests-tab">{% include 'userFriendlyGuests-table.html' %}</div>
             <div class="tab-pane fade" id="participants" role="tabpanel" aria-labelledby="participant-tab">{% include 'participant-table.html' %}</div>
             <div class="tab-pane fade" id="episodes" role="tabpanel" aria-labelledby="episode-tab">{% include 'episode-table.html' %}</div>
             <div class="tab-pane fade" id="results" role="tabpanel" aria-labelledby="result-tab">{% include 'result-table.html' %}</div>
