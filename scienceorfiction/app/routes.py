@@ -191,7 +191,7 @@ def addRoutes(app):
                                guests=getGuests(),
                                themes=getThemes(),
                                participants=getAllParticipants(),
-                               episodes=getAllEpisodes(desc=True),
+                               episodes=getAllEpisodes(),
                                results=getAllResults(),
                                today_date=date.today()
                                )
