@@ -1,0 +1,25 @@
+<table class="table table-sm table-bordered table-hover" data-toggle="table" data-pagination="true">
+    <caption>User Friendly Rogues</caption>
+    <thead class="thead-dark">
+        <tr>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Correct</th>
+            <th>Incorrect</th>
+            <th>Accuracy</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for rogue in userFriendlyRogues %}
+            <tr>
+                <th>{{ rogue.name }}</th>
+                <th>{{ rogue.rogue_start_date }}</th>
+                <th>{{ rogue.rogue_end_date }}</th>
+                <th>{{ rogue.correct }}</th>
+                <th>{{ rogue.incorrect }}</th>
+                <th>{{ ((rogue.correct/(rogue.correct+rogue.incorrect))*100)|round(2)}}%</th>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

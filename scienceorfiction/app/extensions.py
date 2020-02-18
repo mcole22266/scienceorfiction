@@ -348,3 +348,20 @@ def getAdmins(username):
     from .models import Admins
     admin = Admins.query.filter_by(username=username).first()
     return admin
+
+
+def getUserFriendlyRogues(db):
+    data = db.session.execute('''
+    SELECT
+        name, rogue_start_date, rogue_end_date,
+        sum(is_correct) as correct,
+        count(is_correct)-sum(is_correct) as incorrect
+    FROM
+        participants, results
+    WHERE
+        participants.id = participant_id AND
+        is_rogue=1
+    GROUP BY
+        participants.id
+    ''')
+    return data

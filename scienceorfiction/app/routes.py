@@ -7,13 +7,14 @@ from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 
-from .extensions import (addAdmins, addEpisode, check_authentication,
-                         email_secret_code, encrypt, generate_secret_code,
-                         getAdmins, getAllEpisodes, getAllParticipants,
-                         getAllResults, getGuests, getRogues, getThemes,
-                         getYears, addParticipant)
-from .forms import (AddEntryForm, AdminAuthenticateForm, AdminCreateForm,
-                    AdminLoginForm, AddParticipantForm)
+from .extensions import (addAdmins, addEpisode, addParticipant,
+                         check_authentication, email_secret_code, encrypt,
+                         generate_secret_code, getAdmins, getAllEpisodes,
+                         getAllParticipants, getAllResults, getGuests,
+                         getRogues, getThemes, getUserFriendlyRogues,
+                         getYears)
+from .forms import (AddEntryForm, AddParticipantForm, AdminAuthenticateForm,
+                    AdminCreateForm, AdminLoginForm)
 from .graphs import getGraph
 from .models import db
 from .stats import getRogueAttendance, getRogueOverallAccuracy, getSweeps
@@ -193,6 +194,7 @@ def addRoutes(app):
                                participants=getAllParticipants(),
                                episodes=getAllEpisodes(),
                                results=getAllResults(),
+                               userFriendlyRogues=getUserFriendlyRogues(db),
                                today_date=date.today()
                                )
 
