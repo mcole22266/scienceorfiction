@@ -27,8 +27,8 @@ def getAdmins():
 def getRoguesRandomized():
     rogues = getRogues()
     participant_accuracy_choices = [.9, .8, .5, .2, .1]
-    start_dates = [date(2000, 1, 1), date(2000, 1, 1), date(2005, 5, 3),
-                   date(2012, 7, 19), date(2004, 4, 28)]
+    start_dates = [date(2005, 5, 4), date(2005, 5, 4), date(2006, 9, 3),
+                   date(2012, 7, 19), date(2005, 5, 4)]
     end_dates = [None, None, None, None, None]
     shuffle(participant_accuracy_choices)
     shuffle(start_dates)
@@ -42,7 +42,7 @@ def getRoguesRandomized():
 
 def getEpisodes(rogues):
     episodeList = []
-    ep_date = date(2012, 1, 7)
+    ep_date = date(2005, 5, 4)
     ep_num = 600
     num_items_choices = [3, 4]
     themes_choices = [None, 'Star Wars', 'Star Trek', 'Numbers', 'Vaccines',
