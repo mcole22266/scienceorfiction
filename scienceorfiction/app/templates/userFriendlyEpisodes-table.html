@@ -1,0 +1,29 @@
+<table class="table table-sm table-bordered table-hover" data-toggle="table" data-pagination="true">
+    <caption>User Friendly Episodes</caption>
+    <thead class="thead-dark">
+        <tr>
+            <th>Number</th>
+            <th>Date</th>
+            <th>Number of Items</th>
+            <th>Theme</th>
+            <th>Presenter</th>
+            <th>Correct</th>
+            <th>Incorrect</th>
+            <th>Participant Accuracy</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for data in ep_data %}
+            <tr>
+                <th>{{ data.ep_num }}</th>
+                <th>{{ data.date }}</th>
+                <th>{{ data.num_items }}</th>
+                <th>{{ data.theme }}</th>
+                <th>{{ data.presenter }}</th>
+                <th>{{ sum_data[loop.index-1].correct }}</th>
+                <th>{{ sum_data[loop.index-1].incorrect }}</th>
+                <th>{{ ((sum_data[loop.index-1].correct/(sum_data[loop.index-1].correct+sum_data[loop.index-1].incorrect))*100)|round(2) }}%</th>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,9 +1,9 @@
 # Contains several different helper functions
 
-from hashlib import sha256
-from os import environ, path, makedirs
-from time import sleep
 from datetime import date, datetime
+from hashlib import sha256
+from os import environ, makedirs, path
+from time import sleep
 
 from flask_login import LoginManager
 
@@ -369,7 +369,7 @@ def getUserFriendlyRogues(db):
     ORDER BY
         rogue_start_date
     ''')
-    return data
+    return data.fetchall()
 
 
 def getUserFriendlyGuests(db):
@@ -388,4 +388,42 @@ def getUserFriendlyGuests(db):
     ORDER BY
         num_appearances DESC
     ''')
-    return data
+    return data.fetchall()
+
+
+def getUserFriendlyEpisodeData(db):
+    ep_data = db.session.execute('''
+    SELECT
+        ep_num, date, num_items, theme,
+        name AS presenter
+    FROM
+        episodes AS ep
+    JOIN
+        results AS res ON ep.id=res.episode_id
+    JOIN
+        participants AS p on res.participant_id=p.id
+    WHERE
+        res.is_presenter=1
+    ORDER BY
+        ep_num
+    ''')
+    return ep_data.fetchall()
+
+
+def getUserFriendlyEpisodeSums(db):
+    sum_data = db.session.execute('''
+    SELECT
+        ep.ep_num,
+        SUM(is_correct) AS correct,
+        COUNT(is_correct)-SUM(is_correct) AS incorrect
+    FROM
+        results AS res
+    JOIN
+        episodes AS ep ON res.episode_id=ep.id
+    GROUP BY
+        episode_id
+    ORDER BY
+        ep.ep_num
+    ''')
+
+    return sum_data.fetchall()

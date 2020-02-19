@@ -11,7 +11,8 @@ from .extensions import (addAdmins, addEpisode, addParticipant,
                          check_authentication, email_secret_code, encrypt,
                          generate_secret_code, getAdmins, getAllEpisodes,
                          getAllParticipants, getAllResults, getGuests,
-                         getRogues, getThemes, getUserFriendlyGuests,
+                         getRogues, getThemes, getUserFriendlyEpisodeData,
+                         getUserFriendlyEpisodeSums, getUserFriendlyGuests,
                          getUserFriendlyRogues, getYears)
 from .forms import (AddEntryForm, AddParticipantForm, AdminAuthenticateForm,
                     AdminCreateForm, AdminLoginForm)
@@ -196,6 +197,8 @@ def addRoutes(app):
                                results=getAllResults(),
                                userFriendlyRogues=getUserFriendlyRogues(db),
                                userFriendlyGuests=getUserFriendlyGuests(db),
+                               ep_data=getUserFriendlyEpisodeData(db),
+                               sum_data=getUserFriendlyEpisodeSums(db),
                                today_date=date.today()
                                )
 
