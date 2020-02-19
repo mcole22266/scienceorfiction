@@ -347,10 +347,14 @@ def addAdmin(db, username, password, encrypted=False, commit=False):
     return admin
 
 
-def getAdmin(username):
+def getAdmin(username=False, all=False):
     from .models import Admins
-    admin = Admins.query.filter_by(username=username).first()
-    return admin
+    if username:
+        admin = Admins.query.filter_by(username=username).first()
+        return admin
+    if all:
+        admins = Admins.query.all()
+        return admins
 
 
 def getUserFriendlyRogues(db):

@@ -199,6 +199,7 @@ def addRoutes(app):
                                userFriendlyGuests=getUserFriendlyGuests(db),
                                ep_data=getUserFriendlyEpisodeData(db),
                                sum_data=getUserFriendlyEpisodeSums(db),
+                               admins=getAdmin(all=True),
                                today_date=date.today()
                                )
 
