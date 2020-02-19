@@ -71,9 +71,9 @@ def init_db(db):
                            rogue_start_date=start,
                            rogue_end_date=end)
     for admin in testdata.getAdmins():
-        present = getAdmins(admin[0])
+        present = getAdmin(admin[0])
         if not present:
-            addAdmins(db, admin[0], admin[1])
+            addAdmin(db, admin[0], admin[1])
     for episode in testdata.getEpisodes(rogues):
         present = getEpisode(episode['ep_num'])
         if not present:
@@ -158,7 +158,7 @@ def getYears():
 
 
 def check_authentication(username, password):
-    admin = getAdmins(username)
+    admin = getAdmin(username)
     if admin:
         if admin.password == encrypt(password):
             return True
@@ -338,7 +338,7 @@ def getAllEpisodes(daterange=False, desc=False):
     return episodes
 
 
-def addAdmins(db, username, password, encrypted=False, commit=False):
+def addAdmin(db, username, password, encrypted=False, commit=False):
     from .models import Admins
     admin = Admins(username, password, encrypted)
     db.session.add(admin)
@@ -347,7 +347,7 @@ def addAdmins(db, username, password, encrypted=False, commit=False):
     return admin
 
 
-def getAdmins(username):
+def getAdmin(username):
     from .models import Admins
     admin = Admins.query.filter_by(username=username).first()
     return admin

@@ -7,9 +7,9 @@ from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 
-from .extensions import (addAdmins, addEpisode, addParticipant,
+from .extensions import (addAdmin, addEpisode, addParticipant,
                          check_authentication, email_secret_code, encrypt,
-                         generate_secret_code, getAdmins, getAllEpisodes,
+                         generate_secret_code, getAdmin, getAllEpisodes,
                          getAllParticipants, getAllResults, getGuests,
                          getRogues, getThemes, getUserFriendlyEpisodeData,
                          getUserFriendlyEpisodeSums, getUserFriendlyGuests,
@@ -213,7 +213,7 @@ def addRoutes(app):
             username = request.form['username']
             password = request.form['password']
             if check_authentication(username, password):
-                admin = getAdmins(username)
+                admin = getAdmin(username)
                 login_user(admin)
                 return redirect(url_for('admin'))
             else:
@@ -260,8 +260,8 @@ def addRoutes(app):
             if secret_code_form == secret_code:
                 username = request.form['username']
                 password = request.form['password']
-                admin = addAdmins(db, username, password,
-                                  encrypted=True, commit=True)
+                admin = addAdmin(db, username, password,
+                                 encrypted=True, commit=True)
                 login_user(admin)
                 return redirect(url_for('admin'))
             else:
