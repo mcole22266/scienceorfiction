@@ -7,13 +7,15 @@ from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 
-from .extensions import (addAdmins, addEpisode, check_authentication,
-                         email_secret_code, encrypt, generate_secret_code,
-                         getAdmins, getAllEpisodes, getAllParticipants,
-                         getAllResults, getGuests, getRogues, getThemes,
-                         getYears, addParticipant)
-from .forms import (AddEntryForm, AdminAuthenticateForm, AdminCreateForm,
-                    AdminLoginForm, AddParticipantForm)
+from .extensions import (addAdmin, addEpisode, addParticipant,
+                         check_authentication, email_secret_code, encrypt,
+                         generate_secret_code, getAdmin, getAllEpisodes,
+                         getAllParticipants, getAllResults, getGuests,
+                         getRogues, getThemes, getUserFriendlyEpisodeData,
+                         getUserFriendlyEpisodeSums, getUserFriendlyGuests,
+                         getUserFriendlyRogues, getYears)
+from .forms import (AddEntryForm, AddParticipantForm, AdminAuthenticateForm,
+                    AdminCreateForm, AdminLoginForm)
 from .graphs import getGraph
 from .models import db
 from .stats import getRogueAttendance, getRogueOverallAccuracy, getSweeps
@@ -191,8 +193,13 @@ def addRoutes(app):
                                guests=getGuests(),
                                themes=getThemes(),
                                participants=getAllParticipants(),
-                               episodes=getAllEpisodes(desc=True),
+                               episodes=getAllEpisodes(),
                                results=getAllResults(),
+                               userFriendlyRogues=getUserFriendlyRogues(db),
+                               userFriendlyGuests=getUserFriendlyGuests(db),
+                               ep_data=getUserFriendlyEpisodeData(db),
+                               sum_data=getUserFriendlyEpisodeSums(db),
+                               admins=getAdmin(all=True),
                                today_date=date.today()
                                )
 
@@ -207,7 +214,7 @@ def addRoutes(app):
             username = request.form['username']
             password = request.form['password']
             if check_authentication(username, password):
-                admin = getAdmins(username)
+                admin = getAdmin(username)
                 login_user(admin)
                 return redirect(url_for('admin'))
             else:
@@ -254,8 +261,8 @@ def addRoutes(app):
             if secret_code_form == secret_code:
                 username = request.form['username']
                 password = request.form['password']
-                admin = addAdmins(db, username, password,
-                                  encrypted=True, commit=True)
+                admin = addAdmin(db, username, password,
+                                 encrypted=True, commit=True)
                 login_user(admin)
                 return redirect(url_for('admin'))
             else:

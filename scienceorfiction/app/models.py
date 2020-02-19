@@ -105,10 +105,12 @@ class Results(db.Model):
                    primary_key=True)
 
     episode_id = db.Column(db.Integer,
-                           db.ForeignKey('episodes.id'))
+                           db.ForeignKey('episodes.id'),
+                           nullable=False)
 
     participant_id = db.Column(db.Integer,
-                               db.ForeignKey('participants.id'))
+                               db.ForeignKey('participants.id'),
+                               nullable=False)
 
     is_correct = db.Column(db.Boolean,
                            nullable=True)
