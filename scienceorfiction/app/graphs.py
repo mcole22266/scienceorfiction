@@ -1,8 +1,8 @@
 from datetime import date
 from os import environ
 
-from bokeh.plotting import figure, output_file, save
 from bokeh.models import HoverTool
+from bokeh.plotting import figure, output_file, save
 
 from .extensions import getAllEpisodes, getRogues
 from .stats import getRogueAccuracy, getRogueOverallAccuracy, getSweeps
@@ -14,6 +14,12 @@ def saveGraph(graph, filename):
     output_filepath += filename
     output_file(output_filepath)
     save(graph)
+
+
+def buildAllGraphs(graphTypes, graphYears):
+    for graphType in graphTypes:
+        for graphYear in graphYears:
+            getGraph(graphType, graphYear)
 
 
 def getGraph(graphType, graphYear=False, graphTheme=False):

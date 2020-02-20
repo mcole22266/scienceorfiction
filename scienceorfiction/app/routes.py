@@ -16,7 +16,6 @@ from .extensions import (addAdmin, addEpisode, addParticipant,
                          getUserFriendlyRogues, getYears)
 from .forms import (AddEntryForm, AddParticipantForm, AdminAuthenticateForm,
                     AdminCreateForm, AdminLoginForm)
-from .graphs import getGraph
 from .models import db
 from .stats import getRogueAttendance, getRogueOverallAccuracy, getSweeps
 
@@ -39,8 +38,11 @@ def addRoutes(app):
         # GET
         graphType = request.args.get('graphType', 'overallAccuracy')
         graphYear = request.args.get('graphYear', str(date.today().year))
+        if graphYear == 'overall':
+            graph = graphType
+        else:
+            graph = graphType + graphYear
 
-        graph = getGraph(graphType, graphYear)
         return render_template('index.html',
                                title='Hello World',
                                form=form,
