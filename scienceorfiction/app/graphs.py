@@ -16,7 +16,7 @@ def saveGraph(graph, filename):
     save(graph)
 
 
-def getGraph(graphType, graphYear, graphTheme):
+def getGraph(graphType, graphYear=False, graphTheme=False):
     graph = graphType
     if graphYear == '':
         daterange = False
@@ -27,9 +27,7 @@ def getGraph(graphType, graphYear, graphTheme):
         endDate = date(int(graphYear), 12, 31)
         daterange = (startDate, endDate)
         graph += graphYear
-    if graphTheme == '':
-        graphTheme = False
-    else:
+    if graphTheme:
         graph += graphTheme
     if graphType == 'overallAccuracy':
         graphRogueOverallAccuracies(graph, daterange=daterange,

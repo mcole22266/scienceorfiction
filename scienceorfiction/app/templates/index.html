@@ -34,21 +34,6 @@
             {% endfor %}
           </select>
 
-          {% if graphType != 'sweeps' %}
-            <label for="theme">Theme</label>
-            <select name="theme" for="theme" id="theme-id" class="form-control">
-              <option value="" 
-              {% if theme== '' %} selected=selected
-              {% endif %}></option>
-              {% for theme in themes %}
-                <option value="{{ theme }}"
-                {% if theme == graphTheme %} selected=selected
-                {%endif %}>
-                  {{ theme }}</option>
-              {% endfor %}
-            </select>
-          {% endif %}
-
         </div>
         <br>
         <div class="form-field">

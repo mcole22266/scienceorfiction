@@ -32,28 +32,21 @@ def addRoutes(app):
         if form.validate_on_submit():
             graphType = request.form['graphType']
             year = request.form['year']
-            try:
-                theme = request.form['theme']
-            except Exception:
-                theme = ''
             return redirect(url_for('index',
                                     graphType=graphType,
-                                    graphYear=year,
-                                    graphTheme=theme))
+                                    graphYear=year))
 
         # GET
         graphType = request.args.get('graphType', 'overallAccuracy')
         graphYear = request.args.get('graphYear', str(date.today().year))
-        graphTheme = request.args.get('graphTheme', '')
 
-        graph = getGraph(graphType, graphYear, graphTheme)
+        graph = getGraph(graphType, graphYear)
         return render_template('index.html',
                                title='Hello World',
                                form=form,
                                graph=graph,
                                graphType=graphType,
                                graphYear=graphYear,
-                               graphTheme=graphTheme,
                                years=getYears(),
                                themes=getThemes())
 
