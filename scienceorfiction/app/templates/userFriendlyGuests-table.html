@@ -13,10 +13,10 @@
         {% for guest in userFriendlyGuests %}
             <tr>
                 <th>{{ guest.name }}</th>
-                <th>{{ guest.num_appearances }}</th>
-                <th>{{ guest.correct }}</th>
-                <th>{{ guest.incorrect }}</th>
-                <th>{{ ((guest.correct/(guest.correct+guest.incorrect))*100)|round(2)}}%</th>
+                <td>{{ guest.num_appearances }}</td>
+                <td>{{ guest.correct }}</td>
+                <td>{{ guest.incorrect }}</td>
+                <td>{{ ((guest.correct/(guest.correct+guest.incorrect))*100)|round(2)}}%</td>
             </tr>
         {% endfor %}
     </tbody>
