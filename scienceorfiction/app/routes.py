@@ -277,3 +277,9 @@ def addRoutes(app):
     def logout():
         logout_user()
         return redirect(url_for('admin'))
+
+    @app.route('/refreshGraphs')
+    def refreshGraphs():
+        from .extensions import init_graphs
+        init_graphs(app)
+        return redirect(url_for('admin'))

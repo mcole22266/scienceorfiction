@@ -91,6 +91,10 @@ def init_app(app):
     Returns:
         None
     '''
+    init_graphs(app)
+
+
+def init_graphs(app):
     from .graphs import buildAllGraphs
     app.logger.info('Checking if bokeh folder exists')
     if not path.exists('/scienceorfiction/app/templates/bokeh'):
