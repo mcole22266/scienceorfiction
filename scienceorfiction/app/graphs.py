@@ -1,8 +1,8 @@
 from datetime import date
 from os import environ
 
-from bokeh.plotting import figure, output_file, save
 from bokeh.models import HoverTool
+from bokeh.plotting import figure, output_file, save
 
 from .extensions import getAllEpisodes, getRogues
 from .stats import getRogueAccuracy, getRogueOverallAccuracy, getSweeps
@@ -16,7 +16,13 @@ def saveGraph(graph, filename):
     save(graph)
 
 
-def getGraph(graphType, graphYear, graphTheme):
+def buildAllGraphs(graphTypes, graphYears):
+    for graphType in graphTypes:
+        for graphYear in graphYears:
+            getGraph(graphType, graphYear)
+
+
+def getGraph(graphType, graphYear=False, graphTheme=False):
     graph = graphType
     if graphYear == '':
         daterange = False
@@ -27,9 +33,7 @@ def getGraph(graphType, graphYear, graphTheme):
         endDate = date(int(graphYear), 12, 31)
         daterange = (startDate, endDate)
         graph += graphYear
-    if graphTheme == '':
-        graphTheme = False
-    else:
+    if graphTheme:
         graph += graphTheme
     if graphType == 'overallAccuracy':
         graphRogueOverallAccuracies(graph, daterange=daterange,

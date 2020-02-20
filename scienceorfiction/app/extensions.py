@@ -91,12 +91,25 @@ def init_app(app):
     Returns:
         None
     '''
+    init_graphs(app)
+
+
+def init_graphs(app):
+    from .graphs import buildAllGraphs
     app.logger.info('Checking if bokeh folder exists')
     if not path.exists('/scienceorfiction/app/templates/bokeh'):
         app.logger.info('No bokeh folder found, creating folder')
         makedirs('/scienceorfiction/app/templates/bokeh')
     else:
         app.logger.info('bokeh folder found')
+
+    app.logger.info('Building all graphs')
+    episodes = getAllEpisodes()
+    graphTypes = ['overallAccuracy', 'accuracyOverTime', 'sweeps']
+    graphYears = set([str(episode.date.year) for episode in episodes])
+    graphYears.add('overall')
+    buildAllGraphs(graphTypes, graphYears)
+    app.logger.info('All graphs built')
 
 
 def getRogues(onlyNames=False, current_date=False, daterange=False):

@@ -14,11 +14,11 @@
         {% for rogue in userFriendlyRogues %}
             <tr>
                 <th>{{ rogue.name }}</th>
-                <th>{{ rogue.rogue_start_date }}</th>
-                <th>{{ rogue.rogue_end_date }}</th>
-                <th>{{ rogue.correct }}</th>
-                <th>{{ rogue.incorrect }}</th>
-                <th>{{ ((rogue.correct/(rogue.correct+rogue.incorrect))*100)|round(2)}}%</th>
+                <td>{{ rogue.rogue_start_date }}</td>
+                <td>{{ rogue.rogue_end_date }}</td>
+                <td>{{ rogue.correct }}</td>
+                <td>{{ rogue.incorrect }}</td>
+                <td>{{ ((rogue.correct/(rogue.correct+rogue.incorrect))*100)|round(2)}}%</td>
             </tr>
         {% endfor %}
     </tbody>

@@ -16,7 +16,6 @@ from .extensions import (addAdmin, addEpisode, addParticipant,
                          getUserFriendlyRogues, getYears)
 from .forms import (AddEntryForm, AddParticipantForm, AdminAuthenticateForm,
                     AdminCreateForm, AdminLoginForm)
-from .graphs import getGraph
 from .models import db
 from .stats import getRogueAttendance, getRogueOverallAccuracy, getSweeps
 
@@ -32,28 +31,24 @@ def addRoutes(app):
         if form.validate_on_submit():
             graphType = request.form['graphType']
             year = request.form['year']
-            try:
-                theme = request.form['theme']
-            except Exception:
-                theme = ''
             return redirect(url_for('index',
                                     graphType=graphType,
-                                    graphYear=year,
-                                    graphTheme=theme))
+                                    graphYear=year))
 
         # GET
         graphType = request.args.get('graphType', 'overallAccuracy')
         graphYear = request.args.get('graphYear', str(date.today().year))
-        graphTheme = request.args.get('graphTheme', '')
+        if graphYear == 'overall':
+            graph = graphType
+        else:
+            graph = graphType + graphYear
 
-        graph = getGraph(graphType, graphYear, graphTheme)
         return render_template('index.html',
                                title='Hello World',
                                form=form,
                                graph=graph,
                                graphType=graphType,
                                graphYear=graphYear,
-                               graphTheme=graphTheme,
                                years=getYears(),
                                themes=getThemes())
 
@@ -281,4 +276,10 @@ def addRoutes(app):
     @login_required
     def logout():
         logout_user()
+        return redirect(url_for('admin'))
+
+    @app.route('/refreshGraphs')
+    def refreshGraphs():
+        from .extensions import init_graphs
+        init_graphs(app)
         return redirect(url_for('admin'))
