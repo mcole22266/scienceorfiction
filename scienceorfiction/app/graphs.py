@@ -81,7 +81,7 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
     tools = [hovertool, 'pan', 'wheel_zoom', 'save', 'reset']
     source = ColumnDataSource(data=dict(
         x=x, y=y, correct=correct, incorrect=incorrect,
-        color=palettes.Spectral[len(x)]
+        color=palettes.Set3[len(x)]
     ))
     p = figure(title="Rogue Accuracies",
                x_range=x,
@@ -96,25 +96,32 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
                active_scroll="wheel_zoom")
 
     p.vbar(x='x', top='y', width=0.5, color='color',
-           source=source)
+           alpha=0.75, source=source)
 
     saveGraph(p, saveTo)
 
 
 def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
-    colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
-              'navy']
     hovertool = HoverTool(
         mode='vline',
-        tooltips=[
-            ('Date', '@x{%raw%}{%F}{%endraw%}'),  # raw/endraw added due to
-                                                  # Jinja2 Error
-            ('Accuracy', '@y%')
-        ],
+        line_policy='nearest',
+        tooltips='''
+<div class="container-fluid">
+    <div>
+        <span style="font-size: 17px; font-weight: bold;">@name:</span>
+        <span style="font-size: 17px;">@y%</span>
+    </div>
+    <div>
+        <span style="font-size: 15px; font-weight: bold;">Date:</span>
+        <span style="font-size: 15px;">@x{%raw%}{%F}{%endraw%}</span>
+    </div>
+</div>
+''',
         formatters={
             'x': 'datetime'
         }
     )
+    colors = palettes.Set3[12]
     tools = [hovertool, 'pan', 'wheel_zoom', 'save', 'reset']
     p = figure(title="Rogue Accuracies",
                x_axis_label='Date',
@@ -126,17 +133,21 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
                active_inspect=hovertool,
                active_scroll="wheel_zoom")
 
-    for rogue in getRogues(onlyNames=True, daterange=daterange):
+    for i, rogue in enumerate(getRogues(onlyNames=True, daterange=daterange)):
         accuracies = getRogueAccuracy(rogue, theme=theme, daterange=daterange)
         x = []
         y = []
+        color = colors[i]
         for episode, accuracy in accuracies:
             accuracy *= 100
             x.append(episode.date)
             y.append(accuracy)
-        color = colors.pop()
-        p.line(x, y, legend_label=rogue, line_width=4, color=color, alpha=.3)
-        # p.circle(x, y, fill_color=color, alpha=.2, size=6)
+        source = ColumnDataSource(data=dict(
+            x=x, y=y,
+            name=[rogue for r in range(len(x))],
+        ))
+        p.line(x='x', y='y', legend_label=rogue, line_color=color,
+               line_width=4, alpha=0.75, source=source)
     saveGraph(p, saveTo)
 
 
