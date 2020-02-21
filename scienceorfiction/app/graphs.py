@@ -1,7 +1,8 @@
 from datetime import date
 from os import environ
 
-from bokeh.models import HoverTool
+import bokeh.palettes as palettes
+from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.plotting import figure, output_file, save
 
 from .extensions import getAllEpisodes, getRogues
@@ -47,22 +48,41 @@ def getGraph(graphType, graphYear=False, graphTheme=False):
 
 def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
                                 theme=False):
-    colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
-              'navy']
-    keepcolors = []
+    hovertool = HoverTool(
+        tooltips='''
+<div class="container-fluid">
+    <div>
+        <span style="font-size: 17px; font-weight: bold;">@x:</span>
+        <span style="font-size: 17px;">@y%</span>
+    </div>
+    <div class="container">
+        <span style="font-size: 15px;">@correct Correct</span><br>
+        <span style="font-size: 15px;">@incorrect Incorrect</span>
+    </div>
+</div>
+''')
 
     x = []
     y = []
+    correct = []
+    incorrect = []
     for rogue in getRogues(onlyNames=True, daterange=daterange):
-        accuracy = getRogueOverallAccuracy(rogue, daterange=daterange,
-                                           theme=theme)
+        rogueOverallAccuracy = getRogueOverallAccuracy(
+            rogue,
+            daterange=daterange,
+            theme=theme)
+        accuracy, num_correct, num_incorrect = rogueOverallAccuracy
         accuracy = accuracy*100
         x.append(rogue)
         y.append(accuracy)
-        keepcolors.append(colors.pop())
+        correct.append(num_correct)
+        incorrect.append(num_incorrect)
 
-    colors = keepcolors
-    tools = 'hover, pan, wheel_zoom, save, reset'
+    tools = [hovertool, 'pan', 'wheel_zoom', 'save', 'reset']
+    source = ColumnDataSource(data=dict(
+        x=x, y=y, correct=correct, incorrect=incorrect,
+        color=palettes.Spectral[len(x)]
+    ))
     p = figure(title="Rogue Accuracies",
                x_range=x,
                y_range=(0, 100),
@@ -71,12 +91,12 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
                toolbar_location='above',
                toolbar_sticky=False,
                tools=tools,
-               tooltips="@x: @top%",
                active_drag="pan",
-               active_inspect="hover",
+               active_inspect=hovertool,
                active_scroll="wheel_zoom")
 
-    p.vbar(x=x, top=y, bottom=0, width=0.5, color=colors, alpha=0.3)
+    p.vbar(x='x', top='y', width=0.5, color='color',
+           source=source)
 
     saveGraph(p, saveTo)
 
