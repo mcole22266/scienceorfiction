@@ -152,16 +152,24 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
 
 
 def graphSweeps(saveTo='graph', daterange=False):
-    colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
-              'navy']
+    colors = palettes.Set3[12]
 
     hovertool = HoverTool(
         mode='vline',
-        tooltips=[
-            ('Date', '@x{%raw%}{%F}{%endraw%}'),  # raw/endraw added due to
-                                                  # Jinja2 Error
-            ('Accuracy', '@y%')
-        ],
+        tooltips='''
+<div class="container-fluid">
+    <div>
+        <span style="font-size: 17px; font-weight: bold;">
+            @label:
+        </span>
+        <span style="font-size: 17px;">@y</span>
+    </div>
+    <div>
+        <span style="font-size: 15px; font-weight: bold;">Date:</span>
+        <span style="font-size: 15px;">@x{%raw%}{%F}{%endraw%}</span>
+    </div>
+</div>
+''',
         formatters={
             'x': 'datetime'
         }
@@ -201,18 +209,25 @@ def graphSweeps(saveTo='graph', daterange=False):
     for episode, numSweeps in presenterSweeps:
         x.append(episode.date)
         y.append(numSweeps)
-    color = colors.pop()
-    p.line(x, y, legend_label='Presenter Sweeps',
-           line_width=4, color=color, alpha=.3)
-    # p.circle(x, y, fill_color=color, alpha=.2, size=6)
+    color = colors[0]
+    source = ColumnDataSource(data=dict(
+        x=x, y=y,
+        label=['Presenter Sweeps' for r in range(len(x))],
+    ))
+    p.line(x='x', y='y', legend_label='Presenter Sweeps',
+           line_width=4, color=color, alpha=0.75, source=source)
 
     x = []
     y = []
     for episode, numSweeps in participantSweeps:
         x.append(episode.date)
         y.append(numSweeps)
-    color = colors.pop()
-    p.line(x, y, legend_label='Participant Sweeps',
-           line_width=4, color=color, alpha=.3)
+    color = colors[1]
+    source = ColumnDataSource(data=dict(
+        x=x, y=y,
+        label=['Participant Sweeps' for r in range(len(x))],
+    ))
+    p.line(x='x', y='y', legend_label='Participant Sweeps',
+           line_width=4, color=color, alpha=0.75, source=source)
 
     saveGraph(p, saveTo)
