@@ -44,12 +44,12 @@ def addRoutes(app):
             graph = graphType + graphYear
 
         return render_template('index.html',
-                               title='Hello World',
+                               title='Science or Fiction',
                                form=form,
                                graph=graph,
                                graphType=graphType,
                                graphYear=graphYear,
-                               years=getYears(),
+                               years=getYears(desc=True),
                                themes=getThemes())
 
     @app.route('/overallAccuracy')

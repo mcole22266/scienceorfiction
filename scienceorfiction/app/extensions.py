@@ -104,10 +104,9 @@ def init_graphs(app):
         app.logger.info('bokeh folder found')
 
     app.logger.info('Building all graphs')
-    episodes = getAllEpisodes()
     graphTypes = ['overallAccuracy', 'accuracyOverTime', 'sweeps']
-    graphYears = set([str(episode.date.year) for episode in episodes])
-    graphYears.add('overall')
+    graphYears = getYears()
+    graphYears.append('overall')
     buildAllGraphs(graphTypes, graphYears)
     app.logger.info('All graphs built')
 
@@ -163,11 +162,13 @@ def getThemes():
     return episodes
 
 
-def getYears():
+def getYears(desc=False):
     from .models import Episodes
     episodes = Episodes.query.all()
-    dates = set([str(episode.date.year) for episode in episodes])
-    return sorted(list(dates))
+    dates = sorted(list(set([str(episode.date.year) for episode in episodes])))
+    if desc:
+        dates = reversed(dates)
+    return dates
 
 
 def check_authentication(username, password):
