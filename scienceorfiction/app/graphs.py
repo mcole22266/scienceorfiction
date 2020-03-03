@@ -129,11 +129,13 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
                x_axis_type='datetime',
                sizing_mode='stretch_width',
                tools=tools,
+               toolbar_location='above',
                active_drag="pan",
                active_inspect=hovertool,
                active_scroll="wheel_zoom")
 
-    for i, rogue in enumerate(getRogues(onlyNames=True, daterange=daterange)):
+    rogues = getRogues(onlyNames=True, daterange=daterange)
+    for i, rogue in enumerate(rogues):
         accuracies = getRogueAccuracy(rogue, theme=theme, daterange=daterange)
         x = []
         y = []
@@ -148,6 +150,8 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
         ))
         p.line(x='x', y='y', legend_label=rogue, line_color=color,
                line_width=4, alpha=0.75, source=source)
+
+    p.legend.click_policy = "hide"
     saveGraph(p, saveTo)
 
 
