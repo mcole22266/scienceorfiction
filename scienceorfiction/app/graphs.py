@@ -5,7 +5,7 @@ import bokeh.palettes as palettes
 from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.plotting import figure, output_file, save
 
-from .extensions import getAllEpisodes, getRogues
+from .extensions import getAllEpisodes, getGuests, getRogues
 from .stats import getRogueAccuracy, getRogueOverallAccuracy, getSweeps
 
 
@@ -123,7 +123,7 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
     )
     colors = palettes.Set3[12]
     tools = [hovertool, 'pan', 'wheel_zoom', 'save', 'reset']
-    p = figure(title="Rogue Accuracies",
+    p = figure(title="Accuracies",
                x_axis_label='Date',
                y_axis_label='Accuracy',
                x_axis_type='datetime',
@@ -134,9 +134,12 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
                active_inspect=hovertool,
                active_scroll="wheel_zoom")
 
-    rogues = getRogues(onlyNames=True, daterange=daterange)
-    for i, rogue in enumerate(rogues):
-        accuracies = getRogueAccuracy(rogue, theme=theme, daterange=daterange)
+    rogues = getRogues(daterange=daterange)
+    guests = getGuests(daterange=daterange)
+    participants = rogues + guests
+    for i, participant in enumerate(participants):
+        accuracies = getRogueAccuracy(
+            participant.name, theme=theme, daterange=daterange)
         x = []
         y = []
         color = colors[i]
@@ -146,10 +149,11 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
             y.append(accuracy)
         source = ColumnDataSource(data=dict(
             x=x, y=y,
-            name=[rogue for r in range(len(x))],
+            name=[participant.name for r in range(len(x))],
         ))
-        p.line(x='x', y='y', legend_label=rogue, line_color=color,
-               line_width=4, alpha=0.75, source=source)
+        p.line(x='x', y='y', legend_label=participant.name, line_color=color,
+               line_width=4, alpha=0.75, source=source,
+               visible=participant.is_rogue)
 
     p.legend.click_policy = "hide"
     saveGraph(p, saveTo)
