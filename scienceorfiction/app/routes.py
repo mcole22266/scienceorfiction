@@ -64,6 +64,15 @@ def addRoutes(app):
     def sweeps():
         return redirect(url_for('index', graphType='sweeps'))
 
+    @app.route('/data')
+    def data():
+        return render_template('data.html',
+                               title='Data',
+                               userFriendlyRogues=getUserFriendlyRogues(db),
+                               userFriendlyGuests=getUserFriendlyGuests(db),
+                               ep_data=getUserFriendlyEpisodeData(db),
+                               sum_data=getUserFriendlyEpisodeSums(db))
+
     @app.route('/about')
     def about():
         return render_template('about.html')
