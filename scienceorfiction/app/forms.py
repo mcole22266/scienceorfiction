@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, SubmitField, BooleanField
-from wtforms.validators import InputRequired, ValidationError, EqualTo
+from wtforms import BooleanField, PasswordField, StringField, SubmitField
+from wtforms.validators import EqualTo, InputRequired, ValidationError
 
 
 def adminAlreadyExists(form, field):
