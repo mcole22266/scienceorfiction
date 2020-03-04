@@ -1,10 +1,11 @@
 from datetime import date
 from os import environ
 
-from bokeh.models import HoverTool
+import bokeh.palettes as palettes
+from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.plotting import figure, output_file, save
 
-from .extensions import getAllEpisodes, getRogues
+from .extensions import getAllEpisodes, getGuests, getRogues
 from .stats import getRogueAccuracy, getRogueOverallAccuracy, getSweeps
 
 
@@ -47,22 +48,41 @@ def getGraph(graphType, graphYear=False, graphTheme=False):
 
 def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
                                 theme=False):
-    colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
-              'navy']
-    keepcolors = []
+    hovertool = HoverTool(
+        tooltips='''
+<div class="container-fluid">
+    <div>
+        <span style="font-size: 17px; font-weight: bold;">@x:</span>
+        <span style="font-size: 17px;">@y%</span>
+    </div>
+    <div class="container">
+        <span style="font-size: 15px;">@correct Correct</span><br>
+        <span style="font-size: 15px;">@incorrect Incorrect</span>
+    </div>
+</div>
+''')
 
     x = []
     y = []
+    correct = []
+    incorrect = []
     for rogue in getRogues(onlyNames=True, daterange=daterange):
-        accuracy = getRogueOverallAccuracy(rogue, daterange=daterange,
-                                           theme=theme)
+        rogueOverallAccuracy = getRogueOverallAccuracy(
+            rogue,
+            daterange=daterange,
+            theme=theme)
+        accuracy, num_correct, num_incorrect = rogueOverallAccuracy
         accuracy = accuracy*100
         x.append(rogue)
         y.append(accuracy)
-        keepcolors.append(colors.pop())
+        correct.append(num_correct)
+        incorrect.append(num_incorrect)
 
-    colors = keepcolors
-    tools = 'hover, pan, wheel_zoom, save, reset'
+    tools = [hovertool, 'pan', 'wheel_zoom', 'save', 'reset']
+    source = ColumnDataSource(data=dict(
+        x=x, y=y, correct=correct, incorrect=incorrect,
+        color=palettes.Set3[len(x)]
+    ))
     p = figure(title="Rogue Accuracies",
                x_range=x,
                y_range=(0, 100),
@@ -71,66 +91,93 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
                toolbar_location='above',
                toolbar_sticky=False,
                tools=tools,
-               tooltips="@x: @top%",
                active_drag="pan",
-               active_inspect="hover",
+               active_inspect=hovertool,
                active_scroll="wheel_zoom")
 
-    p.vbar(x=x, top=y, bottom=0, width=0.5, color=colors, alpha=0.3)
+    p.vbar(x='x', top='y', width=0.5, color='color',
+           alpha=0.75, source=source)
 
     saveGraph(p, saveTo)
 
 
 def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
-    colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
-              'navy']
     hovertool = HoverTool(
         mode='vline',
-        tooltips=[
-            ('Date', '@x{%raw%}{%F}{%endraw%}'),  # raw/endraw added due to
-                                                  # Jinja2 Error
-            ('Accuracy', '@y%')
-        ],
+        line_policy='nearest',
+        tooltips='''
+<div class="container-fluid">
+    <div>
+        <span style="font-size: 17px; font-weight: bold;">@name:</span>
+        <span style="font-size: 17px;">@y%</span>
+    </div>
+    <div>
+        <span style="font-size: 15px; font-weight: bold;">Date:</span>
+        <span style="font-size: 15px;">@x{%raw%}{%F}{%endraw%}</span>
+    </div>
+</div>
+''',
         formatters={
             'x': 'datetime'
         }
     )
+    colors = palettes.Set3[12]
     tools = [hovertool, 'pan', 'wheel_zoom', 'save', 'reset']
-    p = figure(title="Rogue Accuracies",
+    p = figure(title="Accuracies",
                x_axis_label='Date',
                y_axis_label='Accuracy',
                x_axis_type='datetime',
                sizing_mode='stretch_width',
                tools=tools,
+               toolbar_location='above',
                active_drag="pan",
                active_inspect=hovertool,
                active_scroll="wheel_zoom")
 
-    for rogue in getRogues(onlyNames=True, daterange=daterange):
-        accuracies = getRogueAccuracy(rogue, theme=theme, daterange=daterange)
+    rogues = getRogues(daterange=daterange)
+    guests = getGuests(daterange=daterange)
+    participants = rogues + guests
+    for i, participant in enumerate(participants):
+        accuracies = getRogueAccuracy(
+            participant.name, theme=theme, daterange=daterange)
         x = []
         y = []
+        color = colors[i]
         for episode, accuracy in accuracies:
             accuracy *= 100
             x.append(episode.date)
             y.append(accuracy)
-        color = colors.pop()
-        p.line(x, y, legend_label=rogue, line_width=4, color=color, alpha=.3)
-        # p.circle(x, y, fill_color=color, alpha=.2, size=6)
+        source = ColumnDataSource(data=dict(
+            x=x, y=y,
+            name=[participant.name for r in range(len(x))],
+        ))
+        p.line(x='x', y='y', legend_label=participant.name, line_color=color,
+               line_width=4, alpha=0.75, source=source,
+               visible=participant.is_rogue)
+
+    p.legend.click_policy = "hide"
     saveGraph(p, saveTo)
 
 
 def graphSweeps(saveTo='graph', daterange=False):
-    colors = ['red', 'blue', 'black', 'green', 'orange', 'purple',
-              'navy']
+    colors = palettes.Set3[12]
 
     hovertool = HoverTool(
         mode='vline',
-        tooltips=[
-            ('Date', '@x{%raw%}{%F}{%endraw%}'),  # raw/endraw added due to
-                                                  # Jinja2 Error
-            ('Accuracy', '@y%')
-        ],
+        tooltips='''
+<div class="container-fluid">
+    <div>
+        <span style="font-size: 17px; font-weight: bold;">
+            @label:
+        </span>
+        <span style="font-size: 17px;">@y</span>
+    </div>
+    <div>
+        <span style="font-size: 15px; font-weight: bold;">Date:</span>
+        <span style="font-size: 15px;">@x{%raw%}{%F}{%endraw%}</span>
+    </div>
+</div>
+''',
         formatters={
             'x': 'datetime'
         }
@@ -170,18 +217,25 @@ def graphSweeps(saveTo='graph', daterange=False):
     for episode, numSweeps in presenterSweeps:
         x.append(episode.date)
         y.append(numSweeps)
-    color = colors.pop()
-    p.line(x, y, legend_label='Presenter Sweeps',
-           line_width=4, color=color, alpha=.3)
-    # p.circle(x, y, fill_color=color, alpha=.2, size=6)
+    color = colors[0]
+    source = ColumnDataSource(data=dict(
+        x=x, y=y,
+        label=['Presenter Sweeps' for r in range(len(x))],
+    ))
+    p.line(x='x', y='y', legend_label='Presenter Sweeps',
+           line_width=4, color=color, alpha=0.75, source=source)
 
     x = []
     y = []
     for episode, numSweeps in participantSweeps:
         x.append(episode.date)
         y.append(numSweeps)
-    color = colors.pop()
-    p.line(x, y, legend_label='Participant Sweeps',
-           line_width=4, color=color, alpha=.3)
+    color = colors[1]
+    source = ColumnDataSource(data=dict(
+        x=x, y=y,
+        label=['Participant Sweeps' for r in range(len(x))],
+    ))
+    p.line(x='x', y='y', legend_label='Participant Sweeps',
+           line_width=4, color=color, alpha=0.75, source=source)
 
     saveGraph(p, saveTo)

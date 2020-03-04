@@ -10,12 +10,13 @@ def getRogueOverallAccuracy(roguename, daterange=False, theme=False):
     correctResults = [result for result in presentResults
                       if result.is_correct]
     totalCorrect = len(correctResults)
+    totalIncorrect = len(presentResults) - len(correctResults)
     total = len(presentResults)
     try:
         accuracy = totalCorrect/total
     except ZeroDivisionError:
         accuracy = 0
-    return accuracy
+    return accuracy, totalCorrect, totalIncorrect
 
 
 def getRogueAccuracy(roguename, daterange=False, theme=False):

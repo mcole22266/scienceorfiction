@@ -104,10 +104,9 @@ def init_graphs(app):
         app.logger.info('bokeh folder found')
 
     app.logger.info('Building all graphs')
-    episodes = getAllEpisodes()
     graphTypes = ['overallAccuracy', 'accuracyOverTime', 'sweeps']
-    graphYears = set([str(episode.date.year) for episode in episodes])
-    graphYears.add('overall')
+    graphYears = getYears()
+    graphYears.append('overall')
     buildAllGraphs(graphTypes, graphYears)
     app.logger.info('All graphs built')
 
@@ -146,11 +145,30 @@ def getRogues(onlyNames=False, current_date=False, daterange=False):
     return rogues
 
 
-def getGuests():
+def getGuests(onlyNames=False, daterange=False):
     from .models import Participants
     guests = Participants.query.filter_by(
         is_rogue=False).order_by(
             Participants.name).all()
+
+    if daterange:
+        for guest in guests[:]:
+            results = getResults(participant_id=guest.id)
+            dates = []
+            for result in results:
+                ep = getEpisode(ep_id=result.episode_id)
+                dates.append(ep.date)
+            present = False
+            for d in dates:
+                if d >= daterange[0] and d <= daterange[1]:
+                    present = True
+                    break
+            if not present:
+                guests.remove(guest)
+
+    if onlyNames:
+        for i, guest in enumerate(guests):
+            guests[i] = guest.name
 
     return guests
 
@@ -163,11 +181,13 @@ def getThemes():
     return episodes
 
 
-def getYears():
+def getYears(desc=False):
     from .models import Episodes
     episodes = Episodes.query.all()
-    dates = set([str(episode.date.year) for episode in episodes])
-    return sorted(list(dates))
+    dates = sorted(list(set([str(episode.date.year) for episode in episodes])))
+    if desc:
+        dates = reversed(dates)
+    return dates
 
 
 def check_authentication(username, password):

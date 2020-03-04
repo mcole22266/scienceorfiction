@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% include 'navbar.html' %}
+<br>
+<br>
+
+<div class="vh-100">
+    <br>
+    <br>
+
+    <div class="container col-10">
+        <ul class="nav nav-tabs nav-pills" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="usefulRogue-tab" data-toggle="tab" href="#usefulRogues" role="tab" aria-controls="usefulRogues" aria-selected="true">
+                    Rogues
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="usefulGuest-tab" data-toggle="tab" href="#usefulGuests" role="tab" aria-controls="usefulGuests" aria-selected="false">
+                    Guests
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="usefulEpisodes-tab" data-toggle="tab" href="#usefulEpisodes" role="tab" aria-controls="usefulEpisodes" aria-selected="false">
+                    Episodes
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="usefulRogues" role="tabpanel" aria-labelledby="usefulRogues-tab">{% include 'userFriendlyRogues-table.html' %}</div>
+            <div class="tab-pane fade" id="usefulGuests" role="tabpanel" aria-labelledby="usefulGuests-tab">{% include 'userFriendlyGuests-table.html' %}</div>
+            <div class="tab-pane fade" id="usefulEpisodes" role="tabpanel" aria-labelledby="usefulEpisodes-tab">{% include 'userFriendlyEpisodes-table.html' %}</div>
+        </div>
+    </div>
+</div>
+
+{% include 'footer.html' %}
+
+{% endblock %}

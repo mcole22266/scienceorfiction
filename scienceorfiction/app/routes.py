@@ -44,12 +44,12 @@ def addRoutes(app):
             graph = graphType + graphYear
 
         return render_template('index.html',
-                               title='Hello World',
+                               title='Science or Fiction',
                                form=form,
                                graph=graph,
                                graphType=graphType,
                                graphYear=graphYear,
-                               years=getYears(),
+                               years=getYears(desc=True),
                                themes=getThemes())
 
     @app.route('/overallAccuracy')
@@ -63,6 +63,15 @@ def addRoutes(app):
     @app.route('/sweeps')
     def sweeps():
         return redirect(url_for('index', graphType='sweeps'))
+
+    @app.route('/data')
+    def data():
+        return render_template('data.html',
+                               title='Data',
+                               userFriendlyRogues=getUserFriendlyRogues(db),
+                               userFriendlyGuests=getUserFriendlyGuests(db),
+                               ep_data=getUserFriendlyEpisodeData(db),
+                               sum_data=getUserFriendlyEpisodeSums(db))
 
     @app.route('/about')
     def about():
