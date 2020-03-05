@@ -6,7 +6,8 @@
         <tr>
             <th>id</th>
             <th>username</th>
-            <th>password</th>
+            <th>firstname</th>
+            <th>lastname</th>
         </tr>
     </thead>
     <tbody>
@@ -14,7 +15,8 @@
                 <tr>
                     <th scope="row">{{ admin.id }}</th>
                     <td>{{ admin.username }}</td>
-                    <td>{{ admin.password }}</td>
+                    <td>{{ admin.firstname }}</td>
+                    <td>{{ admin.lastname }}</td>
                 </tr>
         {% endfor %}
     </tbody>
