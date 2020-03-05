@@ -8,7 +8,11 @@
 
 <div class="vh-100">
     <div class="container-fluid">
-        <h1>Welcome {{ current_user.username }}</h1>
+        {% if current_user.firstname %}
+            <h1>Welcome {{ current_user.firstname }}</h1>
+        {% else %}
+            <h1>Welcome {{ current_user.username }}</h1>
+        {% endif %}
         <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addEntryForm">Add Entry</button>
         <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addParticipantForm">Add Participant</button>
         <a href="/refreshGraphs"><button class="btn btn-primary" type="button">Refresh Graphs</button></a>
