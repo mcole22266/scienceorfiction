@@ -153,9 +153,21 @@ class Admins(db.Model):
     password = db.Column(db.String(80),
                          nullable=False)
 
-    def __init__(self, username, password, encrypted=False):
+    firstname = db.Column(db.String(80),
+                          nullable=True)
+
+    lastname = db.Column(db.String(80),
+                         nullable=True)
+
+    def __init__(self, username, password,
+                 firstname=False, lastname=False,
+                 encrypted=False):
         from .extensions import encrypt
         self.username = username
+        if firstname:
+            self.firstname = firstname
+        if lastname:
+            self.lastname = lastname
         if not encrypted:
             self.password = encrypt(password)
         elif encrypted:
