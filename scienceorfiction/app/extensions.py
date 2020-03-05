@@ -442,7 +442,7 @@ def getUserFriendlyEpisodeData(db):
     WHERE
         res.is_presenter=1
     ORDER BY
-        ep_num
+        ep_num DESC
     ''')
     return ep_data.fetchall()
 
@@ -460,7 +460,7 @@ def getUserFriendlyEpisodeSums(db):
     GROUP BY
         episode_id
     ORDER BY
-        ep.ep_num
+        ep.ep_num DESC
     ''')
 
     return sum_data.fetchall()
