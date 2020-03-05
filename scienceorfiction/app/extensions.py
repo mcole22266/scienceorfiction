@@ -371,9 +371,10 @@ def getAllEpisodes(daterange=False, desc=False):
     return episodes
 
 
-def addAdmin(db, username, password, encrypted=False, commit=False):
+def addAdmin(db, username, password, firstname, lastname,
+             encrypted=False, commit=False):
     from .models import Admins
-    admin = Admins(username, password, encrypted)
+    admin = Admins(username, password, firstname, lastname, encrypted)
     db.session.add(admin)
     if commit:
         db.session.commit()

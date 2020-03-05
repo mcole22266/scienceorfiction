@@ -240,9 +240,13 @@ def addRoutes(app):
         if form.validate_on_submit():
             username = request.form['username']
             password = encrypt(request.form['password'])
+            firstname = request.form['firstname']
+            lastname = request.form['lastname']
             return redirect(url_for('admin_authenticate',
                                     username=username,
-                                    password=password))
+                                    password=password,
+                                    firstname=firstname,
+                                    lastname=lastname))
 
         # GET
         return render_template('adminCreate.html',
@@ -251,13 +255,6 @@ def addRoutes(app):
 
     @app.route('/admin/authenticate', methods=['GET', 'POST'])
     def admin_authenticate():
-        if current_user.is_authenticated:
-            return redirect(url_for('admin'))
-        form = AdminAuthenticateForm()
-        username = request.args.get('username')
-        app.logger.info(username)
-        password = request.args.get('password')
-        app.logger.info(password)
 
         # POST
         if request.method == 'POST':
@@ -265,7 +262,10 @@ def addRoutes(app):
             if secret_code_form == secret_code:
                 username = request.form['username']
                 password = request.form['password']
+                firstname = request.form['firstname']
+                lastname = request.form['lastname']
                 admin = addAdmin(db, username, password,
+                                 firstname, lastname,
                                  encrypted=True, commit=True)
                 login_user(admin)
                 return redirect(url_for('admin'))
@@ -273,12 +273,22 @@ def addRoutes(app):
                 return redirect(url_for('admin_authenticate'))
 
         # GET
+        if current_user.is_authenticated:
+            return redirect(url_for('admin'))
+        form = AdminAuthenticateForm()
+        username = request.args.get('username')
+        password = request.args.get('password')
+        firstname = request.args.get('firstname')
+        lastname = request.args.get('lastname')
+
         thread = Thread(target=email_secret_code, args=[secret_code])
         thread.start()
         return render_template('adminAuthenticate.html',
                                title='Admin - Authenticate',
                                username=username,
                                password=password,
+                               firstname=firstname,
+                               lastname=lastname,
                                form=form)
 
     @app.route('/logout')
