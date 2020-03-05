@@ -46,6 +46,14 @@ class AdminCreateForm(FlaskForm):
         adminAlreadyExists
     ])
 
+    firstname = StringField('First Name', render_kw={
+        'placeholder': 'optional'
+    })
+
+    lastname = StringField('Last Name', render_kw={
+        'placeholder': 'optional'
+    })
+
     password = PasswordField('Password', validators=[
         EqualTo('passwordConfirm', message='Passwords do not match.')
     ])
