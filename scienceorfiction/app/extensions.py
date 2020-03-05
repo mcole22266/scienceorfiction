@@ -332,11 +332,11 @@ def addEpisode(db, ep_num, date, num_items, theme, guests, participant_results,
     episode = Episodes(ep_num, date, num_items, theme)
     db.session.add(episode)
     episode = getEpisode(ep_num=ep_num)
-    for name, correct in guests:
-        addParticipant(db, name)
-        guest = getParticipant(name)
-        results.append(addResult(db, episode.id, guest.id, correct))
-    for participant, correct in participant_results:
+    for name in guests:
+        present = getParticipant(name)
+        if not present:
+            addParticipant(db, name)
+    for (participant, correct) in participant_results:
         rogue = getParticipant(participant)
         results.append(addResult(db, episode.id, rogue.id, correct))
     if commit:
@@ -371,7 +371,8 @@ def getAllEpisodes(daterange=False, desc=False):
     return episodes
 
 
-def addAdmin(db, username, password, firstname, lastname,
+def addAdmin(db, username, password,
+             firstname=False, lastname=False,
              encrypted=False, commit=False):
     from .models import Admins
     admin = Admins(username, password, firstname, lastname, encrypted)

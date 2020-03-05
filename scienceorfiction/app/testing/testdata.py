@@ -42,8 +42,8 @@ def getRoguesRandomized():
 
 def getEpisodes(rogues):
     episodeList = []
-    ep_date = date(2005, 5, 4)
-    ep_num = 600
+    ep_date = date(2018, 5, 4)
+    ep_num = 1
     num_items_choices = [3, 4]
     themes_choices = [None, 'Star Wars', 'Star Trek', 'Numbers', 'Vaccines',
                       'Computer Science', 'Biology', 'Chemistry',
@@ -99,7 +99,8 @@ def getEpisodes(rogues):
                 participant = (guest, 'correct')
             else:
                 participant = (guest, 'incorrect')
-            episode['guests'].append(participant)
+            episode['guests'].append(guest)
+            episode['rogues'].append(participant)
 
         # append episode and increment values
         episodeList.append(episode)

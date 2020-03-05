@@ -9,10 +9,17 @@ def adminAlreadyExists(form, field):
         raise ValidationError('This admin username already exists.')
 
 
+def epNumAlreadyExists(form, field):
+    from .models import Episodes
+    if Episodes.query.filter_by(ep_num=field.data).first():
+        raise ValidationError('The Episode Number you input already exists')
+
+
 class AddEntryForm(FlaskForm):
 
     ep_num = StringField('Episode Number', validators=[
-        InputRequired()
+        InputRequired(),
+        epNumAlreadyExists
     ])
 
     num_items = StringField('Number of Items', validators=[

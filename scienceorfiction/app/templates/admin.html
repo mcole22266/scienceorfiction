@@ -5,6 +5,23 @@
 {% include 'navbar-admin.html' %}
 <br>
 <br>
+{% if form.errors %}
+    <div class="container">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <h5 class="alert-heading">The operation has been cancelled due to the following error(s)</h3>
+            <ul>
+                {% for error in form.errors.ep_num %}
+                    <li>
+                        <p>{{ error }}</p>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </li>
+                </ul>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
 
 <div class="vh-100">
     <div class="container-fluid">

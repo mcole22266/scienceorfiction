@@ -1,7 +1,3 @@
-{% if form.errors %}
-    {{ form.errors }}
-{% endif %}
-
 <div class="container-fluid form-card">
     <form action="/admin" method="POST" role="form" id="addEntryForm" name="addEntryForm">
         {{ form.csrf_token }}
