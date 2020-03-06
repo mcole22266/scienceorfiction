@@ -1,5 +1,5 @@
 <div class="container-fluid form-card">
-    <form action="/admin" method="POST" role="form" id="addEntryForm" name="addEntryForm">
+    <form action="/admin" method="POST" role="form" id="addEntryForm" name="addEntryForm" data-toggle="validator">
         {{ form.csrf_token }}
 
         <h3>Episode</h3>
@@ -24,7 +24,7 @@
         <div class="row">
             <div class="col-12">
                 <label for="theme-id">Theme</label>
-                <input type="text" name="theme" id="theme-id" class="form-control" list="theme-list">
+                <input type="text" name="theme" id="theme-id" class="form-control" list="theme-list" required>
                 <datalist id="theme-list">
                     {% for theme in themes %}
                         <option value="{{ theme }}">
