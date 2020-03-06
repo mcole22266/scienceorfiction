@@ -15,6 +15,12 @@ def epNumAlreadyExists(form, field):
         raise ValidationError('The Episode Number you input already exists')
 
 
+def participantAlreadyExists(form, field):
+    from .models import Participants
+    if Participants.query.filter_by(name=field.data).first():
+        raise ValidationError('The Participant you input already exists')
+
+
 class AddEntryForm(FlaskForm):
 
     ep_num = StringField('Episode Number', validators=[
@@ -31,7 +37,9 @@ class AddEntryForm(FlaskForm):
 
 class AddParticipantForm(FlaskForm):
 
-    name = StringField('Name')
+    name = StringField('Name', validators=[
+        participantAlreadyExists
+    ])
 
     is_rogue = BooleanField('Rogue')
 

@@ -5,7 +5,7 @@
 {% include 'navbar-admin.html' %}
 <br>
 <br>
-{% if form.errors %}
+{% if form.errors  or participantForm.errors %}
     <div class="container">
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <h5 class="alert-heading">The operation has been cancelled due to the following error(s)</h3>
@@ -18,7 +18,16 @@
                         </button>
                     </li>
                 </ul>
-            {% endfor %}
+                {% endfor %}
+                {% for error in participantForm.errors.name %}
+                    <li>
+                        <p>{{ error }}</p>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </li>
+                </ul>
+                {% endfor %}
         </div>
     </div>
 {% endif %}
