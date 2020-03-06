@@ -32,6 +32,15 @@
     </div>
 {% endif %}
 
+<div class="container">
+    <div class="alert alert-info alert-dismissable fade" role="alert" id="update-alert">
+        Graphs are being updated. This page will reload when the update is complete.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
+
 <div class="vh-100">
     <div class="container-fluid">
         {% if current_user.firstname %}
@@ -48,7 +57,7 @@
             Add Participant
         </button>
         <a href="/refreshGraphs">
-            <button class="btn btn-primary" type="button" data-toggle="tooltip"
+            <button class="btn btn-primary" type="button" data-toggle="tooltip" onclick="alertUser()"
                     data-placement="right" title="Update the graphs to account for any new data that has been added">
                 Refresh
             </button>
@@ -140,5 +149,12 @@
         </div>
     </div>
 </div>
+
+<script>
+    function alertUser() {
+        updateAlert = document.getElementById('update-alert');
+        updateAlert.classList.add('show');
+    }
+</script>
 
 {% endblock %}
