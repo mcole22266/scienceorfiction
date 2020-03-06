@@ -67,7 +67,7 @@ def addRoutes(app):
     @app.route('/data')
     def data():
         return render_template('data.html',
-                               title='Data',
+                               title='Science or Fiction',
                                userFriendlyRogues=getUserFriendlyRogues(db),
                                userFriendlyGuests=getUserFriendlyGuests(db),
                                ep_data=getUserFriendlyEpisodeData(db),
@@ -200,7 +200,7 @@ def addRoutes(app):
 
         # GET
         return render_template('admin.html',
-                               title='Admin - Add Entry',
+                               title='Science or Fiction - Admin',
                                form=form,
                                participantForm=participantForm,
                                rogues=getRogues(current_date=date.today()),
