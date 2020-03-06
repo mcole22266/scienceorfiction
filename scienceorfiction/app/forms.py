@@ -4,21 +4,39 @@ from wtforms.validators import EqualTo, InputRequired, ValidationError
 
 
 def adminAlreadyExists(form, field):
-    from .models import Admins
-    if Admins.query.filter_by(username=field.data).first():
+    from .extensions import getAdmin
+    admin = getAdmin(username=field.data)
+    if admin:
         raise ValidationError('This admin username already exists.')
 
 
 def epNumAlreadyExists(form, field):
-    from .models import Episodes
-    if Episodes.query.filter_by(ep_num=field.data).first():
+    from .extensions import getEpisode
+    episode = getEpisode(ep_num=field.data)
+    if episode:
         raise ValidationError('The Episode Number you input already exists')
 
 
 def participantAlreadyExists(form, field):
-    from .models import Participants
-    if Participants.query.filter_by(name=field.data).first():
+    from .extensions import getParticipant
+    participant = getParticipant(name=field.data)
+    if participant:
         raise ValidationError('The Participant you input already exists')
+
+
+def usernameDoesNotExist(form, field):
+    from .extensions import getAdmin
+    admin = getAdmin(username=field.data)
+    if not admin:
+        raise ValidationError('This username does not exist')
+
+
+def incorrectPassword(form, field):
+    from .extensions import encrypt, getAdmin
+    admin = getAdmin(username=form.username.data)
+    if admin:
+        if admin.password != encrypt(field.data):
+            raise ValidationError('Password is incorrect')
 
 
 class AddEntryForm(FlaskForm):
@@ -48,9 +66,13 @@ class AddParticipantForm(FlaskForm):
 
 class AdminLoginForm(FlaskForm):
 
-    username = StringField('Username')
+    username = StringField('Username', validators=[
+        usernameDoesNotExist
+    ])
 
-    password = PasswordField('Password')
+    password = PasswordField('Password', validators=[
+        incorrectPassword
+    ])
 
     submit = SubmitField('Log In')
 

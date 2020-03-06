@@ -232,7 +232,6 @@ def addRoutes(app):
                 login_user(admin)
                 return redirect(url_for('admin'))
             else:
-                flash('Username and/or Password incorrect')
                 return redirect(url_for('admin_login'))
 
         # GET
