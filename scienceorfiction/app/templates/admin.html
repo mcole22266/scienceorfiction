@@ -39,9 +39,20 @@
         {% else %}
             <h1>Welcome {{ current_user.username }}</h1>
         {% endif %}
-        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addEntryForm">Add Entry</button>
-        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addParticipantForm">Add Participant</button>
-        <a href="/refreshGraphs"><button class="btn btn-primary" type="button">Refresh Graphs</button></a>
+        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addEntryForm"
+                data-placement="bottom" title="Add episode information to the available data">
+            Add Entry
+        </button>
+        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addParticipantForm"
+                data-placement="bottom" title="Add a new rogue/guest to the data">
+            Add Participant
+        </button>
+        <a href="/refreshGraphs">
+            <button class="btn btn-primary" type="button" data-toggle="tooltip"
+                    data-placement="right" title="Update the graphs to account for any new data that has been added">
+                Refresh
+            </button>
+        </a>
     </div>
     <br>
     <br>
