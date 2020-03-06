@@ -29,6 +29,18 @@
                 </div>
                 <br>
 
+                <div class="row">
+                    <div class="col">
+                        {{ form.firstname.label }}
+                        {{ form.firstname(class_ = "form-control") }}
+                    </div>
+                    <div class="col">
+                        {{ form.lastname.label }}
+                        {{ form.lastname(class_ = "form-control") }}
+                    </div>
+                </div>
+                <br>
+
                 <div class="form-field">
                     {{ form.password.label }}
                     {{ form.password(class_ = "form-control") }}

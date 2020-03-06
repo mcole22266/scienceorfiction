@@ -1,7 +1,3 @@
-{% if participantForm.errors %}
-    {{ participantForm.errors }}
-{% endif %}
-
 <div class="container-fluid form-card">
     <form action="/admin" method="POST" role="form">
         {{ participantForm.csrf_token }}
@@ -9,7 +5,12 @@
 
         <div class="form-group">
             {{ participantForm.name.label }}
-            {{ participantForm.name(class_ = "form-control") }}
+            {{ participantForm.name(class_ = "form-control", list = "participant-list") }}
+            <datalist id="participant-list">
+                {% for participant in participants %}
+                    <option value="{{ participant.name }}">
+                {% endfor %}
+            </datalist>
         </div>
 
         <div class="form-check">

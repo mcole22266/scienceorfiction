@@ -67,7 +67,7 @@ def addRoutes(app):
     @app.route('/data')
     def data():
         return render_template('data.html',
-                               title='Data',
+                               title='Science or Fiction',
                                userFriendlyRogues=getUserFriendlyRogues(db),
                                userFriendlyGuests=getUserFriendlyGuests(db),
                                ep_data=getUserFriendlyEpisodeData(db),
@@ -133,64 +133,74 @@ def addRoutes(app):
         form = AddEntryForm()
         participantForm = AddParticipantForm()
 
-        # POST
-        if form.validate_on_submit():
+        # find which form was submitted by checking for unique
+        # form data
+        try:
             ep_num = request.form['ep_num']
-            ep_date = request.form['date']
-            num_items = request.form['num_items']
-            theme = request.form['theme']
-            guests = []
-            participant_results = []
-            for key in request.form.keys():
-                app.logger.info(key)
-                if 'radio' in key:
-                    if 'guest' not in key:
-                        # remove 'radio-' from key by finding hyphen
-                        participant = key[key.find('-')+1:]
-                        result = request.form[key]
+            formType = 'add entry'
+        except Exception:
+            formType = 'add participant'
+
+        # POST
+        if formType == 'add entry':
+            if form.validate_on_submit():
+                ep_num = request.form['ep_num']
+                ep_date = request.form['date']
+                num_items = request.form['num_items']
+                theme = request.form['theme']
+                guests = []
+                participant_results = []
+                for key in request.form.keys():
+                    app.logger.info(key)
+                    if 'radio' in key:
+                        if 'guest' not in key:
+                            # remove 'radio-' from key by finding hyphen
+                            participant = key[key.find('-')+1:]
+                            result = request.form[key]
+                        else:
+                            # remove '-radio' from key by finding hyphen
+                            guest = key[:key.find('-')]
+                            app.logger.info('guest: ' + guest)
+                            participant = request.form[guest]
+                            app.logger.info('participant: ' + participant)
+                            result = request.form[guest + '-radio']
+                            app.logger.info('result: ' + result)
+                            guests.append(participant)
+                        participant_results.append((participant, result))
+                addEpisode(db, ep_num, ep_date, num_items, theme, guests,
+                           participant_results, commit=True)
+                return redirect(url_for('admin'))
+
+        if formType == 'add participant':
+            if participantForm.validate_on_submit():
+                name = request.form['name']
+                try:
+                    is_rogue = request.form['is_rogue']
+                except Exception:
+                    is_rogue = False
+                if is_rogue:
+                    start_date = request.form['rogue_start_date']
+                    if start_date != '':
+                        start_date = datetime.strptime(start_date, '%Y-%m-%d')
                     else:
-                        # remove '-radio' from key by finding hyphen
-                        guest = key[:key.find('-')]
-                        app.logger.info('guest: ' + guest)
-                        participant = request.form[guest]
-                        app.logger.info('participant: ' + participant)
-                        result = request.form[guest + '-radio']
-                        app.logger.info('result: ' + result)
-                        guests.append(participant)
-                    participant_results.append((participant, result))
-            addEpisode(db, ep_num, ep_date, num_items, theme, guests,
-                       participant_results, commit=True)
-            return redirect(url_for('admin'))
-
-        if participantForm.validate_on_submit():
-            name = request.form['name']
-            try:
-                is_rogue = request.form['is_rogue']
-            except Exception:
-                is_rogue = False
-            if is_rogue:
-                start_date = request.form['rogue_start_date']
-                if start_date != '':
-                    start_date = datetime.strptime(start_date, '%Y-%m-%d')
+                        start_date = None
+                    end_date = request.form['rogue_end_date']
+                    if end_date != '':
+                        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+                    else:
+                        end_date = None
+                    addParticipant(db, name, is_rogue=True,
+                                   rogue_start_date=start_date,
+                                   rogue_end_date=end_date,
+                                   commit=True)
                 else:
-                    start_date = None
-                end_date = request.form['rogue_end_date']
-                if end_date != '':
-                    end_date = datetime.strptime(end_date, '%Y-%m-%d')
-                else:
-                    end_date = None
-                addParticipant(db, name, is_rogue=True,
-                               rogue_start_date=start_date,
-                               rogue_end_date=end_date,
-                               commit=True)
-            else:
-                addParticipant(db, name, commit=True)
+                    addParticipant(db, name, commit=True)
 
-            return redirect(url_for('admin'))
+                return redirect(url_for('admin'))
 
         # GET
         return render_template('admin.html',
-                               title='Admin - Add Entry',
+                               title='Science or Fiction - Admin',
                                form=form,
                                participantForm=participantForm,
                                rogues=getRogues(current_date=date.today()),
@@ -240,9 +250,13 @@ def addRoutes(app):
         if form.validate_on_submit():
             username = request.form['username']
             password = encrypt(request.form['password'])
+            firstname = request.form['firstname']
+            lastname = request.form['lastname']
             return redirect(url_for('admin_authenticate',
                                     username=username,
-                                    password=password))
+                                    password=password,
+                                    firstname=firstname,
+                                    lastname=lastname))
 
         # GET
         return render_template('adminCreate.html',
@@ -251,13 +265,6 @@ def addRoutes(app):
 
     @app.route('/admin/authenticate', methods=['GET', 'POST'])
     def admin_authenticate():
-        if current_user.is_authenticated:
-            return redirect(url_for('admin'))
-        form = AdminAuthenticateForm()
-        username = request.args.get('username')
-        app.logger.info(username)
-        password = request.args.get('password')
-        app.logger.info(password)
 
         # POST
         if request.method == 'POST':
@@ -265,7 +272,10 @@ def addRoutes(app):
             if secret_code_form == secret_code:
                 username = request.form['username']
                 password = request.form['password']
+                firstname = request.form['firstname']
+                lastname = request.form['lastname']
                 admin = addAdmin(db, username, password,
+                                 firstname, lastname,
                                  encrypted=True, commit=True)
                 login_user(admin)
                 return redirect(url_for('admin'))
@@ -273,12 +283,22 @@ def addRoutes(app):
                 return redirect(url_for('admin_authenticate'))
 
         # GET
+        if current_user.is_authenticated:
+            return redirect(url_for('admin'))
+        form = AdminAuthenticateForm()
+        username = request.args.get('username')
+        password = request.args.get('password')
+        firstname = request.args.get('firstname')
+        lastname = request.args.get('lastname')
+
         thread = Thread(target=email_secret_code, args=[secret_code])
         thread.start()
         return render_template('adminAuthenticate.html',
                                title='Admin - Authenticate',
                                username=username,
                                password=password,
+                               firstname=firstname,
+                               lastname=lastname,
                                form=form)
 
     @app.route('/logout')

@@ -9,7 +9,7 @@
   <div class="container-fluid row align-items-center h-100">
 
     <!-- Title and Graph Options -->
-    <div class="container col-lg-4">
+    <div class="container col-xl-2">
 
       <h1>Science or Fiction</h1>
 
@@ -17,8 +17,6 @@
         {{ form.csrf_token }}
 
         <div class="form-field">
-          <h3>Options:</h3>
-
           <input type="hidden" name="graphType" value="{{ graphType }}">
 
           <label for="year">Year</label>
@@ -37,7 +35,7 @@
         </div>
         <br>
         <div class="form-field">
-          <input class="btn btn-primary rounded-pill" type="submit" value="submit">
+          <input class="btn btn-primary rounded-pill" type="submit" value="Submit">
         </div>
         <br>
       </form>
@@ -45,12 +43,13 @@
     </div>
     
     <!-- Graph -->
-    <div class="container col-lg-8">
+    <div class="container col-xl-10">
       {% include 'bokeh/' + graph + '.html' %}
     </div>
-  </div>
 
   {% include 'footer.html' %}
+  </div>
+
 </div>
 
 {% endblock %}

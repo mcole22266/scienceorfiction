@@ -5,13 +5,63 @@
 {% include 'navbar-admin.html' %}
 <br>
 <br>
+{% if form.errors  or participantForm.errors %}
+    <div class="container">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <h5 class="alert-heading">The operation has been cancelled due to the following error(s)</h3>
+            <ul>
+                {% for error in form.errors.ep_num %}
+                    <li>
+                        <p>{{ error }}</p>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </li>
+                </ul>
+                {% endfor %}
+                {% for error in participantForm.errors.name %}
+                    <li>
+                        <p>{{ error }}</p>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </li>
+                </ul>
+                {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+<div class="container">
+    <div class="alert alert-info alert-dismissable fade" role="alert" id="update-alert">
+        Graphs are being updated. This page will reload when the update is complete.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+</div>
 
 <div class="vh-100">
     <div class="container-fluid">
-        <h1>Welcome {{ current_user.username }}</h1>
-        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addEntryForm">Add Entry</button>
-        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addParticipantForm">Add Participant</button>
-        <a href="/refreshGraphs"><button class="btn btn-primary" type="button">Refresh Graphs</button></a>
+        {% if current_user.firstname %}
+            <h1>Welcome {{ current_user.firstname }}</h1>
+        {% else %}
+            <h1>Welcome {{ current_user.username }}</h1>
+        {% endif %}
+        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addEntryForm"
+                data-placement="bottom" title="Add episode information to the available data">
+            Add Entry
+        </button>
+        <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addParticipantForm"
+                data-placement="bottom" title="Add a new rogue/guest to the data">
+            Add Participant
+        </button>
+        <a href="/refreshGraphs">
+            <button class="btn btn-primary" type="button" data-toggle="tooltip" onclick="alertUser()"
+                    data-placement="right" title="Update the graphs to account for any new data that has been added">
+                Refresh
+            </button>
+        </a>
     </div>
     <br>
     <br>
@@ -99,5 +149,12 @@
         </div>
     </div>
 </div>
+
+<script>
+    function alertUser() {
+        updateAlert = document.getElementById('update-alert');
+        updateAlert.classList.add('show');
+    }
+</script>
 
 {% endblock %}
