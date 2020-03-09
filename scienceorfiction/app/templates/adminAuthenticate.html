@@ -19,10 +19,11 @@
                 <input type="hidden" name="password" value="{{ password }}">
                 <input type="hidden" name="firstname" value="{{ firstname }}">
                 <input type="hidden" name="lastname" value="{{ lastname }}">
+                <input type="hidden" name="secret_code" value="{{ secret_code }}">
 
                 <div class="form-field">
-                    {{ form.secret_code.label }}
-                    {{ form.secret_code(class_ = "form-control") }}
+                    {{ form.secretcode_input.label }}
+                    {{ form.secretcode_input(class_ = "form-control") }}
                 </div>
 
                 <br>

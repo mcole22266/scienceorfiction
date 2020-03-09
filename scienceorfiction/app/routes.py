@@ -3,7 +3,7 @@
 from datetime import date, datetime
 from threading import Thread
 
-from flask import flash, redirect, render_template, request, url_for
+from flask import redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_wtf import FlaskForm
 
@@ -18,8 +18,6 @@ from .forms import (AddEntryForm, AddParticipantForm, AdminAuthenticateForm,
                     AdminCreateForm, AdminLoginForm)
 from .models import db
 from .stats import getRogueAttendance, getRogueOverallAccuracy, getSweeps
-
-secret_code = generate_secret_code()
 
 
 def addRoutes(app):
@@ -264,40 +262,47 @@ def addRoutes(app):
 
     @app.route('/admin/authenticate', methods=['GET', 'POST'])
     def admin_authenticate():
+        if current_user.is_authenticated:
+            return redirect(url_for('admin'))
+        form = AdminAuthenticateForm()
 
         # POST
-        if request.method == 'POST':
-            secret_code_form = request.form['secret_code']
-            if secret_code_form == secret_code:
-                username = request.form['username']
-                password = request.form['password']
-                firstname = request.form['firstname']
-                lastname = request.form['lastname']
+        if form.validate_on_submit():
+            username = request.form['username']
+            password = request.form['password']
+            firstname = request.form['firstname']
+            lastname = request.form['lastname']
+            secret_code = request.form['secret_code']
+            secretcode_input = request.form['secretcode_input']
+            if secretcode_input == secret_code:
                 admin = addAdmin(db, username, password,
                                  firstname, lastname,
                                  encrypted=True, commit=True)
                 login_user(admin)
                 return redirect(url_for('admin'))
             else:
-                return redirect(url_for('admin_authenticate'))
+                return redirect(url_for('admin_authenticate',
+                                        username=username,
+                                        password=password,
+                                        firstname=firstname,
+                                        lastname=lastname))
 
         # GET
-        if current_user.is_authenticated:
-            return redirect(url_for('admin'))
-        form = AdminAuthenticateForm()
         username = request.args.get('username')
         password = request.args.get('password')
         firstname = request.args.get('firstname')
         lastname = request.args.get('lastname')
-
+        secret_code = generate_secret_code()
         thread = Thread(target=email_secret_code, args=[secret_code])
         thread.start()
+
         return render_template('adminAuthenticate.html',
                                title='Admin - Authenticate',
                                username=username,
                                password=password,
                                firstname=firstname,
                                lastname=lastname,
+                               secret_code=secret_code,
                                form=form)
 
     @app.route('/logout')
