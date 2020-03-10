@@ -104,6 +104,8 @@ class AdminCreateForm(FlaskForm):
 
 class AdminAuthenticateForm(FlaskForm):
 
-    secretcode_input = StringField('Secret Code')
+    secretcode_input = StringField('Secret Code', validators=[
+        InputRequired()
+    ])
 
     submit = SubmitField('Create Account')
