@@ -10,6 +10,16 @@ from .stats import getRogueAccuracy, getRogueOverallAccuracy, getSweeps
 
 
 def saveGraph(graph, filename):
+    '''
+    Writes a given graph to a file in a given location. Location is dictated by
+    the OUTPUT_FILEPATH env variable.
+
+    Args:
+        graph (Bokeh Figure): The desired graph to be written to a file.
+        filename (str): The desired name of the saved file.
+    Returns:
+        None
+    '''
     filename += '.html'
     output_filepath = environ['OUTPUT_FILEPATH']
     output_filepath += filename
@@ -18,12 +28,34 @@ def saveGraph(graph, filename):
 
 
 def buildAllGraphs(graphTypes, graphYears):
+    '''
+    Used primarily to "update" graphs by recreating them with current data.
+    Also is used upon app initialization to create graphs needed for display.
+
+    Args:
+        graphTypes (List[str]): A list of graphtypes to build.
+        graphYears (List[date]): A list of dates for graphs to build.
+    Returns:
+        None
+    '''
     for graphType in graphTypes:
         for graphYear in graphYears:
             getGraph(graphType, graphYear)
 
 
 def getGraph(graphType, graphYear=False, graphTheme=False):
+    '''
+    "Controller" for graph-building. Given a graphType ensures that a graph
+    is built.
+
+    Args:
+        graphType (str): The type of graph to build.
+        graphYear(date) - optional: The year to build a graph for.
+        graphTheme(str) - optional: The theme to filter all data in
+            graph building.
+    Returns:
+        (str): Name of graph based on parameters.
+    '''
     graph = graphType
     if graphYear == '':
         daterange = False
@@ -48,6 +80,18 @@ def getGraph(graphType, graphYear=False, graphTheme=False):
 
 def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
                                 theme=False):
+    '''
+    Used specifically to create an Overall Accuracy bar graph.
+
+    Args:
+        saveTo (str): Filename for graph.
+        daterange (List or Tuple) - optional: Filter data for graphs down to
+            a date range.
+        theme (str) - optional: Filter data for graphs down to a particular
+            theme.
+    Returns:
+        None
+    '''
     hovertool = HoverTool(
         tooltips='''
 <div class="container-fluid">
@@ -102,6 +146,19 @@ def graphRogueOverallAccuracies(saveTo='graph', daterange=False,
 
 
 def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
+    '''
+    Used specifically to create an accumulated rogue accuracy over time
+    line graph.
+
+    Args:
+        saveTo (str): Filename for graph.
+        daterange (List or Tuple) - optional: Filter data for graphs down to
+            a date range.
+        theme (str) - optional: Filter data for graphs down to a particular
+            theme.
+    Returns:
+        None
+    '''
     hovertool = HoverTool(
         mode='vline',
         line_policy='nearest',
@@ -160,6 +217,17 @@ def graphRogueAccuracies(saveTo='graph', theme=False, daterange=False):
 
 
 def graphSweeps(saveTo='graph', daterange=False):
+    '''
+    Used specifically to create an accumulated number of sweeps over time
+    line graph.
+
+    Args:
+        saveTo (str): Filename for graph.
+        daterange (List or Tuple) - optional: Filter data for graphs down to
+            a date range.
+    Returns:
+        None
+    '''
     colors = palettes.Set3[12]
 
     hovertool = HoverTool(
