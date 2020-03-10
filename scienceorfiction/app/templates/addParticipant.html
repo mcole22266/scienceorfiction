@@ -1,7 +1,6 @@
 <div class="container-fluid form-card">
     <form action="/admin" method="POST" role="form">
-        {{ participantForm.csrf_token }}
-        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        {{ participantForm.csrf_token(id="csrf_token_participant") }}
 
         <div class="form-group">
             {{ participantForm.name.label }}
@@ -33,7 +32,7 @@
 
         <br>
         <div class="form-field" style="float: right;">
-            {{ participantForm.submit(class_ = "btn btn-primary rounded-pill", id = ("submit")) }}
+            {{ participantForm.submitParticipant(class_ = "btn btn-primary rounded-pill", id = ("submit")) }}
         </div>
     </form>
 </div>

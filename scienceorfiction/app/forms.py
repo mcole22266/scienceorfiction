@@ -50,7 +50,7 @@ class AddEntryForm(FlaskForm):
         InputRequired()
     ])
 
-    submit = SubmitField('Add Entry')
+    submitEntry = SubmitField('Add Entry')
 
 
 class AddParticipantForm(FlaskForm):
@@ -61,7 +61,7 @@ class AddParticipantForm(FlaskForm):
 
     is_rogue = BooleanField('Rogue')
 
-    submit = SubmitField('Add Participant')
+    submitParticipant = SubmitField('Add Participant')
 
 
 class AdminLoginForm(FlaskForm):
