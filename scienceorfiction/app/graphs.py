@@ -1,3 +1,6 @@
+# Contains logic to create graphs needed for Science or Fiction app.
+# Also contains supporting functions to simplify certain use-cases
+
 from datetime import date
 from os import environ
 
