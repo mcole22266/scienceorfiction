@@ -1,4 +1,9 @@
-# Contains several different helper functions
+# extensions.py
+# Created by: Michael Cole
+# Updated by: [Michael Cole]
+# ----------------------------
+# Contains several different helper functions to support the application
+# by providing ease of use functionality.
 
 from datetime import date, datetime
 from hashlib import sha256
@@ -57,6 +62,7 @@ def init_db(db):
     '''
     Initializes database with temporary data if data
     is not already present.
+
     Args:
         db (SQLAlchemy): db object from .models
     Returns:
@@ -85,7 +91,8 @@ def init_db(db):
 
 def init_app(app):
     '''
-    Initializes the app.
+    Initializes the app with custom initializers.
+
     Args:
         app (Flask): app from Flask
     Returns:
@@ -95,7 +102,17 @@ def init_app(app):
 
 
 def init_graphs(app):
+    '''
+    Initializes the application with the necessary graphs for users.
+    (Designed to be used upon app startup).
+
+    Args:
+        app(Flask): app from Flask
+    Returns:
+        None
+    '''
     from .graphs import buildAllGraphs
+    # Create bokeh folder if doesn't already exist
     app.logger.info('Checking if bokeh folder exists')
     if not path.exists('/scienceorfiction/app/templates/bokeh'):
         app.logger.info('No bokeh folder found, creating folder')
@@ -112,7 +129,19 @@ def init_graphs(app):
 
 
 def getRogues(onlyNames=False, current_date=False, daterange=False):
-    '''current arg is passed a date'''
+    '''
+    Support function used to retrieve rogues based on certain parameters.
+
+    Args:
+        onlyNames (bool) - optional: Set to True if only rogue names are
+            desired.
+        current_date (bool) - optional: Set to True if only rogues who
+            are currently active are desired.
+        daterange (list or tuple) - optional: Pass a start and stop date
+            to retrieve only rogues who were active within a date window.
+    Returns:
+        (list): List of rogues who meet the specified paramters
+    '''
     from .models import Participants
     rogues = Participants.query.filter_by(
         is_rogue=True).order_by(
@@ -146,6 +175,17 @@ def getRogues(onlyNames=False, current_date=False, daterange=False):
 
 
 def getGuests(onlyNames=False, daterange=False):
+    '''
+    Support function used to retrieve guests based on certain parameters.
+
+    Args:
+        onlyNames (bool) - optional: Set to True if only guest names are
+            desired.
+        daterange (list or tuple) - optional: Pass a start and stop date
+            to retrieve only guests who were active within a date window.
+    Returns:
+        (list): List of guests who meet the specified paramters
+    '''
     from .models import Participants
     guests = Participants.query.filter_by(
         is_rogue=False).order_by(
@@ -174,6 +214,12 @@ def getGuests(onlyNames=False, daterange=False):
 
 
 def getThemes():
+    '''
+    Support function used to retrieve all themes from database.
+
+    Returns:
+        (list): List of all themes.
+    '''
     from .models import Episodes
     episodes = Episodes.query.with_entities(Episodes.theme).order_by(
                Episodes.theme).distinct()
@@ -182,6 +228,14 @@ def getThemes():
 
 
 def getYears(desc=False):
+    '''
+    Support function used to retrieve all years from database.
+
+    Args:
+        desc (bool) - optional: If True, data is sorted in reverse order.
+    Returns:
+        (list): List of all years in db.
+    '''
     from .models import Episodes
     episodes = Episodes.query.all()
     dates = sorted(list(set([str(episode.date.year) for episode in episodes])))
@@ -191,6 +245,15 @@ def getYears(desc=False):
 
 
 def check_authentication(username, password):
+    '''
+    Support function used to verify a username/password combo.
+
+    Args:
+        username (str): Username to verify.
+        password (str): The unencrypted password to test.
+    Returns:
+        (bool): Returns True is authenticated.
+    '''
     admin = getAdmin(username)
     if admin:
         if admin.password == encrypt(password):
@@ -199,11 +262,25 @@ def check_authentication(username, password):
 
 
 def encrypt(string):
+    '''
+    Support function used to encrypt a string.
+
+    Args:
+        string (str): String to encrypt.
+    Returns:
+        (str): encoded version of given string.
+    '''
     string = string.encode()
     return sha256(string).hexdigest()
 
 
 def generate_secret_code():
+    '''
+    Support function to generate a secret code.
+
+    Returns:
+        (str): Secret Code.
+    '''
     from string import ascii_letters
     from random import choice
     secret_code = [choice(ascii_letters) for _ in range(10)]
@@ -212,6 +289,15 @@ def generate_secret_code():
 
 
 def email_secret_code(secret_code):
+    '''
+    Support function specifically used to email the secret code
+    to the username given in the environment variables.
+
+    Args:
+        secret_code (str): Secret code to email.
+    Returns:
+        None
+    '''
     import yagmail
     GMAIL_USERNAME = environ['GMAIL_USERNAME']
     GMAIL_PASSWORD = environ['GMAIL_PASSWORD']
@@ -230,6 +316,22 @@ The Bot'''
 def addParticipant(db, name, is_rogue=False,
                    rogue_start_date=None, rogue_end_date=None,
                    commit=False):
+    '''
+    Support function used to add a new participant to the db.
+
+    Args:
+        db (SQLAlchemy db): db object
+        name (str): Particpant Name
+        is_rogue (bool) - optional: Set to True if particpant is a rogue.
+        rogue_start_date (date) - optional: Should be set if is_rogue==True.
+            Date in which the rogue begins.
+        rogue_end_date (date) - optional: Set only if rogue no longer is an
+            active rogue.
+        commit (bool) - optional: Set to True to have the function commit the
+            changes.
+    Returns:
+        (Participants): db.Model from the participants table in the db.
+    '''
     from .models import Participants
     # start and end dates need to be converted from date to datetime object
     # before being passed into the db
@@ -256,6 +358,14 @@ def addParticipant(db, name, is_rogue=False,
 
 
 def getParticipant(name):
+    '''
+    Support function used to retrieve a particpant from the db.
+
+    Args:
+        name (str): Unique name to use in order to retrieve the participant.
+    Returns:
+        (Participants): db.Model from the participants table in the db.
+    '''
     from .models import Participants
     name = name.title()
     participant = Participants.query.filter_by(name=name).first()
@@ -263,12 +373,31 @@ def getParticipant(name):
 
 
 def getAllParticipants():
+    '''
+    Support function used to retreive all participants from the db.
+
+    Returns:
+        (list): List of all participants in the db.
+    '''
     from .models import Participants
     participants = Participants.query.all()
     return participants
 
 
 def addResult(db, episode_id, rogue_id, is_correct, commit=False):
+    '''
+    Support function used to add a new result to the db.
+
+    Args:
+        db (SQLAlchemy db): db object
+        episode_id (int): Unique Episode ID
+        rogue_id (int): Unique Rogue ID
+        is_correct (bool): True/False indicating rogue result.
+        commit (bool) - optional: Set to True to have the function commit the
+            changes.
+    Returns:
+        (Results): db.Model from the results table in the db.
+    '''
     from .models import Results
     result = Results(episode_id, rogue_id, is_correct)
     db.session.add(result)
@@ -279,6 +408,22 @@ def addResult(db, episode_id, rogue_id, is_correct, commit=False):
 
 def getResults(episode_id=False, participant_id=False,
                daterange=False, theme=False):
+    '''
+    Support function to retrieve data from the results table based on given
+    parameters.
+
+    Args:
+        episode_id (int) - optional: Set to retrieve all results for a single
+            episode.
+        participant_id (int) - optional: Set to retrieve all results for a
+            single participant.
+        daterange (list[date]) - optional: Set to retrieve all results within
+            a date window.
+        theme (str) - optional: Set to retrieve all results for a given theme.
+    Returns:
+        (list): List of all results in the table that match the given
+            parameters.
+    '''
     from .models import Results, Episodes
     if episode_id and participant_id:
         # get specific result for this participant on this episode
@@ -320,6 +465,12 @@ def getResults(episode_id=False, participant_id=False,
 
 
 def getAllResults():
+    '''
+    Support function to retrieve all results from the results table in the db.
+
+    Returns:
+        (list): List of all results in the db.
+    '''
     from .models import Results
     results = Results.query.all()
     return results
@@ -327,6 +478,24 @@ def getAllResults():
 
 def addEpisode(db, ep_num, date, num_items, theme, guests, participant_results,
                commit=False):
+    '''
+    Support function used to add a new episode to the db.
+
+    Args:
+        db (SQLAlchemy db): db object.
+        episode_num (int): Unique Episode Number.
+        date (date): Unique date for the episode.
+        num_items (int): Number of items in the Science or Fiction.
+        theme (str): Theme for the episode's Science or Fiction.
+        guests (list[str]): List of guests who participated in the episode. If
+            they do not currently exist in the db, they are added.
+        participant_results (list[tuple(Participants,str)]): A list of tuples
+            that give a participant as well as the result.
+        commit (bool) - optional: Set to True to have the function commit the
+            changes.
+    Returns:
+        (Results): db.Model from the episodes table in the db.
+    '''
     from .models import Episodes
     results = []
     episode = Episodes(ep_num, date, num_items, theme)
@@ -345,6 +514,18 @@ def addEpisode(db, ep_num, date, num_items, theme, guests, participant_results,
 
 
 def getEpisode(ep_num=False, ep_id=False):
+    '''
+    Support function to retrieve an episode from the db.
+
+    Args:
+        ep_num (int) - optional: Set to retrieve the episode by the
+            episode number.
+        ep_id (int) - optional: Set to retreive the episode by the
+            episode id.
+
+    Returns:
+        (db.Episodes): The desired episode based on the parameters.
+    '''
     from .models import Episodes
     if ep_num:
         episode = Episodes.query.filter_by(ep_num=ep_num).first()
@@ -354,6 +535,20 @@ def getEpisode(ep_num=False, ep_id=False):
 
 
 def getAllEpisodes(daterange=False, desc=False):
+    '''
+    Support function to retrieve all episodes in the database that
+    fit within certain parameters. Call function with no arguments
+    to simply return all episodes.
+
+    Args:
+        daterange (list[date]) - optional: Set to only retrieve episodes
+            that fall within the given date range.
+        desc (bool) - optional: Set to True to have the data returned
+            sorted in descending order.
+
+    Returns:
+        (list): List of all episodes that fit the given criteria.
+    '''
     from .models import Episodes
     if daterange and not desc:
         startdate, enddate = daterange  # daterange is a tuple
@@ -374,6 +569,23 @@ def getAllEpisodes(daterange=False, desc=False):
 def addAdmin(db, username, password,
              firstname=False, lastname=False,
              encrypted=False, commit=False):
+    '''
+    Support function used to add a new admin to the db.
+
+    Args:
+        db (SQLAlchemy db): db object.
+        username (str): Admin username.
+        password (str): Chosen password. If set to an already encrypted
+            password, encrypted arg should be set to True.
+        firstname (str) - optional: Admin first name.
+        lastname (str) - optional: Admin last name.
+        encrypted (bool) - optional: Set to true if the given password has
+            already been encrypted.
+        commit (bool) - optional: Set to True to have the function commit the
+            changes.
+    Returns:
+        (Results): db.Model from the admins table in the db.
+    '''
     from .models import Admins
     admin = Admins(username, password, firstname, lastname, encrypted)
     db.session.add(admin)
@@ -383,6 +595,16 @@ def addAdmin(db, username, password,
 
 
 def getAdmin(username=False, all=False):
+    '''
+    Support function to retreive a single admin or all admins.
+
+    Args:
+        username (str) - optional: Retrieve a single admin based on username.
+        all (bool) - optional: Set to True in order to retrieve all admins.
+    Returns:
+        (db.Admins): A single administrator
+        (list): A list of all administrators
+    '''
     from .models import Admins
     if username:
         admin = Admins.query.filter_by(username=username).first()
@@ -393,6 +615,15 @@ def getAdmin(username=False, all=False):
 
 
 def getUserFriendlyRogues(db):
+    '''
+    Support function to retrieve specific information from multiple tables
+    regarding Rogues.
+
+    Args:
+        db (SQLAlchemy db): db object.
+    Returns:
+        (list): List of all pertinent information regarding rogues.
+    '''
     data = db.session.execute('''
     SELECT
         name, rogue_start_date, rogue_end_date,
@@ -412,6 +643,15 @@ def getUserFriendlyRogues(db):
 
 
 def getUserFriendlyGuests(db):
+    '''
+    Support function to retrieve specific information from multiple tables
+    regarding Guests.
+
+    Args:
+        db (SQLAlchemy db): db object.
+    Returns:
+        (list): List of all pertinent information regarding guests.
+    '''
     data = db.session.execute('''
     SELECT
         name,
@@ -431,6 +671,15 @@ def getUserFriendlyGuests(db):
 
 
 def getUserFriendlyEpisodeData(db):
+    '''
+    Support function to retrieve specific information from multiple tables
+    regarding Episodes.
+
+    Args:
+        db (SQLAlchemy db): db object.
+    Returns:
+        (list): List of all pertinent information regarding episodes.
+    '''
     ep_data = db.session.execute('''
     SELECT
         ep_num, date, num_items, theme,
@@ -450,6 +699,15 @@ def getUserFriendlyEpisodeData(db):
 
 
 def getUserFriendlyEpisodeSums(db):
+    '''
+    Support function to retrieve specific information from multiple tables
+    regarding totaling information.
+
+    Args:
+        db (SQLAlchemy db): db object.
+    Returns:
+        (list): List of all pertinent information regarding totals.
+    '''
     sum_data = db.session.execute('''
     SELECT
         ep.ep_num,
