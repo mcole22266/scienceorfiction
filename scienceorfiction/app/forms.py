@@ -1,9 +1,26 @@
+# forms.py
+# Created by: Michael Cole
+# Updated by: [Michael Cole]
+# --------------------------
+# Contains Flask Forms to be used in front-end bootstrap forms.
+# Also contains custom wtform validators.
+
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, StringField, SubmitField
 from wtforms.validators import EqualTo, InputRequired, ValidationError
 
 
 def adminAlreadyExists(form, field):
+    '''
+    Custom validator to raise a ValidationError if the user inputs an admin
+    username that is already in-use.
+
+    Args:
+        form (FlaskForm): required by WTForms for custom validators.
+        field (FlaskFormField): required by WTForms for custom validators.
+    Returns:
+        None
+    '''
     from .extensions import getAdmin
     admin = getAdmin(username=field.data)
     if admin:
@@ -11,6 +28,16 @@ def adminAlreadyExists(form, field):
 
 
 def epNumAlreadyExists(form, field):
+    '''
+    Custom validator to raise a ValidationError if the user inputs an episode
+    number that already exists in the db.
+
+    Args:
+        form (FlaskForm): required by WTForms for custom validators.
+        field (FlaskFormField): required by WTForms for custom validators.
+    Returns:
+        None
+    '''
     from .extensions import getEpisode
     episode = getEpisode(ep_num=field.data)
     if episode:
@@ -18,6 +45,16 @@ def epNumAlreadyExists(form, field):
 
 
 def participantAlreadyExists(form, field):
+    '''
+    Custom validator to raise a ValidationError if the user inputs a
+    particpant name that already exists in the db.
+
+    Args:
+        form (FlaskForm): required by WTForms for custom validators.
+        field (FlaskFormField): required by WTForms for custom validators.
+    Returns:
+        None
+    '''
     from .extensions import getParticipant
     participant = getParticipant(name=field.data)
     if participant:
@@ -25,6 +62,16 @@ def participantAlreadyExists(form, field):
 
 
 def usernameDoesNotExist(form, field):
+    '''
+    Custom validator to raise a ValidationError if the user inputs a username
+    that does not exist in the db.
+
+    Args:
+        form (FlaskForm): required by WTForms for custom validators.
+        field (FlaskFormField): required by WTForms for custom validators.
+    Returns:
+        None
+    '''
     from .extensions import getAdmin
     admin = getAdmin(username=field.data)
     if not admin:
@@ -32,6 +79,16 @@ def usernameDoesNotExist(form, field):
 
 
 def incorrectPassword(form, field):
+    '''
+    Custom validator to raise a ValidationError if the user inputs an
+    incorrect password for the given username.
+
+    Args:
+        form (FlaskForm): required by WTForms for custom validators.
+        field (FlaskFormField): required by WTForms for custom validators.
+    Returns:
+        None
+    '''
     from .extensions import encrypt, getAdmin
     admin = getAdmin(username=form.username.data)
     if admin:
@@ -40,7 +97,14 @@ def incorrectPassword(form, field):
 
 
 class AddEntryForm(FlaskForm):
+    '''
+    FlaskForm object used to add a new entry to the database.
+    Several fields in this form are located within the template rather
+    than the FlaskForm itself.
 
+    Args:
+        FlaskForm (FlaskForm): Mandatory flask form for WTForms
+    '''
     ep_num = StringField('Episode Number', validators=[
         InputRequired(),
         epNumAlreadyExists
@@ -54,7 +118,14 @@ class AddEntryForm(FlaskForm):
 
 
 class AddParticipantForm(FlaskForm):
+    '''
+    FlaskForm object used to add a new participant to the database.
+    Several fields in this form are located within the template rather
+    than the FlaskForm itself.
 
+    Args:
+        FlaskForm (FlaskForm): Mandatory flask form for WTForms
+    '''
     name = StringField('Name', validators=[
         participantAlreadyExists
     ])
@@ -65,7 +136,12 @@ class AddParticipantForm(FlaskForm):
 
 
 class AdminLoginForm(FlaskForm):
+    '''
+    FlaskForm object used to log an admin into the application.
 
+    Args:
+        FlaskForm (FlaskForm): Mandatory flask form for WTForms
+    '''
     username = StringField('Username', validators=[
         usernameDoesNotExist
     ])
@@ -78,7 +154,12 @@ class AdminLoginForm(FlaskForm):
 
 
 class AdminCreateForm(FlaskForm):
+    '''
+    FlaskForm object used to create an admin.
 
+    Args:
+        FlaskForm (FlaskForm): Mandatory flask form for WTForms
+    '''
     username = StringField('Username', validators=[
         adminAlreadyExists
     ])
@@ -103,7 +184,12 @@ class AdminCreateForm(FlaskForm):
 
 
 class AdminAuthenticateForm(FlaskForm):
+    '''
+    FlaskForm object used to authenticate an admin to ensure top approval.
 
+    Args:
+        FlaskForm (FlaskForm): Mandatory flask form for WTForms
+    '''
     secretcode_input = StringField('Secret Code', validators=[
         InputRequired()
     ])
