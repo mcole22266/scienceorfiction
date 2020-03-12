@@ -267,6 +267,7 @@ def graphSweeps(saveTo='graph', daterange=False):
                x_axis_type='datetime',
                sizing_mode='stretch_width',
                tools=tools,
+               toolbar_location='above',
                active_drag='pan',
                active_inspect=hovertool,
                active_scroll='wheel_zoom')
