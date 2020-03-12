@@ -1,4 +1,9 @@
-# Contains all routing information (and lots of logic for now)
+# routes.py
+# Created by: Michael Cole
+# Updated by: Michael Cole
+# -----------------------------
+# Contains all routing information
+# (and lots of logic for now).
 
 from datetime import date, datetime
 from threading import Thread

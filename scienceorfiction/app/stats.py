@@ -1,4 +1,9 @@
-# Used to collect useful stats to be displayed by Bokeh graphs
+# stats.py
+# Created by: Michael Cole
+# Updated by: Michael Cole
+# -----------------------------
+# Used to collect useful stats to be
+# displayed by Bokeh graphs
 
 from .extensions import getAllEpisodes, getEpisode, getParticipant, getResults
 

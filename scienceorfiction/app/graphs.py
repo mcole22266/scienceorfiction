@@ -1,3 +1,7 @@
+# graphs.py
+# Created by: Michael Cole
+# Updated by: Michael Cole
+# -----------------------------
 # Contains logic to create graphs needed for Science or Fiction app.
 # Also contains supporting functions to simplify certain use-cases
 

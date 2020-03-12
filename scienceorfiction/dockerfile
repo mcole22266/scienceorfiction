@@ -1,3 +1,10 @@
+# dockerfile
+# Created by: Michael Cole
+# Updated by: Michael Cole
+# -----------------------------
+# Build instructions for the app
+# container.
+
 FROM python:3.7.5-slim
 
 LABEL maintainer="Michael Cole <mcole042891@gmail.com>"

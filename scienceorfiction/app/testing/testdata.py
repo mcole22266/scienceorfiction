@@ -1,4 +1,9 @@
+# __init__.py
+# Created by: Michael Cole
+# Updated by: [Michael Cole]
+# --------------------------
 # Temporary test data to insert
+
 from datetime import date, timedelta
 from random import shuffle, choice, random
 

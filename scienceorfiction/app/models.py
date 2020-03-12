@@ -1,3 +1,7 @@
+# models.py
+# Created by: Michael Cole
+# Updated by: Michael Cole
+# -----------------------------
 # Contains all database models for Flask-SQLAlchemy as well as
 # the db object created upon initialization
 

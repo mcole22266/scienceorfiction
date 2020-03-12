@@ -1,3 +1,11 @@
+# requirements.txt
+# Created by: Michael Cole
+# Updated by: Michael Cole
+# -----------------------------
+# Runs during app-building process
+# to ensure all required packages are
+# installed.
+
 flask==1.1.1
 flask_sqlalchemy
 mysql-connector-python
