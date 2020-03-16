@@ -1,3 +1,9 @@
+# .gitignore
+# Created by: Michael Cole
+# Updated by: Michael Cole
+# -----------------------------
+# Files to be ignored by Git
+
 .vscode
 __pycache__
 secrets.env

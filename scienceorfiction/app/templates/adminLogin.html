@@ -1,3 +1,9 @@
+<!-- adminLogin.html
+Created by: Michael Cole
+Updated by: Michael Cole
+------------------------
+Form that allows an admin to
+log in to their account -->
 
 {% extends 'base.html' %}
 
@@ -7,9 +13,6 @@
 
 <div class="vh-100">
     <div class="container-fluid row h-75 align-items-center">
-        {% if form.errors %}
-            {{ form.errors }}
-        {% endif %}
 
         <div class="container form-card col-md-5">
             <h1>Log In</h1>
@@ -23,12 +26,26 @@
                 <div class="form-field">
                     {{ form.username.label }}
                     {{ form.username(class_ = "form-control") }}
+                        {% if form.username.errors %}
+                            {% for error in form.username.errors %}
+                                <div class="alert alert-warning">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
                 </div>
                 <br>
 
                 <div class="form-field">
                     {{ form.password.label }}
                     {{ form.password(class_ = "form-control") }}
+                        {% if form.password.errors %}
+                            {% for error in form.password.errors %}
+                                <div class="alert alert-warning">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
                 </div>
 
                 <br>

@@ -1,3 +1,11 @@
+<!-- admin.html
+Created by: Michael Cole
+Updated by: [Michael Cole]
+--------------------------
+Landing page for admins after they
+log in. Allows admins to view data
+in the db and make important changes. -->
+
 {% extends 'base.html' %}
 
 {% block content %}
@@ -67,7 +75,7 @@
     <br>
 
     <div class="container col-10">
-        <ul class="nav nav-tabs nav-pills" id="myTab" role="tablist">
+        <ul class="nav nav-tabs nav-pills flex-column flex-sm-row" id="myTab" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" id="usefulRogue-tab" data-toggle="tab" href="#usefulRogues" role="tab" aria-controls="usefulRogues" aria-selected="true">
                     Rogues

@@ -1,3 +1,10 @@
+<!-- addEntry.html
+Created by: Michael Cole
+Updated by: Michael Cole
+------------------------
+For to add an entry to the database.
+Only accessible by admins -->
+
 <div class="container-fluid form-card">
     <form action="/admin" method="POST" role="form" id="addEntryForm" name="addEntryForm" data-toggle="validator">
         {{ form.csrf_token }}
@@ -12,7 +19,7 @@
             </div>
             <div class="col-md-4">
                 <label for="date-id">Date</label>
-                <input type="date" name="date" id="date-id" value="{{ today_date }}" class="form-control">  <!-- Default value: today's date -->
+                <input type="date" name="date" id="date-id" value="{{ today_date }}" class="form-control" required>  <!-- Default value: today's date -->
                 <br>
             </div>
             <div class="col-md-4">
@@ -43,7 +50,7 @@
 
         <br>
         <div class="form-field" style="float: right;">
-            {{ form.submit(class_= "btn btn-primary rounded-pill")}}
+            {{ form.submitEntry(class_= "btn btn-primary rounded-pill")}}
         </div> 
 
     </form>

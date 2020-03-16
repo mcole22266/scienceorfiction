@@ -1,3 +1,7 @@
+# __init__.py
+# Created by: Michael Cole
+# Updated by: [Michael Cole]
+# --------------------------
 # App initialization
 
 from flask import Flask
@@ -23,20 +27,25 @@ def create_app():
     app = Flask(__name__, instance_relative_config=False,
                 template_folder='templates',
                 static_folder='static')
+    # Load environment variables into the app
     app.config.from_object('config.Config')
 
     with app.app_context():
 
+        # Initialize app with SQLAlchemy
         db.init_app(app)
+        # Initialize app with CSRF protection from WTForms
         csrf.init_app(app)
 
+        # Initialize app with login manage from Flask_Logins
         login_manager.init_app(app)
+        # Initialize app with defined routes
         addRoutes(app)
 
         if database_ready(db, app):
-            db.create_all()
+            db.create_all()      # Create and populate all tables
             db.session.commit()
-            init_db(db)
-            init_app(app)
+            init_db(db)          # Initialize db with test data
+            init_app(app)        # Initialize app with prepared graphs
 
         return app

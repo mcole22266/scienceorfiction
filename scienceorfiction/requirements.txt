@@ -1,9 +1,17 @@
+# requirements.txt
+# Created by: Michael Cole
+# Updated by: Michael Cole
+# -----------------------------
+# Runs during app-building process
+# to ensure all required packages are
+# installed.
+
 flask==1.1.1
-flask_sqlalchemy
-mysql-connector-python
-flask_wtf
-flask_login
-yagmail
-flake8
-bokeh
-numpy
+flask_sqlalchemy==2.4.1
+mysql-connector-python==8.0.19
+flask_wtf==0.14.3
+flask_login==0.5.0
+yagmail==0.11.224
+flake8==3.7.9
+bokeh==1.4.0
+numpy==1.18.1

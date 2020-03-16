@@ -1,3 +1,11 @@
+# docker-compose.yml
+# Created by: Michael Cole
+# Updated by: Michael Cole
+# -----------------------------
+# Instructions for docker-compose on how
+# to build the project. 
+# Run `docker-compose up --build`
+
 version: '3'
 
 services:
