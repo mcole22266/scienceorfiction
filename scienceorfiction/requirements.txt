@@ -6,7 +6,7 @@
 # to ensure all required packages are
 # installed.
 
-flask==1.1.1
+flask==2.3.2
 flask_sqlalchemy==2.4.1
 mysql-connector-python==8.0.19
 flask_wtf==0.14.3
